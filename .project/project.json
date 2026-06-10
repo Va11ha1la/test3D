@@ -1,0 +1,33 @@
+{
+  "$schema": "../schemas/project.schema.json",
+  "project_id": "p_dked",
+  "author": {
+    "id": "709557730"
+  },
+  "entry": "main.generated.lua",
+  "version": "1.0.1",
+  "taptap_publish": {
+    "title": "身法大师",
+    "description": "一款硬核横版动作跑酷游戏。掌握蹬墙跳、滑铲、攀爬等多种身法技巧，穿越精心设计的关卡，挑战极限操作与反应速度。",
+    "category": "action",
+    "screen_orientation": "landscape",
+    "collection_type": "sce",
+    "trial_note": "这是一款注重操作手感的平台跳跃游戏，希望你能享受掌握每一种身法的过程！",
+    "app_platforms": "1,2",
+    "developer_id": 275201,
+    "app_id": 865621,
+    "miniapp_id": "tapmc2uxn9pas3p93b"
+  },
+  "assets": {
+    "icon": "",
+    "screenshots": [],
+    "promotional_image": ""
+  },
+  "test_qrcode": {
+    "url": "https://tapcode-sce.spark.xd.com/qrcode/p_dked_1780313985989.png",
+    "generated_at": "2026-06-01T11:39:46.097Z"
+  },
+  "metadata": {
+    "updated_at": "2026-06-01T11:39:46.097Z"
+  }
+}
