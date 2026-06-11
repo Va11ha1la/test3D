@@ -1,5 +1,9 @@
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 local function drawWorld()
+    if currentLevel.trace then
+        drawTraceWorld()
+        return
+    end
     drawPaper()
     drawBackground()
     if currentLevelIsLDtkGrandScroll() then drawLDtkGrandScrollBackdrop() end

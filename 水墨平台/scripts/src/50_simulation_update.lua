@@ -125,7 +125,9 @@ local function fixedStep()
         end
     end
 
-    if currentLevel.id == "bamboo" then
+    if currentLevel.trace then
+        traceCollision(prevX, prevY)
+    elseif currentLevel.id == "bamboo" then
         bambooCollision()
     elseif currentLevel.id == "ldtk_grand_scroll" then
         ldtkGrandScrollCollision(prevX, prevY)

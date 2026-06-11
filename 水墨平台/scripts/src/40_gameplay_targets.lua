@@ -55,7 +55,9 @@ local function resetPlayer()
     player.onEaves = nil
     player.eavesT, player.eavesSpeed = 0, 0
 
-    if currentLevel.id == "bamboo" then
+    if currentLevel.trace then
+        player.x, player.y = TRACE_RT.spawnX, TRACE_RT.spawnY - 24
+    elseif currentLevel.id == "bamboo" then
         local nodes = {}
         for _, s in ipairs(bambooSegments) do if s.stalkId == "bamboo1" and s.isNode then nodes[#nodes + 1] = s end end
         local safe = nodes[math.max(1, #nodes - 3)]
@@ -156,6 +158,7 @@ local function loadLevel(index)
     elseif currentLevel.id == "xuwei_grape" then generateXuweiGrape()
     elseif currentLevel.id == "molong" then generateMolong()
     elseif currentLevel.id == "ldtk_grand_scroll" then generateLDtkGrandScroll()
+    elseif currentLevel.trace then generateTraceLevel()
     end
 
     resetPlayer()

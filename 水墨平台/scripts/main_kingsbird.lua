@@ -46,6 +46,9 @@ local camX, camY = 0, 0
 local CAM_ZOOM = 0.95
 local burstFx = {}
 local goalDone, goalAge = false, 0
+local ipoints = {}         -- 交互点 {x,y,kind,trig,members}
+local bloomMap = {}        -- [layer][pi] -> 兰草生长体(仅绿层)
+local petals = {}          -- 花瓣粒子
 
 -- ---------------- 拖尾 ----------------
 local tpts = {}
@@ -337,6 +340,20 @@ end
 
 -- @TRACE-END@
 
+-- 宣纸色阶重映射(原帧色 -> 暖纸白水墨)
+local XUAN_GRADE = {
+    ["216,213,207"] = { 243, 239, 229 },
+    ["197,194,190"] = { 229, 225, 214 },
+    ["181,179,174"] = { 212, 208, 197 },
+    ["157,153,150"] = { 188, 184, 175 },
+    ["138,138,134"] = { 162, 160, 151 },
+    ["113,112,110"] = { 131, 129, 122 },
+    ["78,84,79"] = { 86, 95, 82 },
+    ["55,55,53"] = { 46, 44, 41 },
+    ["33,33,32"] = { 25, 23, 21 },
+}
+if LEVELS[1] then LEVELS[1].PAPER = "xuan" end
+
 local curLevel = 1
 local LV = LEVELS[1]
 local cpReached = {}
@@ -403,7 +420,108 @@ local function loadLevel(n)
     goalDone, goalAge = false, 0
     cpReached = {}
     for i = 1, #LV.CPS do cpReached[i] = (i == 1) end
-    print("[kingsbird] level " .. curLevel .. " " .. LV.name)
+    if LV.TRACE and LV.PAPER == "xuan" and not LV.graded then
+        LV.graded = true
+        local key = string.format("%d,%d,%d", LV.TRACE.base[1], LV.TRACE.base[2], LV.TRACE.base[3])
+        if XUAN_GRADE[key] then LV.TRACE.base = XUAN_GRADE[key] end
+        for _, lay in ipairs(LV.TRACE.layers) do
+            local k2 = string.format("%d,%d,%d", lay.color[1], lay.color[2], lay.color[3])
+            if XUAN_GRADE[k2] then lay.color = XUAN_GRADE[k2] end
+        end
+    end
+    ipoints = {}
+    bloomMap = {}
+    petals = {}
+    if LV.TRACE then
+        local plumPts, orchidPts = {}, {}
+        for _, lay in ipairs(LV.TRACE.layers) do
+            local c = lay.color
+            if c[1] == 150 and c[2] == 45 then
+                lay.hidden = true
+                for pi, bb in ipairs(lay.bb or {}) do
+                    plumPts[#plumPts + 1] = { x = (bb[1] + bb[3]) * 0.5, y = (bb[2] + bb[4]) * 0.5,
+                        r = clamp(math.max(bb[3] - bb[1], bb[4] - bb[2]) * 0.5, 9, 22) }
+                end
+            elseif c[1] == 158 and c[2] == 160 then
+                lay.hidden = true
+            elseif c[1] == 72 and c[2] == 115 then
+                bloomMap[lay] = {}
+                for pi, bb in ipairs(lay.bb or {}) do
+                    local g = { cx = (bb[1] + bb[3]) * 0.5, by = bb[4], t = 0, delay = 0 }
+                    bloomMap[lay][pi] = g
+                    orchidPts[#orchidPts + 1] = { x = g.cx, y = bb[4], g = g }
+                end
+            end
+        end
+        -- 贪心聚类 -> 交互点
+        local function clusterize(pts, rad, kind)
+            for _, pt in ipairs(pts) do
+                local home = nil
+                for _, ip in ipairs(ipoints) do
+                    if ip.kind == kind and (ip.x - pt.x) ^ 2 + (ip.y - pt.y) ^ 2 < rad * rad then
+                        home = ip
+                        break
+                    end
+                end
+                if not home then
+                    home = { x = pt.x, y = pt.y, kind = kind, trig = false, members = {}, n = 0 }
+                    ipoints[#ipoints + 1] = home
+                end
+                pt.t = 0
+                pt.delay = 0
+                home.members[#home.members + 1] = pt
+                home.n = home.n + 1
+                home.x = home.x + (pt.x - home.x) / home.n
+                home.y = home.y + (pt.y - home.y) / home.n
+            end
+        end
+        clusterize(plumPts, 220, "plum")
+        clusterize(orchidPts, 170, "orchid")
+        -- 沿前景顶面自动补充交互点(避开已有点,间距 >=420)
+        local cands = {}
+        for _, poly in ipairs(LV.POLYS) do
+            local n = #poly
+            for i = 1, n do
+                local ax, ay = poly[i][1], poly[i][2]
+                local bx, by = poly[i % n + 1][1], poly[i % n + 1][2]
+                if math.abs(by - ay) < 12 and math.abs(bx - ax) > 70 then
+                    local mx, my = (ax + bx) / 2, (ay + by) / 2
+                    if insidePoly(poly, mx, my + 8) then
+                        cands[#cands + 1] = { x = mx, y = my }
+                    end
+                end
+            end
+        end
+        table.sort(cands, function(a, b) return a.x < b.x end)
+        local lastX = -1e9
+        for ci, cd in ipairs(cands) do
+            if cd.x - lastX > 420 then
+                local clash = false
+                for _, ip in ipairs(ipoints) do
+                    if (ip.x - cd.x) ^ 2 + (ip.y - cd.y) ^ 2 < 300 * 300 then
+                        clash = true
+                        break
+                    end
+                end
+                if not clash then
+                    lastX = cd.x
+                    local kind = (hash01(ci * 5.3) > 0.45) and "plum" or "sprout"
+                    local ip = { x = cd.x, y = cd.y - 14, kind = kind, trig = false, members = {} }
+                    if kind == "plum" then
+                        for k = 1, 4 + math.floor(hash01(ci) * 3) do
+                            ip.members[#ip.members + 1] = { x = cd.x + (hash01(ci * 7 + k) - 0.5) * 110,
+                                y = cd.y - 8 - hash01(ci * 11 + k) * 34,
+                                r = 9 + hash01(ci * 13 + k) * 6, t = 0, delay = 0 }
+                        end
+                    else
+                        ip.members[#ip.members + 1] = { x = cd.x, y = cd.y, r = 1, t = 0, delay = 0 }
+                    end
+                    ipoints[#ipoints + 1] = ip
+                end
+            end
+        end
+    end
+    print("[kingsbird] level " .. curLevel .. " " .. LV.name .. " ipoints=" .. #ipoints)
 end
 
 -- ---------------- 碰撞 ----------------
@@ -437,11 +555,20 @@ local function collideCircle(px, py, pr)
             end
         end
         if inside then
-            -- 卡入实体:朝最近边外侧弹出
+            -- 卡入实体:朝最近边外侧弹出;若该方向顺着运动(会穿透),改用逆速度方向的次近边
             local dx, dy = bestX - px, bestY - py
             local d = math.sqrt(dx * dx + dy * dy)
             local nx, ny
             if d > 1e-4 then nx, ny = dx / d, dy / d else nx, ny = 0, -1 end
+            local vdot = nx * P.vx + ny * P.vy
+            if vdot > 0.1 then
+                local spd2 = math.sqrt(P.vx * P.vx + P.vy * P.vy)
+                if spd2 > 0.5 then
+                    nx, ny = -P.vx / spd2, -P.vy / spd2
+                    bestX, bestY = px, py
+                    d = pr
+                end
+            end
             px = bestX + nx * (pr + 1)
             py = bestY + ny * (pr + 1)
             pushX = pushX + nx * (d + pr)
@@ -536,6 +663,10 @@ end
 local function fixedStep()
     elapsed = elapsed + FIXED_DT
 
+    if goalDone and LV.TRACE then
+        P.dashQueued = false
+        P.jumpQueued = false
+    end
     if P.dashQueued then
         if P.canDash and not P.isDashing then
             local dx = (keys.d and 1 or 0) - (keys.a and 1 or 0)
@@ -560,8 +691,10 @@ local function fixedStep()
             P.vx = P.vx * 0.5
         end
     else
-        if keys.a then P.vx = P.vx - P.accel; P.facing = -1 end
-        if keys.d then P.vx = P.vx + P.accel; P.facing = 1 end
+        if not (goalDone and LV.TRACE) then
+            if keys.a then P.vx = P.vx - P.accel; P.facing = -1 end
+            if keys.d then P.vx = P.vx + P.accel; P.facing = 1 end
+        end
         P.vy = P.vy + P.grav
         P.vx = P.vx * P.fric
         if P.wallDir ~= 0 and not P.grounded and P.vy > 3.0
@@ -652,9 +785,55 @@ local function fixedStep()
         end
     else
         goalAge = goalAge + 1
-        if goalAge == 100 then loadLevel(curLevel % #LEVELS + 1) end
+        local adv = LV.TRACE and 430 or 100
+        if goalAge == adv then loadLevel(curLevel % #LEVELS + 1) end
     end
     if P.y > LV.KILL then respawn() end
+
+    -- 交互点:主动触碰开花
+    for _, ip in ipairs(ipoints) do
+        if not ip.trig then
+            local dx, dy = P.x - ip.x, P.y - ip.y
+            if dx * dx + dy * dy < 58 * 58 then
+                ip.trig = true
+                burstFx[#burstFx + 1] = { x = ip.x, y = ip.y, age = 0, kind = "ink" }
+                for mi, m in ipairs(ip.members) do
+                    m.delay = (mi - 1) * 6 + math.floor(hash01(mi * 7.7) * 5)
+                end
+            end
+        else
+            for _, m in ipairs(ip.members) do
+                if m.delay > 0 then
+                    m.delay = m.delay - 1
+                elseif m.t < 1 then
+                    m.t = math.min(1, m.t + 0.055)
+                    if ip.kind == "plum" and m.t > 0.12 and m.t < 0.18 then
+                        for _ = 1, 4 do
+                            petals[#petals + 1] = { x = m.x + (math.random() - 0.5) * 24,
+                                y = m.y + (math.random() - 0.5) * 18,
+                                vx = (math.random() - 0.5) * 1.2, vy = -0.5 - math.random() * 0.7,
+                                rot = math.random() * 6.28, vr = (math.random() - 0.5) * 0.12,
+                                life = 100 + math.random(60), age = 0, ph = math.random() * 6.28 }
+                        end
+                    end
+                    if ip.kind == "orchid" and m.g then m.g.t = m.t end
+                elseif ip.kind == "plum" and math.random() < 0.0025 then
+                    petals[#petals + 1] = { x = m.x + (math.random() - 0.5) * 26,
+                        y = m.y, vx = 0.2, vy = 0.2, rot = math.random() * 6.28,
+                        vr = (math.random() - 0.5) * 0.1, life = 140, age = 0, ph = math.random() * 6.28 }
+                end
+            end
+        end
+    end
+    for i = #petals, 1, -1 do
+        local pt = petals[i]
+        pt.age = pt.age + 1
+        pt.x = pt.x + pt.vx + math.sin(pt.age * 0.08 + pt.ph) * 0.5
+        pt.y = pt.y + pt.vy
+        pt.vy = math.min(pt.vy + 0.022, 1.0)
+        pt.rot = pt.rot + pt.vr
+        if pt.age > pt.life then table.remove(petals, i) end
+    end
 
     if (P.dashVisualT or 0) > 0 then P.dashVisualT = P.dashVisualT - 1 end
     local spd = math.sqrt(P.vx * P.vx + P.vy * P.vy)
@@ -675,6 +854,14 @@ local function fixedStep()
     for _, b in ipairs(burstFx) do b.age = b.age + 1 end
     for i = #burstFx, 1, -1 do if burstFx[i].age > 70 then table.remove(burstFx, i) end end
 
+    if goalDone and LV.TRACE then
+        -- 终幕:镜头移向画卷中心
+        local ccx = (LV.TRACE.spanx[1] + LV.TRACE.spanx[2] + (LV.FRW or 1680)) / 2
+        local ccy = (LV.TRACE.spany[1] + LV.TRACE.spany[2] + (LV.FRH or 910)) / 2
+        camX = camX + (ccx - camX) * 0.045
+        camY = camY + (ccy - camY) * 0.045
+        goto cam_done
+    end
     camX = camX + (P.x - camX) * 0.07
     camY = camY + (P.y - 50 - camY) * 0.06
     if LV.TRACE then
@@ -694,6 +881,7 @@ local function fixedStep()
             camY = clamp(camY, sy1 + halfH, sy2 - halfH)
         end
     end
+    ::cam_done::
 end
 
 -- ============================================================================
@@ -1172,9 +1360,11 @@ table.remove(LEVELS, 2)
 local function drawTraceLayers()
     local TR_REFX, TR_REFY = LV.REFX or 840, LV.REFY or 455
     local zoom = LV.ZOOM or CAM_ZOOM
+    if goalDone then zoom = zoom * 0.2 end -- 终幕放宽裁剪
     local halfW = (screenW / 2) / zoom + 60
     local halfH = (screenH / 2) / zoom + 60
     for _, L in ipairs(LV.TRACE.layers) do
+        if L.hidden then goto next_layer end
         local tox = (camX - TR_REFX) * (1 - L.par)
         local toy = (camY - TR_REFY) * (1 - L.par) * 0.5
         nvgSave(vg)
@@ -1182,17 +1372,44 @@ local function drawTraceLayers()
         nvgFillColor(vg, rgba(L.color[1], L.color[2], L.color[3], 255))
         local vx1, vx2 = camX - halfW - tox, camX + halfW - tox
         local vy1, vy2 = camY - halfH - toy, camY + halfH - toy
+        local bm = bloomMap[L]
         for pi, poly in ipairs(L.polys) do
             local bb = L.bb and L.bb[pi]
             if (not bb) or (bb[3] > vx1 and bb[1] < vx2 and bb[4] > vy1 and bb[2] < vy2) then
-                nvgBeginPath(vg)
-                nvgMoveTo(vg, poly[1], poly[2])
-                for k = 3, #poly - 1, 2 do nvgLineTo(vg, poly[k], poly[k + 1]) end
-                nvgClosePath(vg)
-                nvgFill(vg)
+                local b = bm and bm[pi]
+                if b then
+                    local t = b.t
+                    if t > 0.01 then
+                        local sc2 = (1 - (1 - t) ^ 3)
+                        sc2 = sc2 * (1 + 0.3 * math.sin(t * 3.14159) * (1 - t * 0.5))
+                        nvgSave(vg)
+                        nvgTranslate(vg, b.cx, b.by)
+                        nvgRotate(vg, math.sin(elapsed * 1.5 + b.cx * 0.013) * 0.06 * t)
+                        nvgScale(vg, sc2, sc2)
+                        nvgTranslate(vg, -b.cx, -b.by)
+                        nvgBeginPath(vg)
+                        nvgMoveTo(vg, poly[1], poly[2])
+                        for k = 3, #poly - 1, 2 do nvgLineTo(vg, poly[k], poly[k + 1]) end
+                        nvgClosePath(vg)
+                        nvgFill(vg)
+                        nvgRestore(vg)
+                    end
+                else
+                    nvgBeginPath(vg)
+                    nvgMoveTo(vg, poly[1], poly[2])
+                    for k = 3, #poly - 1, 2 do nvgLineTo(vg, poly[k], poly[k + 1]) end
+                    nvgClosePath(vg)
+                    if L.par >= 0.99 then
+                        nvgStrokeColor(vg, rgba(L.color[1], L.color[2], L.color[3], 42))
+                        nvgStrokeWidth(vg, 9)
+                        nvgStroke(vg)
+                    end
+                    nvgFill(vg)
+                end
             end
         end
         nvgRestore(vg)
+        ::next_layer::
     end
 end
 
@@ -1412,8 +1629,8 @@ local function drawFluidTrail()
         nvgFillColor(vg, color)
         nvgFill(vg)
     end
-    fillStrip(outerL, outerR, rgba(235, 245, 255, lerp(110, 70, dashInterp)))
-    fillStrip(innerL, innerR, rgba(250, 252, 255, 235))
+    fillStrip(outerL, outerR, rgba(46, 42, 38, lerp(95, 60, dashInterp)))
+    fillStrip(innerL, innerR, rgba(24, 21, 19, 235))
 end
 
 local function drawDroplets()
@@ -1421,7 +1638,7 @@ local function drawDroplets()
         local r = d.r * math.max(0, d.life)
         if r > 0.1 then
             if d.streak then
-                nvgStrokeColor(vg, rgba(240, 248, 255, d.life * 190))
+                nvgStrokeColor(vg, rgba(30, 27, 24, d.life * 200))
                 nvgStrokeWidth(vg, r * 1.3)
                 nvgBeginPath(vg)
                 nvgMoveTo(vg, d.x, d.y)
@@ -1430,64 +1647,313 @@ local function drawDroplets()
             else
                 nvgBeginPath(vg)
                 nvgCircle(vg, d.x, d.y, r)
-                nvgFillColor(vg, rgba(235, 245, 255, d.life * 110))
+                nvgFillColor(vg, rgba(46, 42, 38, d.life * 120))
                 nvgFill(vg)
                 nvgBeginPath(vg)
                 nvgCircle(vg, d.x, d.y, r * 0.6)
-                nvgFillColor(vg, rgba(250, 252, 255, d.life * 200))
+                nvgFillColor(vg, rgba(24, 21, 19, d.life * 210))
                 nvgFill(vg)
             end
         end
     end
 end
 
+-- 没骨梅花:5 圆瓣 + 深红心 + 黄蕊
+local function drawPlumFlower(x, y, r, t, seed)
+    local sc2 = (1 - (1 - t) ^ 3)
+    sc2 = sc2 * (1 + 0.35 * math.sin(t * 3.14159) * (1 - t * 0.6))
+    local rr = r * sc2
+    if rr < 0.5 then return end
+    local jit = hash01(seed) * 6.28
+    for k = 0, 4 do
+        local a = jit + k * 1.2566 + math.sin(seed * 3 + k) * 0.12
+        local px = x + math.cos(a) * rr * 0.52
+        local py = y + math.sin(a) * rr * 0.52
+        nvgBeginPath(vg)
+        nvgCircle(vg, px, py, rr * 0.46 * (0.92 + hash01(seed + k) * 0.16))
+        nvgFillColor(vg, rgba(197, 38, 64, 232))
+        nvgFill(vg)
+    end
+    nvgBeginPath(vg)
+    nvgCircle(vg, x, y, rr * 0.3)
+    nvgFillColor(vg, rgba(140, 18, 40, 240))
+    nvgFill(vg)
+    if t > 0.72 then
+        local fa = (t - 0.72) / 0.28
+        for k = 0, 4 do
+            local a = jit + k * 1.2566 + 0.6
+            nvgBeginPath(vg)
+            nvgCircle(vg, x + math.cos(a) * rr * 0.2, y + math.sin(a) * rr * 0.2, rr * 0.07 + 0.6)
+            nvgFillColor(vg, rgba(252, 228, 150, 230 * fa))
+            nvgFill(vg)
+        end
+    end
+end
+
+-- 程序兰草:扇形叶片随生长展开
+local function drawOrchidSprout(x, y, t, seed)
+    local sc2 = 1 - (1 - t) ^ 3
+    if sc2 < 0.03 then return end
+    for k = 0, 8 do
+        local a = -1.5708 + (k / 8 - 0.5) * 2.5 + math.sin(elapsed * 1.6 + seed + k * 1.7) * 0.05 * t
+        local ln = (26 + hash01(seed + k * 3) * 36) * sc2
+        local ex = x + math.cos(a) * ln
+        local ey = y + math.sin(a) * ln
+        nvgStrokeColor(vg, rgba(64, 94, 60, 235))
+        nvgStrokeWidth(vg, 3.4 - (k % 3) * 0.8)
+        nvgBeginPath(vg)
+        nvgMoveTo(vg, x, y)
+        nvgBezierTo(vg, x + math.cos(a) * ln * 0.4, y + math.sin(a) * ln * 0.5 - 5,
+            ex - math.cos(a) * ln * 0.08, ey + 3, ex, ey)
+        nvgStroke(vg)
+    end
+    if t > 0.8 then
+        local fa = (t - 0.8) / 0.2
+        nvgBeginPath(vg)
+        nvgCircle(vg, x + 4, y - 34 * sc2, 3.0)
+        nvgFillColor(vg, rgba(240, 226, 152, 235 * fa))
+        nvgFill(vg)
+        nvgBeginPath(vg)
+        nvgCircle(vg, x - 6, y - 27 * sc2, 2.2)
+        nvgFillColor(vg, rgba(244, 238, 200, 220 * fa))
+        nvgFill(vg)
+    end
+end
+
+local function drawFlowers()
+    for _, ip in ipairs(ipoints) do
+        if not ip.trig then
+            -- 花苞 + 呼吸墨圈(可交互提示)
+            local ph = elapsed * 2.2 + ip.x * 0.01
+            nvgStrokeColor(vg, rgba(70, 66, 62, 56 + 26 * math.sin(ph)))
+            nvgStrokeWidth(vg, 2.2)
+            nvgBeginPath(vg)
+            nvgCircle(vg, ip.x, ip.y, 24 + math.sin(ph) * 4)
+            nvgStroke(vg)
+            for _, m in ipairs(ip.members) do
+                nvgBeginPath(vg)
+                nvgCircle(vg, m.x, m.y, ip.kind == "plum" and 3.6 or 3.0)
+                nvgFillColor(vg, ip.kind == "plum" and rgba(132, 22, 44, 235) or rgba(60, 88, 56, 235))
+                nvgFill(vg)
+            end
+        else
+            for mi, m in ipairs(ip.members) do
+                if ip.kind == "plum" then
+                    if m.t > 0 then
+                        drawPlumFlower(m.x, m.y, m.r, m.t, mi * 13.7 + ip.x)
+                    else
+                        nvgBeginPath(vg)
+                        nvgCircle(vg, m.x, m.y, 3.6)
+                        nvgFillColor(vg, rgba(132, 22, 44, 235))
+                        nvgFill(vg)
+                    end
+                elseif ip.kind == "sprout" then
+                    drawOrchidSprout(m.x, m.y, m.t, ip.x * 0.013)
+                end
+            end
+        end
+    end
+end
+
+-- 纸纹与晕染(屏幕空间)
+local function drawPaperGrain(w, h)
+    -- 水渍淡晕(固定位置,极淡)
+    if LV.PAPER == "xuan" then
+        for i = 1, 7 do
+            local bx = hash01(i * 11.3) * w
+            local by = hash01(i * 17.9) * h
+            local br = 90 + hash01(i * 5.1) * 240
+            local warm = (i % 2 == 0)
+            for ring = 3, 1, -1 do
+                nvgBeginPath(vg)
+                nvgCircle(vg, bx, by, br * ring / 3)
+                nvgFillColor(vg, warm and rgba(196, 178, 142, 4) or rgba(150, 158, 162, 3))
+                nvgFill(vg)
+            end
+        end
+        -- 纸屑斑点
+        for i = 1, 36 do
+            nvgBeginPath(vg)
+            nvgCircle(vg, hash01(i * 23.7) * w, hash01(i * 31.1) * h, 0.8 + hash01(i * 3.3) * 1.6)
+            nvgFillColor(vg, rgba(130, 118, 96, 10 + hash01(i * 7.7) * 10))
+            nvgFill(vg)
+        end
+    end
+    nvgStrokeWidth(vg, 1)
+    for i = 1, (LV.PAPER == "xuan" and 112 or 64) do
+        local fx = hash01(i * 3.1) * w
+        local fy = hash01(i * 7.7) * h
+        local fl = 6 + hash01(i * 1.3) * 22
+        local fa = hash01(i * 9.1) * 3.14
+        nvgStrokeColor(vg, rgba(120, 112, 96, 7 + hash01(i) * 8))
+        nvgBeginPath(vg)
+        nvgMoveTo(vg, fx, fy)
+        nvgLineTo(vg, fx + math.cos(fa) * fl, fy + math.sin(fa) * fl)
+        nvgStroke(vg)
+    end
+end
+
+-- 终幕装裱:裱边贴合地图矩形(世界包围盒投影到屏幕)
+local function drawVistaMount(w, h)
+    local v = clamp((goalAge - 50) / 90, 0, 1)
+    v = 1 - (1 - v) ^ 2
+    if v <= 0.01 then return end
+    -- 与主渲染一致的终幕缩放
+    local zoom = LV.ZOOM or CAM_ZOOM
+    local frw = LV.FRW or 1680
+    local frh = LV.FRH or 910
+    local wW = (LV.TRACE.spanx[2] - LV.TRACE.spanx[1]) + frw
+    local wH = (LV.TRACE.spany[2] - LV.TRACE.spany[1]) + frh
+    local fit = math.min(w / wW, h / wH) * 0.94
+    local tt = clamp(goalAge / 170, 0, 1)
+    tt = 1 - (1 - tt) ^ 3
+    zoom = zoom + (fit - zoom) * tt
+    local rx1 = (LV.TRACE.spanx[1] - camX) * zoom + w / 2
+    local ry1 = (LV.TRACE.spany[1] - camY) * zoom + h / 2
+    local rx2 = (LV.TRACE.spanx[2] + frw - camX) * zoom + w / 2
+    local ry2 = (LV.TRACE.spany[2] + frh - camY) * zoom + h / 2
+
+    -- 深褐裱边(贴着画心外沿)
+    local bw = 26 * v
+    nvgFillColor(vg, rgba(58, 42, 30, 245 * v))
+    nvgBeginPath(vg)
+    nvgRect(vg, rx1 - bw, ry1 - bw, rx2 - rx1 + bw * 2, bw)
+    nvgRect(vg, rx1 - bw, ry2, rx2 - rx1 + bw * 2, bw)
+    nvgRect(vg, rx1 - bw, ry1, bw, ry2 - ry1)
+    nvgRect(vg, rx2, ry1, bw, ry2 - ry1)
+    nvgFill(vg)
+    -- 裱绫内沿线
+    nvgStrokeColor(vg, rgba(150, 122, 88, 200 * v))
+    nvgStrokeWidth(vg, 2)
+    nvgBeginPath(vg)
+    nvgRect(vg, rx1 + 2, ry1 + 2, rx2 - rx1 - 4, ry2 - ry1 - 4)
+    nvgStroke(vg)
+    -- 画心四边宣纸氤氲
+    local ew = math.min(24, (ry2 - ry1) * 0.12)
+    nvgFillColor(vg, rgba(196, 174, 138, 18 * v))
+    nvgBeginPath(vg)
+    nvgRect(vg, rx1, ry1, rx2 - rx1, ew)
+    nvgRect(vg, rx1, ry2 - ew, rx2 - rx1, ew)
+    nvgRect(vg, rx1, ry1, ew, ry2 - ry1)
+    nvgRect(vg, rx2 - ew, ry1, ew, ry2 - ry1)
+    nvgFill(vg)
+
+    -- 题跋 + 印章(锚定画心右上,按画心高度缩放)
+    local k = clamp((ry2 - ry1) / 520, 0.45, 1.1)
+    nvgSave(vg)
+    nvgTranslate(vg, rx2 - 96 * k, ry1 + (ry2 - ry1) * 0.14)
+    nvgScale(vg, k, k)
+    for c2 = 0, 2 do
+        local cx2 = c2 * 16
+        local nrow = 9 - c2 * 2
+        for r2 = 0, nrow do
+            local seed = c2 * 31 + r2 * 7
+            nvgBeginPath(vg)
+            nvgRect(vg, cx2 - 4, r2 * 15, 8 * (0.5 + hash01(seed) * 0.6), 2.2)
+            nvgFillColor(vg, rgba(74, 70, 64, 130 * v))
+            nvgFill(vg)
+            if hash01(seed + 3) > 0.5 then
+                nvgBeginPath(vg)
+                nvgRect(vg, cx2 - 3, r2 * 15 + 5, 6, 2)
+                nvgFillColor(vg, rgba(74, 70, 64, 100 * v))
+                nvgFill(vg)
+            end
+        end
+    end
+    local sv = clamp((goalAge - 150) / 26, 0, 1)
+    if sv > 0 then
+        local pop = 1 + (1 - sv) * 0.7
+        nvgSave(vg)
+        nvgTranslate(vg, 8, 168)
+        nvgRotate(vg, -0.05)
+        nvgScale(vg, pop, pop)
+        nvgBeginPath(vg)
+        nvgRect(vg, -17, -17, 34, 34)
+        nvgFillColor(vg, rgba(186, 48, 40, 235 * sv))
+        nvgFill(vg)
+        nvgFillColor(vg, rgba(242, 236, 224, 230 * sv))
+        for gx2 = 0, 1 do
+            for gy2 = 0, 1 do
+                nvgBeginPath(vg)
+                nvgRect(vg, -12 + gx2 * 14, -12 + gy2 * 14, 9, 9)
+                nvgFill(vg)
+            end
+        end
+        nvgRestore(vg)
+    end
+    local sv2 = clamp((goalAge - 185) / 26, 0, 1)
+    if sv2 > 0 then
+        local pop = 1 + (1 - sv2) * 0.7
+        nvgSave(vg)
+        nvgTranslate(vg, -28, 224)
+        nvgScale(vg, pop, pop)
+        nvgStrokeColor(vg, rgba(186, 48, 40, 230 * sv2))
+        nvgStrokeWidth(vg, 2.4)
+        nvgBeginPath(vg)
+        nvgRect(vg, -10, -30, 20, 60)
+        nvgStroke(vg)
+        nvgFillColor(vg, rgba(186, 48, 40, 215 * sv2))
+        for r2 = 0, 3 do
+            nvgBeginPath(vg)
+            nvgRect(vg, -5, -24 + r2 * 14, 10, 6)
+            nvgFill(vg)
+        end
+        nvgRestore(vg)
+    end
+    nvgRestore(vg)
+end
+
+local function drawPetals()
+    for _, pt in ipairs(petals) do
+        local a = 230 * (1 - pt.age / pt.life)
+        nvgSave(vg)
+        nvgTranslate(vg, pt.x, pt.y)
+        nvgRotate(vg, pt.rot)
+        nvgBeginPath(vg)
+        nvgEllipse(vg, 0, 0, 4.6, 2.4)
+        nvgFillColor(vg, rgba(198, 46, 66, a))
+        nvgFill(vg)
+        nvgRestore(vg)
+    end
+end
+
 local function drawBursts()
     for _, b in ipairs(burstFx) do
         local t = b.age / 70
+        if b.kind == "ink" then
+            local rr = 14 + t * 60
+            nvgStrokeColor(vg, rgba(60, 56, 52, 200 * (1 - t)))
+            nvgStrokeWidth(vg, 3.5 * (1 - t) + 0.6)
+            nvgBeginPath(vg)
+            nvgCircle(vg, b.x, b.y, rr)
+            nvgStroke(vg)
+            goto next_burst
+        end
         local r = 20 + t * (b.kind == "goal" and 220 or 110)
         nvgStrokeColor(vg, col(b.kind == "goal" and LV.PAL.acc or { 240, 246, 255 }, 220 * (1 - t)))
         nvgStrokeWidth(vg, 5 * (1 - t) + 1)
         nvgBeginPath(vg)
         nvgCircle(vg, b.x, b.y, r)
         nvgStroke(vg)
+        ::next_burst::
     end
 end
 
 local function drawPlayer()
     local pc = LV.PAL.player or LV.PAL.fore
-    local spd = math.sqrt(P.vx * P.vx + P.vy * P.vy)
     nvgSave(vg)
     nvgTranslate(vg, P.x, P.y)
-    nvgScale(vg, P.facing, 1)
-    nvgFillColor(vg, col(pc))
+    -- 静态墨珠:实心圆 + 墨晕软边 + 湿润高光
     nvgBeginPath(vg)
-    nvgEllipse(vg, 0, -4, 5.5, 9)
-    nvgFill(vg)
-    nvgBeginPath(vg)
-    nvgCircle(vg, 2, -15, 5)
-    nvgFill(vg)
-    nvgBeginPath(vg)
-    nvgMoveTo(vg, 6, -15)
-    nvgLineTo(vg, 11, -13)
-    nvgLineTo(vg, 6, -11)
-    nvgClosePath(vg)
-    nvgFill(vg)
-    local ph = elapsed * (6 + spd * 1.2)
-    local l1 = math.sin(ph) * (P.grounded and clamp(spd, 0, 6) or 2)
-    local l2 = math.sin(ph + math.pi) * (P.grounded and clamp(spd, 0, 6) or 2)
-    nvgStrokeColor(vg, col(pc))
-    nvgStrokeWidth(vg, 3.4)
-    nvgBeginPath(vg)
-    nvgMoveTo(vg, 0, 3)
-    nvgLineTo(vg, l1, 11)
-    nvgMoveTo(vg, 0, 3)
-    nvgLineTo(vg, l2, 11)
+    nvgCircle(vg, 0, 0, 9.2)
+    nvgStrokeColor(vg, col(pc, 64))
+    nvgStrokeWidth(vg, 4.5)
     nvgStroke(vg)
-    nvgFillColor(vg, col(pc, 230))
+    nvgFillColor(vg, col(pc))
+    nvgFill(vg)
     nvgBeginPath(vg)
-    nvgMoveTo(vg, -3, -12)
-    nvgBezierTo(vg, -10 - P.vx * P.facing, -6, -9 - P.vx * P.facing, 4, -4, 6)
-    nvgClosePath(vg)
+    nvgCircle(vg, -2.6, -3.4, 1.8)
+    nvgFillColor(vg, rgba(255, 255, 255, 44))
     nvgFill(vg)
     nvgRestore(vg)
 end
@@ -1505,6 +1971,14 @@ function HandleNanoVGRender(eventType, eventData)
     nvgSave(vg)
     nvgTranslate(vg, screenW / 2, screenH / 2)
     local zoom = LV.ZOOM or CAM_ZOOM
+    if goalDone and LV.TRACE then
+        local w = (LV.TRACE.spanx[2] - LV.TRACE.spanx[1]) + (LV.FRW or 1680)
+        local h = (LV.TRACE.spany[2] - LV.TRACE.spany[1]) + (LV.FRH or 910)
+        local fit = math.min(screenW / w, screenH / h) * 0.94
+        local tt = clamp(goalAge / 170, 0, 1)
+        tt = 1 - (1 - tt) ^ 3
+        zoom = zoom + (fit - zoom) * tt
+    end
     nvgScale(vg, zoom, zoom)
     nvgTranslate(vg, -camX, -camY)
 
@@ -1518,12 +1992,17 @@ function HandleNanoVGRender(eventType, eventData)
     end
     drawCheckpoints()
     drawGoalGate()
+    drawFlowers()
     drawFluidTrail()
     drawDroplets()
+    drawPetals()
     drawBursts()
     drawPlayer()
 
     nvgRestore(vg)
+
+    if LV.TRACE then drawPaperGrain(screenW, screenH) end
+    if goalDone and LV.TRACE then drawVistaMount(screenW, screenH) end
 
     for i = 0, 3 do
         nvgBeginPath(vg)

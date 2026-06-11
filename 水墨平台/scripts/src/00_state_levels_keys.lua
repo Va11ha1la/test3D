@@ -477,6 +477,37 @@ local LEVELS = {
         dashSpeed = 19,
         friction = 0.86,
     },
+    {
+        id = "trace_zhumei", trace = true, traceKey = "zhumei",
+        name = "水墨竹梅", title = "水墨平台跳跃 - 竹梅画卷", seal = "梅",
+        note = "触碰枝头花苞与兰芽,墨梅次第绽放。抵达卷尾,画卷将自动装裱钤印。",
+        wmul = 3.4, hmul = 1.3,
+        paper = C(243, 239, 229), paper2 = C(229, 225, 214),
+        ink = C(25, 23, 21), wash = C(131, 129, 122), accent = C(186, 48, 40),
+        bloom = C(197, 38, 64), water = C(243, 239, 229),
+        radius = 10, gravity = 0.52, jumpForce = -15.5, dashSpeed = 19, friction = 0.86,
+    },
+    {
+        id = "trace_forest", trace = true, traceKey = "forest",
+        name = "金绿林行", title = "水墨平台跳跃 - 金绿林行", seal = "林",
+        note = "金光林海,沿梁柱穿行。触碰交互点唤醒花苞。",
+        wmul = 3.6, hmul = 3.3,
+        paper = C(108, 128, 14), paper2 = C(151, 161, 25),
+        ink = C(18, 26, 10), wash = C(72, 94, 12), accent = C(245, 222, 82),
+        bloom = C(245, 222, 82), water = C(108, 128, 14),
+        radius = 10, gravity = 0.52, jumpForce = -15.5, dashSpeed = 19, friction = 0.86,
+    },
+    {
+        id = "trace_water", trace = true, traceKey = "water",
+        name = "青蓝水城", title = "水墨平台跳跃 - 青蓝水城", seal = "水",
+        note = "斜塔拱桥,青空之城。沿白点饰边前行。",
+        wmul = 5.1, hmul = 3.4,
+        paper = C(94, 249, 254), paper2 = C(150, 226, 238),
+        ink = C(52, 44, 96), wash = C(112, 103, 201), accent = C(250, 252, 255),
+        bloom = C(250, 252, 255), water = C(92, 222, 232),
+        radius = 10, gravity = 0.52, jumpForce = -15.5, dashSpeed = 19, friction = 0.86,
+    },
+
 }
 
 local leftKeys = { string.byte("a"), string.byte("A") }
