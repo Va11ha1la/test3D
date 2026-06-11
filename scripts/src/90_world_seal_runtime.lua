@@ -59,6 +59,16 @@ function sealInfoForCurrentLevel()
         return { x = 0.94, y = 0.45, size = 130, primaryA = "春水", primaryB = "破境", vertical = "春江水暖", paper = C(236, 241, 226), wear = 80 }
     elseif currentLevel.id == "eaves" then
         return { x = 0.94, y = 0.45, size = 130, primaryA = "古阁", primaryB = "飞檐", vertical = "古阁金秋", paper = C(239, 230, 213), wear = 80 }
+    elseif currentLevel.id == "plum_finale" then
+        return { x = 0.94, y = 0.88, size = 110, primaryA = "双清", primaryB = "梅卷", vertical = "梅竹双清", paper = C(214, 190, 152), wear = 80 }
+    elseif currentLevel.id == "wentong_zhu" then
+        return { x = 0.06, y = 0.85, size = 110, primaryA = "与可", primaryB = "倒垂", vertical = "胸有成竹", paper = C(172, 140, 86), wear = 90 }
+    elseif currentLevel.id == "plum_xiyan" then
+        return { x = 0.06, y = 0.80, size = 110, primaryA = "洗砚", primaryB = "清气", vertical = "淡墨痕", paper = C(206, 202, 192), wear = 80 }
+    elseif currentLevel.id == "molong" then
+        return { x = 0.03, y = 0.08, size = 110, primaryA = "九龙", primaryB = "行雨", vertical = "神龙见首", paper = C(166, 158, 140), wear = 90 }
+    elseif currentLevel.id == "xuwei_grape" then
+        return { x = 0.80, y = 0.88, size = 110, primaryA = "青藤", primaryB = "明珠", vertical = "笔底明珠", paper = C(214, 202, 176), wear = 90 }
     else
         return { x = 0.94, y = 0.45, size = 130, primaryA = "弄梅", primaryB = "破境", vertical = "清气乾坤", paper = C(246, 237, 225), wear = 80 }
     end

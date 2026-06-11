@@ -823,6 +823,68 @@ local function drawBackground()
             strokeLine(W(0.82 + i * 0.04), H(0.24), W(0.82 + i * 0.04), H(0.66), 1.2, rgba(42, 30, 24, 48))
             strokeLine(W(0.82 + i * 0.04) + 7, H(0.24), W(0.82 + i * 0.04) + 7, H(0.66), 0.7, rgba(42, 30, 24, 20))
         end
+    elseif currentLevel.id == "plum_finale" then
+        -- 母本复刻：王冕《梅竹双清卷》梅段的旧纸底——无山无雾，只有岁月斑驳的卷纸、
+        -- 鉴藏朱印与右壁满纸行书。印章位置按母本描取。
+        drawVerticalWash(0, worldH, C(205, 180, 140), currentLevel.paper, 26, 10, 12)
+        -- 旧纸的水渍与霉斑
+        for i = 1, 14 do
+            local sx = hash01(i * 37.7) * worldW
+            local sy = hash01(i * 53.3) * worldH
+            drawInkBleed(sx, sy, 60 + hash01(i * 17) * 160, 40 + hash01(i * 23) * 90, C(168, 142, 102), 7 + hash01(i * 29) * 7, i * 7.1, 2)
+        end
+        -- 鉴藏印（仿乾隆鉴藏诸玺布局）：圆玺——细环 + 印泥斑点，避免大色块
+        local rsX, rsY, rsR = W(0.665), H(0.095), W(0.052)
+        drawCircle(rsX, rsY, rsR, rgba(186, 72, 48, 30))
+        drawCircle(rsX, rsY, rsR - 4, colorRGBA(currentLevel.paper, 235))
+        drawInkSpeckles(rsX - rsR * 0.8, rsY - rsR * 0.8, rsR * 1.6, rsR * 1.6, C(186, 72, 48), 64, 311.7, 22)
+        -- 方玺两枚（描边 + 印文斑点）
+        for _, s in ipairs({
+            { 0.585, 0.275, 0.095, 0.150 },
+            { 0.505, 0.455, 0.055, 0.100 },
+        }) do
+            local x1, y1, w1, h1 = W(s[1]), H(s[2]), W(s[3]), H(s[4])
+            drawRect(x1, y1, w1, h1, 0, rgba(186, 72, 48, 9))
+            strokeLine(x1, y1, x1 + w1, y1, 2.2, rgba(186, 72, 48, 46))
+            strokeLine(x1 + w1, y1, x1 + w1, y1 + h1, 2.2, rgba(186, 72, 48, 46))
+            strokeLine(x1 + w1, y1 + h1, x1, y1 + h1, 2.2, rgba(186, 72, 48, 46))
+            strokeLine(x1, y1 + h1, x1, y1, 2.2, rgba(186, 72, 48, 46))
+            drawInkSpeckles(x1 + 6, y1 + 6, w1 - 12, h1 - 12, C(186, 72, 48), 52, s[1] * 97.3, 26)
+        end
+        -- 边角小印（左缘与左下角，仿历代收传印记）
+        for _, s in ipairs({
+            { 0.006, 0.300, 0.020, 0.045 }, { 0.006, 0.360, 0.020, 0.040 },
+            { 0.022, 0.800, 0.030, 0.055 }, { 0.060, 0.840, 0.026, 0.048 },
+            { 0.014, 0.880, 0.034, 0.060 },
+        }) do
+            drawRect(W(s[1]), H(s[2]), W(s[3]), H(s[4]), 0, rgba(186, 72, 48, 26))
+            drawInkSpeckles(W(s[1]), H(s[2]), W(s[3]), H(s[4]), currentLevel.paper, 150, s[2] * 131.1, 12)
+        end
+        -- 右壁满纸行书（题诗柱的纸面墨痕：三主柱 + 两道残柱）
+        for i = 0, 4 do
+            local colX = W(0.806 + i * 0.045)
+            local topY, botY = H(0.080 + hash01(i * 13.7) * 0.030), H(0.780 - hash01(i * 19.3) * 0.040)
+            if i == 1 then colX = W(0.866) end
+            if i == 2 then colX = W(0.926) end
+            if i > 2 then colX = W(0.962 + (i - 3) * 0.022) end
+            strokeLine(colX + 8, topY, colX + 8, botY, 0.8, rgba(56, 46, 36, 20))
+            -- 行书字团：沿柱身的浓淡墨点
+            local steps = i > 2 and 9 or 14
+            for k = 0, steps do
+                local cy = topY + (botY - topY) * k / steps
+                local seed = i * 71.3 + k * 13.9
+                drawInkBleed(colX + (hash01(seed) - 0.5) * 10, cy, 7 + hash01(seed + 3) * 9, 5 + hash01(seed + 7) * 7, C(56, 46, 36), 26 + hash01(seed + 11) * 30, seed, 2)
+            end
+        end
+        -- 极疏的飘瓣（白描花瓣偶然离枝）
+        for i = 1, 12 do
+            local drift = elapsed * (5 + hash01(i * 13) * 8)
+            local x = (hash01(i * 67) * worldW - drift) % worldW
+            local y = (hash01(i * 71) * worldH + drift * 0.55) % worldH
+            local s = 3.5 + hash01(i * 77) * 4
+            local a = 20 + hash01(i * 83) * 34
+            drawTinyBlossom(x, y, s, C(238, 230, 212), C(222, 210, 188), C(90, 75, 58), i * 91.3, a, 5)
+        end
     elseif currentLevel.id == "peach" then
         drawVerticalWash(0, worldH, C(160, 184, 163), C(242, 230, 208), 126, 0, 30)
         drawMountainBandAt(810, 5, C(85, 115, 95), 13, 0.28, 0.35, 0.22, 0.45, -200)
@@ -858,6 +920,87 @@ local function drawBackground()
         drawMasterPlumBackground()
     elseif currentLevel.id == "plum_parallax" then
         drawParallaxBackground()
+    elseif currentLevel.id == "molong" then
+        -- 风雷烟云:旋涡云带横贯,斜雨如丝,远雷淡痕,下缘云涛
+        for band = 0, 2 do
+            local by = H(0.16 + band * 0.30)
+            for i = 1, 16 do
+                local seed = band * 97.7 + i * 13.1
+                local cx2 = hash01(seed) * worldW
+                local cy2 = by + (hash01(seed + 3) - 0.5) * H(0.14)
+                drawRotEllipse(cx2, cy2, 160 + hash01(seed + 7) * 240, 26 + hash01(seed + 11) * 40,
+                    (hash01(seed + 13) - 0.5) * 0.3, colorRGBA(currentLevel.paper2, 22 + hash01(seed + 17) * 26))
+            end
+            for i = 1, 10 do
+                local seed = band * 71.3 + i * 17.9
+                local cx2 = hash01(seed) * worldW
+                local cy2 = by + (hash01(seed + 5) - 0.5) * H(0.12)
+                local r0 = 36 + hash01(seed + 7) * 60
+                for k = 0, 5 do
+                    local a1 = k * 1.05 + hash01(seed + k) * 0.4
+                    strokeLine(cx2 + math.cos(a1) * r0, cy2 + math.sin(a1) * r0 * 0.5,
+                        cx2 + math.cos(a1 + 0.8) * r0 * 0.74, cy2 + math.sin(a1 + 0.8) * r0 * 0.38,
+                        1.1, colorRGBA(currentLevel.wash, 30 + hash01(seed + k + 9) * 22))
+                end
+            end
+        end
+        for i = 1, 130 do
+            local seed = i * 23.3
+            local x = hash01(seed) * worldW
+            local y = hash01(seed + 3) * worldH
+            local ln = 30 + hash01(seed + 7) * 60
+            strokeLine(x, y, x - ln * 0.26, y + ln, 0.7, colorRGBA(currentLevel.wash, 10 + hash01(seed + 11) * 14))
+        end
+        for i = 0, 1 do
+            local sx = W(0.30 + i * 0.40) + hash01(i * 7.1) * W(0.06)
+            local sy = H(0.04)
+            local px, py = sx, sy
+            for k = 1, 4 do
+                local nx2 = px + (hash01(i * 31 + k * 7) - 0.5) * 90 - 20
+                local ny2 = py + H(0.07 + hash01(i * 37 + k * 11) * 0.05)
+                strokeLine(px, py, nx2, ny2, 1.6, rgba(232, 222, 188, 34))
+                px, py = nx2, ny2
+            end
+        end
+        for i = 1, 22 do
+            local seed = i * 31.7
+            local cx2 = hash01(seed) * worldW
+            local cy2 = H(0.93 + hash01(seed + 3) * 0.05)
+            strokeQuad(cx2 - 70, cy2, cx2, cy2 - 34 - hash01(seed + 7) * 26, cx2 + 70, cy2, 2.2, colorRGBA(currentLevel.wash, 60))
+        end
+    elseif currentLevel.id == "wentong_zhu" or currentLevel.id == "plum_xiyan"
+        or currentLevel.id == "xuwei_grape" then
+        -- 母本复刻关:素纸/素绢,不画山;只铺岁月痕迹与母本固有的纸面元素
+        for i = 1, 12 do
+            local sx = hash01(i * 43.7) * worldW
+            local sy = hash01(i * 57.3) * worldH
+            drawInkBleed(sx, sy, 50 + hash01(i * 19) * 140, 36 + hash01(i * 27) * 80, currentLevel.paper2, 8 + hash01(i * 31) * 7, i * 9.3, 2)
+        end
+        if currentLevel.id == "wentong_zhu" then
+            -- 绢本横丝纹理 + 顶部题跋墨影带
+            for i = 0, 26 do
+                local y = worldH * i / 26 + hash01(i * 7.7) * 14
+                strokeLine(0, y, worldW, y + (hash01(i * 11.3) - 0.5) * 8, 0.6, rgba(120, 92, 50, 14))
+            end
+            for i = 1, 56 do
+                local cx2 = W(0.03 + hash01(i * 13.1) * 0.94)
+                local cy2 = H(0.022 + hash01(i * 17.9) * 0.12)
+                drawInkBleed(cx2, cy2, 5 + hash01(i * 23) * 7, 7 + hash01(i * 29) * 10, C(30, 24, 16), 30 + hash01(i * 37) * 30, i * 5.7, 2)
+            end
+        elseif currentLevel.id == "plum_xiyan" then
+            -- 右上鉴藏圆玺 + 左下收传印群(位置按母本)
+            local rx2, ry2, rr2 = W(0.835), H(0.085), W(0.030)
+            drawCircle(rx2, ry2, rr2, rgba(186, 72, 48, 30))
+            drawCircle(rx2, ry2, rr2 - 4, colorRGBA(currentLevel.paper, 235))
+            drawInkSpeckles(rx2 - rr2 * 0.8, ry2 - rr2 * 0.8, rr2 * 1.6, rr2 * 1.6, C(186, 72, 48), 60, 411.3, 16)
+            for _, s in ipairs({
+                { 0.020, 0.560, 0.022, 0.045 }, { 0.024, 0.640, 0.020, 0.040 },
+                { 0.018, 0.870, 0.026, 0.050 }, { 0.060, 0.900, 0.022, 0.045 },
+            }) do
+                drawRect(W(s[1]), H(s[2]), W(s[3]), H(s[4]), 0, rgba(186, 72, 48, 26))
+                drawInkSpeckles(W(s[1]), H(s[2]), W(s[3]), H(s[4]), currentLevel.paper, 150, s[2] * 97.1, 10)
+            end
+        end
     else
         drawMountainBand(100, 6, currentLevel.wash, 12, 0.28, 0.30)
     end
