@@ -3439,6 +3439,10 @@ end
 -- ============================================================================
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 local function updateCamera()
+    if currentLevel.trace then
+        traceUpdateCamera()
+        return
+    end
     local targetX = player.x - DESIGN_W * 0.5
     local targetY = player.y - DESIGN_H * 0.5
     cameraX = cameraX + (targetX - cameraX) * 0.10
@@ -7669,8 +7673,30 @@ function generateTraceLevel()
             end
         end
     end
+    -- 描摹关专属镜头(沿用 kingsbird 设计:广角+慢跟随)
+    TRACE_RT.zoom = ({ zhumei = 0.75, forest = 0.92, water = 0.92 })[currentLevel.traceKey] or 1.0
+    TRACE_RT.camCx = TRACE_RT.spawnX
+    TRACE_RT.camCy = TRACE_RT.spawnY - 50
     print(string.format("[trace] %s polys=%d ipoints=%d world=%dx%d",
         currentLevel.traceKey, #TRACE_RT.polys, #TRACE_RT.ipoints, worldW, worldH))
+end
+
+function traceUpdateCamera()
+    local RT = TRACE_RT
+    if not RT.def then return end
+    local z = RT.zoom or 1
+    local halfW = DESIGN_W / (2 * z)
+    local halfH = DESIGN_H / (2 * z)
+    local tx = player.x
+    local ty = player.y - 50
+    RT.camCx = (RT.camCx or tx) + (tx - (RT.camCx or tx)) * 0.07
+    RT.camCy = (RT.camCy or ty) + (ty - (RT.camCy or ty)) * 0.06
+    if worldW <= halfW * 2 then RT.camCx = worldW / 2
+    else RT.camCx = clamp(RT.camCx, halfW, worldW - halfW) end
+    if worldH <= halfH * 2 then RT.camCy = worldH / 2
+    else RT.camCy = clamp(RT.camCy, halfH, worldH - halfH) end
+    cameraX = RT.camCx - DESIGN_W / 2
+    cameraY = RT.camCy - DESIGN_H / 2
 end
 
 function traceCollideOnce()
@@ -7979,14 +8005,14 @@ function drawTraceWorld()
     if not def then return end
     nvgSave(vg)
     nvgTranslate(vg, cameraX, cameraY)   -- 抵消外层相机
-    local z = 1
-    local cx = cameraX + DESIGN_W / 2
-    local cy = cameraY + DESIGN_H / 2
+    local z = RT.zoom or 1
+    local cx = RT.camCx or (cameraX + DESIGN_W / 2)
+    local cy = RT.camCy or (cameraY + DESIGN_H / 2)
     if RT.goalDone then
         local fitz = math.min(DESIGN_W / (worldW + 80), DESIGN_H / (worldH + 80)) * 0.96
         local tt = math.min(RT.vista / 170, 1)
         tt = 1 - (1 - tt) ^ 3
-        z = 1 + (fitz - 1) * tt
+        z = z + (fitz - z) * tt
         cx = cx + (worldW / 2 - cx) * tt
         cy = cy + (worldH / 2 - cy) * tt
     end

@@ -1,5 +1,9 @@
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 local function updateCamera()
+    if currentLevel.trace then
+        traceUpdateCamera()
+        return
+    end
     local targetX = player.x - DESIGN_W * 0.5
     local targetY = player.y - DESIGN_H * 0.5
     cameraX = cameraX + (targetX - cameraX) * 0.10
