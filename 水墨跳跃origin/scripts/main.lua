@@ -1,0 +1,9 @@
+-- Developer-facing entry note.
+--
+-- The game source has been split into ordered chunks under scripts/src/.
+-- Runtime uses scripts/main.generated.lua, built by tools/build_main.ps1.
+--
+-- Edit scripts/src/*.lua, then run:
+--   powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_main.ps1
+--
+-- run_urhox.ps1 performs that build automatically before launching UrhoX.
