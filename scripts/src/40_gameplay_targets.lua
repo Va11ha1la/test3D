@@ -68,7 +68,7 @@ local function resetPlayer()
         local ns = branchGroups.main or {}
         local safe = ns[15]
         if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.05), H(0.72) end
-    elseif currentLevel.id == "plum" or currentLevel.id == "plum_parallax" then
+    elseif currentLevel.id == "plum" then
         local ns = branchGroups.main_trunk or {}
         local safe = ns[15]
         if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.90), H(0.55) end
@@ -77,31 +77,6 @@ local function resetPlayer()
         local ns = branchGroups.main_trunk or {}
         local safe = ns[15]
         if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.10), H(0.55) end
-        player.facingRight = true
-    elseif currentLevel.id == "plum_finale" then
-        local ns = branchGroups.finale_trunk or {}
-        local safe = ns[12]
-        if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.06), H(0.78) end
-        player.facingRight = true
-    elseif currentLevel.id == "wentong_zhu" then
-        local ns = branchGroups.wt_cane or {}
-        local safe = ns[10]
-        if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.08), H(0.18) end
-        player.facingRight = true
-    elseif currentLevel.id == "plum_xiyan" then
-        local ns = branchGroups.xy_trunk or {}
-        local safe = ns[12]
-        if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.95), H(0.45) end
-        player.facingRight = false
-    elseif currentLevel.id == "xuwei_grape" then
-        local ns = branchGroups.xw_vine or {}
-        local safe = ns[8]
-        if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.92), H(0.26) end
-        player.facingRight = false
-    elseif currentLevel.id == "molong" then
-        local ns = branchGroups.dragon_body or {}
-        local safe = ns[math.max(1, math.floor(#ns * 0.45))]
-        if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.40), H(0.65) end
         player.facingRight = true
     elseif currentLevel.id == "peach" then
         local ns = branchGroups.main_trunk or {}
@@ -148,13 +123,7 @@ local function loadLevel(index)
     elseif currentLevel.id == "eaves" then generateEaves()
     elseif currentLevel.id == "huangshan" then generateHuangshan()
     elseif currentLevel.id == "plum_master" then generatePlumMaster()
-    elseif currentLevel.id == "plum_parallax" then generatePlum() -- 视差关复用蟠梅长卷地形(sourceLevelIndex=4)
     elseif currentLevel.id == "plum_mirror" then generatePlumMirror()
-    elseif currentLevel.id == "plum_finale" then generatePlumFinale()
-    elseif currentLevel.id == "wentong_zhu" then generateWentongZhu()
-    elseif currentLevel.id == "plum_xiyan" then generatePlumXiyan()
-    elseif currentLevel.id == "xuwei_grape" then generateXuweiGrape()
-    elseif currentLevel.id == "molong" then generateMolong()
     elseif currentLevel.id == "ldtk_grand_scroll" then generateLDtkGrandScroll()
     end
 
@@ -530,42 +499,6 @@ end
 local function updateSpecialBeforeMovement()
     if currentLevel.id == "ldtk_grand_scroll" then
         updateLDtkGrandScrollSpecial()
-        return
-    end
-
-    if currentLevel.id == "molong" then
-        -- 墨龙行波:整条龙身按行波起伏,玩家被驮起/抛出;龙首、角、爪随波同摆
-        local ph = elapsed * 3.0
-        local function wob(t) return math.sin(ph - t * 14.0) * 26 end
-        local body = branchGroups.dragon_body
-        if body then
-            for _, n in ipairs(body) do n.y = n.baseY + wob(n.t) end
-            refreshBranchNormalsForCurrentPose(body)
-        end
-        local hw = wob(1)
-        for _, bid in ipairs({ "dragon_head", "dragon_horn" }) do
-            local l = branchGroups[bid]
-            if l then for _, n in ipairs(l) do n.y = n.baseY + hw end end
-        end
-        local legRoots = { 0.22, 0.42, 0.62, 0.82 }
-        for i = 1, 4 do
-            local l = branchGroups["dragon_leg" .. i]
-            if l then
-                local o = wob(legRoots[i])
-                for _, n in ipairs(l) do n.y = n.baseY + o end
-            end
-        end
-        for _, t in ipairs(targets) do bindItemToBranch(t) end
-        for _, b in ipairs(blooms) do bindItemToBranch(b) end
-        for _, cp in ipairs(cloudPlatforms) do
-            local cy = cp.y + math.sin(elapsed * 1.2 + cp.bob) * 8
-            if math.abs(player.x - cp.x) < cp.rx and math.abs((player.y + player.radius) - cy) < cp.ry * 0.75 and player.vy >= 0 then
-                player.y = cy - player.radius
-                player.vy = 0
-                player.isGrounded = true
-                player.canDash = true
-            end
-        end
         return
     end
 

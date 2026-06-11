@@ -1,9 +1,3 @@
--- AUTO-GENERATED FILE. Do not edit directly.
--- Edit scripts/src/*.lua, then run tools/build_main.ps1.
-
--- ============================================================================
--- BEGIN scripts/src/00_state_levels_keys.lua
--- ============================================================================
 ---@diagnostic disable: access-invisible, assign-type-mismatch, param-type-mismatch, missing-parameter
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 -- ============================================================================
@@ -370,119 +364,6 @@ local LEVELS = {
         dashSpeed = 21,
         friction = 0.84,
     },
-    {
-        id = "plum_finale",
-        sourceImage = "reference/wang_mian_twin_purities_plum.jpg",
-        name = "双清梅卷",
-        title = "母本复刻 - 王冕《梅竹双清卷》梅段",
-        seal = "清",
-        note = "复刻台北故宫《梅竹双清卷》王冕墨梅段：主枝自左缘横出、长鞭拖至右下，圈花白描不设色，右壁题诗三柱可攀。",
-        -- 画芯 1045x900，比例 1.161；世界尺寸按母本比例设定（同 plum_master 先例）
-        wmul = 2.0,
-        hmul = 3.06,
-        paper = C(214, 190, 152),
-        paper2 = C(193, 168, 128),
-        ink = C(56, 46, 36),
-        wash = C(120, 102, 80),
-        accent = C(166, 38, 38),
-        bloom = C(240, 232, 212),
-        water = C(196, 178, 148),
-        radius = 11,
-        gravity = 0.46,
-        jumpForce = -16.5,
-        dashSpeed = 21,
-        friction = 0.84,
-    },
-    {
-        id = "wentong_zhu",
-        sourceImage = "reference/wen_tong_bamboo.jpg",
-        name = "倒垂竹",
-        title = "母本复刻 - 文同《墨竹图》",
-        seal = "竹",
-        note = "复刻台北故宫文同《墨竹图》：S 形主竿自左上倒垂入谷再扬至右缘，节节生枝、枝枝缀叶。",
-        -- 画芯 1830x2880,比例 0.635;大画布精刻
-        wmul = 2.2,
-        hmul = 6.16,
-        paper = C(172, 140, 86),
-        paper2 = C(146, 116, 68),
-        ink = C(26, 22, 16),
-        wash = C(70, 58, 38),
-        accent = C(52, 80, 44),
-        bloom = C(48, 42, 30),
-        water = C(140, 118, 76),
-        radius = 11,
-        gravity = 0.52,
-        jumpForce = -15.5,
-        dashSpeed = 19,
-        friction = 0.86,
-    },
-    {
-        id = "plum_xiyan",
-        sourceImage = "reference/wang_mian_ink_plum_beijing.jpg",
-        name = "洗砚梅",
-        title = "母本复刻 - 王冕《墨梅图》卷(故宫)",
-        seal = "砚",
-        note = "复刻北京故宫王冕《墨梅图》卷：主干自右缘横出渐细成长梢，两枝上扬入花团，左端回锋，『吾家洗砚池头树』题于左壁。",
-        -- 画芯 3601x2226,比例 1.618;大画布精刻
-        wmul = 3.8,
-        hmul = 4.18,
-        paper = C(206, 202, 192),
-        paper2 = C(184, 178, 166),
-        ink = C(48, 44, 40),
-        wash = C(110, 104, 94),
-        accent = C(150, 40, 44),
-        bloom = C(140, 134, 126),
-        water = C(176, 170, 158),
-        radius = 11,
-        gravity = 0.52,
-        jumpForce = -15.5,
-        dashSpeed = 19,
-        friction = 0.86,
-    },
-    {
-        id = "xuwei_grape",
-        sourceImage = "reference/xu_wei_grapes.jpg",
-        name = "墨葡萄",
-        title = "母本复刻 - 徐渭《墨葡萄图》",
-        seal = "葡",
-        note = "复刻北京故宫徐渭《墨葡萄图》：狂草主藤自右上横垂，两侧垂蔓飘悬，串串墨葡萄半生晾作明珠。",
-        -- 画芯 509x1341,比例 0.380(立轴纵关);大画布精刻
-        wmul = 1.6,
-        hmul = 7.49,
-        paper = C(214, 202, 176),
-        paper2 = C(190, 176, 148),
-        ink = C(40, 36, 30),
-        wash = C(96, 86, 70),
-        accent = C(88, 74, 96),
-        bloom = C(118, 96, 138),
-        water = C(180, 168, 144),
-        radius = 11,
-        gravity = 0.52,
-        jumpForce = -15.5,
-        dashSpeed = 19,
-        friction = 0.86,
-    },
-    {
-        id = "molong",
-        name = "墨龙行雨",
-        title = "意象复刻 - 陈容《九龙图》墨龙",
-        seal = "龙",
-        note = "墨龙是一条活的平台：龙身游波起伏会驮着你、抛起你；踏云逐珠，冲刺碎珠可炸雷光。",
-        wmul = 3.5,
-        hmul = 2.2,
-        paper = C(166, 158, 140),
-        paper2 = C(138, 130, 112),
-        ink = C(22, 20, 18),
-        wash = C(82, 78, 70),
-        accent = C(120, 96, 52),
-        bloom = C(216, 174, 64),
-        water = C(110, 112, 106),
-        radius = 11,
-        gravity = 0.52,
-        jumpForce = -15.5,
-        dashSpeed = 19,
-        friction = 0.86,
-    },
 }
 
 local leftKeys = { string.byte("a"), string.byte("A") }
@@ -554,14 +435,6 @@ end
 
 local function W(v) return worldW * v end
 local function H(v) return worldH * v end
-
--- ============================================================================
--- END scripts/src/00_state_levels_keys.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/10_drawing_primitives_layout.lua
--- ============================================================================
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 
 local function drawRect(x, y, w, h, r, color)
@@ -818,14 +691,6 @@ local function addMasterPlumFlowerTarget(xv, yv, axv, ayv, radius)
     }
 end
 
-
--- ============================================================================
--- END scripts/src/10_drawing_primitives_layout.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/20_fluid_trail_particles.lua
--- ============================================================================
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 local function addTrail(x, y, r, alpha, life, kind)
     trailParticles[#trailParticles + 1] = { x = x, y = y, r = r, alpha = alpha or 0.18, life = life or 45, maxLife = life or 45, kind = kind }
@@ -1058,62 +923,6 @@ local function addBristle(x, y, vx, vy, kind)
         kind = kind,
     }
 end
-
--- ============================================================================
--- END scripts/src/20_fluid_trail_particles.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/29_ldtk_plum_mirror_data.lua
--- ============================================================================
--- AUTO-GENERATED FILE. Do not edit directly.
--- Generated by tools/convert_ldtk_plum_mirror_to_lua.ps1 from ldtk/ink_plum_mirror.ldtk.
-
-LDTK_PLUM_MIRROR = {
-    source = "ldtk/ink_plum_mirror.ldtk",
-    identifier = "UrhoX_Level_12_Plum_Mirror",
-    width = 4480,
-    height = 1584,
-    materials = {
-        paper = { 246, 237, 225 },
-        paper2 = { 220, 207, 190 },
-        ink = { 42, 30, 24 },
-        wash = { 114, 82, 69 },
-        accent = { 142, 35, 42 },
-        bloom = { 195, 18, 18 },
-        water = { 204, 165, 68 },
-    },
-    physics = { radius = 11, gravity = 0.46, jumpForce = -16.5, dashSpeed = 21, friction = 0.84 },
-    start = { x = 639, y = 922, facing = "right", },
-    branches = {
-        { id = "main_trunk", x1 = 224, y1 = 950.4, x2 = 1881.6, y2 = 1045.44, startR = 46, endR = 32, curveX = 80, curveY = 50, pointsNum = 60, jitter = 0.1 },
-        { id = "hanging_branch", x1 = 1881.6, y1 = 1045.44, x2 = 2777.6, y2 = 1172.16, startR = 32, endR = 20, curveX = 60, curveY = 30, pointsNum = 50, jitter = 0.1 },
-        { id = "right_crescent", x1 = 1881.6, y1 = 1045.44, x2 = 3225.6, y2 = 792, startR = 30, endR = 16, curveX = 100, curveY = -80, pointsNum = 60, jitter = 0.1 },
-        { id = "upright_young_shoot", x1 = 1568, y1 = 950.4, x2 = 2508.8, y2 = 380.16, startR = 18, endR = 8, curveX = 30, curveY = -100, pointsNum = 70, jitter = 0.1 },
-        { id = "poetry_col_1", x1 = 3673.6, y1 = 443.52, x2 = 3673.6, y2 = 982.08, startR = 4, endR = 4, curveX = 0, curveY = 0, pointsNum = 20, jitter = 0 },
-        { id = "poetry_col_2", x1 = 3852.8, y1 = 443.52, x2 = 3852.8, y2 = 982.08, startR = 4, endR = 4, curveX = 0, curveY = 0, pointsNum = 20, jitter = 0 },
-        { id = "poetry_col_3", x1 = 4032, y1 = 443.52, x2 = 4032, y2 = 982.08, startR = 4, endR = 4, curveX = 0, curveY = 0, pointsNum = 20, jitter = 0 },
-        { id = "poetry_col_4", x1 = 4211.2, y1 = 443.52, x2 = 4211.2, y2 = 982.08, startR = 4, endR = 4, curveX = 0, curveY = 0, pointsNum = 20, jitter = 0 },
-    },
-    targets = {
-        { branchId = "main_trunk", progress = 0.5, radius = 38 },
-        { branchId = "hanging_branch", progress = 0.4, radius = 38 },
-        { branchId = "hanging_branch", progress = 0.9, radius = 38 },
-        { branchId = "upright_young_shoot", progress = 0.4, radius = 38 },
-        { branchId = "upright_young_shoot", progress = 0.9, radius = 38 },
-        { branchId = "right_crescent", progress = 0.35, radius = 38 },
-        { branchId = "right_crescent", progress = 0.8, radius = 38 },
-        { branchId = "poetry_col_1", progress = 0.6, radius = 38 },
-    },
-}
-
--- ============================================================================
--- END scripts/src/29_ldtk_plum_mirror_data.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/30_level_generation.lua
--- ============================================================================
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 
 local function resetBranchMetadata()
@@ -1245,10 +1054,8 @@ local function generateBamboo()
 
     createBambooStalk(W(0.15), H(1.1), -math.pi * 0.48, H(0.8), 18, 12, "bamboo1")
     createBambooStalk(W(0.35), H(0.9), -math.pi * 0.35, H(0.7), 14, 10, "bamboo2")
-    -- bamboo3/4 基部下移：原 H(0.25)/H(0.3) 时顶部目标位于世界顶以上(y<0)，
-    -- 相机上界钳在 0，玩家永远看不到；下移后所有竹节目标均在镜头内
-    createBambooStalk(W(0.72), H(0.50), -math.pi * 0.55, H(0.5), 12, 8, "bamboo3")
-    createBambooStalk(W(0.78), H(0.55), -math.pi * 0.4, H(0.4), 8, 6, "bamboo4")
+    createBambooStalk(W(0.72), H(0.25), -math.pi * 0.55, H(0.5), 12, 8, "bamboo3")
+    createBambooStalk(W(0.78), H(0.3), -math.pi * 0.4, H(0.4), 8, 6, "bamboo4")
 
     local placements = {
         { id = "bamboo1", nodes = { 4, 8, 11 } },
@@ -1351,16 +1158,6 @@ local function generatePlum()
 end
 
 function generatePlumMirror()
-    if LDTK_PLUM_MIRROR then
-        for _, b in ipairs(LDTK_PLUM_MIRROR.branches or {}) do
-            createBranch(b.x1, b.y1, b.x2, b.y2, b.startR, b.endR, b.curveX, b.curveY, b.pointsNum, b.id, b.jitter)
-        end
-        for _, t in ipairs(LDTK_PLUM_MIRROR.targets or {}) do
-            addTargetOnBranch(t.branchId, t.progress, t.radius)
-        end
-        return
-    end
-
     -- 第12关：蟠梅长卷的镜像版，从左往右行动
     -- 性能优化：减少 pointsNum（节点数减半），大幅降低每帧绘制量
     -- 原 plum 用 120/100/120/140 节点，这里减半以保持流畅
@@ -1378,217 +1175,6 @@ function generatePlumMirror()
         { "right_crescent", 0.35 }, { "right_crescent", 0.8 }, { "poetry_col_1", 0.6 },
     }) do addTargetOnBranch(p[1], p[2], 38) end
 end
-
-function generatePlumFinale()
-    -- 第13关：母本复刻 - 王冕《梅竹双清卷》梅段（台北故宫，22.4x81.4cm 中画芯约 25.6x22.4cm）
-    -- 坐标自 assets/reference/wang_mian_twin_purities_plum.jpg (1045x900) 网格描取，
-    -- 所有枝干走向与母本一致：
-    --   主枝自左缘横出，斜度逐渐加大，化作"长鞭梢"一笔拖至右下角收笔；
-    --   上层弧枝与主枝同根，先扬后抑，繁花尽缀此枝（圈花白描）；
-    --   交搭小枝自主枝中段挑向右上，与上弧枝成女字穿插；
-    --   左下垂梢带花穗回锋；两条垂花小枝自上弧枝下挂；
-    --   两条短仰枝挑出顶缘；右壁题诗满纸（化作三柱可攀字柱）。
-
-    -- 主枝（粗入细出，长鞭拖尾）
-    createBranchPath({
-        { 0.000, 0.150, 24 }, { 0.060, 0.163, 23 }, { 0.130, 0.190, 21 },
-        { 0.200, 0.232, 19 }, { 0.270, 0.272, 18 }, { 0.340, 0.314, 16 },
-        { 0.405, 0.352, 14 }, { 0.465, 0.412, 12 }, { 0.525, 0.480, 10 },
-        { 0.585, 0.555, 8 },  { 0.645, 0.652, 7 },  { 0.710, 0.748, 6 },
-        { 0.780, 0.840, 5 },  { 0.850, 0.905, 4 },  { 0.920, 0.952, 3 },
-        { 0.978, 0.974, 2.5 },
-    }, "finale_trunk", 0.10)
-
-    -- 上层弧枝（满花主枝，先扬后抑，末端发丝细、微微回挑）
-    createBranchPath({
-        { 0.012, 0.132, 12 }, { 0.060, 0.104, 11 }, { 0.120, 0.082, 10 },
-        { 0.190, 0.071, 9 },  { 0.258, 0.082, 8 },  { 0.320, 0.104, 7 },
-        { 0.380, 0.134, 5.5 }, { 0.440, 0.158, 4 }, { 0.498, 0.171, 3 },
-        { 0.545, 0.163, 2.5 },
-    }, "finale_upper", 0.10)
-
-    -- 交搭小枝（自主枝挑向右上，与上弧枝成女字穿插）
-    createBranchPath({
-        { 0.300, 0.290, 5 }, { 0.345, 0.257, 4 }, { 0.385, 0.234, 3 }, { 0.418, 0.221, 2.5 },
-    }, "finale_cross", 0.12)
-
-    -- 中部细长挑枝及其下叉（自主枝沿势向右）
-    createBranchPath({
-        { 0.400, 0.345, 5 }, { 0.450, 0.352, 4 }, { 0.495, 0.366, 3 },
-        { 0.540, 0.381, 2.5 }, { 0.578, 0.394, 2.5 },
-    }, "finale_spray", 0.12)
-    createBranchPath({
-        { 0.432, 0.387, 4 }, { 0.470, 0.407, 3 }, { 0.506, 0.424, 2.5 },
-    }, "finale_spray_fork", 0.12)
-
-    -- 左下垂梢（带花穗，回锋收笔）
-    createBranchPath({
-        { 0.130, 0.205, 7 }, { 0.110, 0.264, 6 }, { 0.094, 0.330, 5 },
-        { 0.085, 0.394, 4 }, { 0.082, 0.452, 3 }, { 0.091, 0.503, 2.5 },
-    }, "finale_droop", 0.12)
-    createBranchPath({
-        { 0.075, 0.172, 5 }, { 0.048, 0.200, 4 }, { 0.026, 0.218, 3 },
-    }, "finale_droop2", 0.12)
-
-    -- 顶部短仰枝两条
-    createBranchPath({
-        { 0.128, 0.086, 4 }, { 0.140, 0.048, 3 }, { 0.149, 0.022, 2.5 },
-    }, "finale_spur1", 0.12)
-    createBranchPath({
-        { 0.262, 0.078, 4 }, { 0.276, 0.040, 3 }, { 0.286, 0.017, 2.5 },
-    }, "finale_spur2", 0.12)
-
-    -- 上弧枝下挂的垂花小枝两条
-    createBranchPath({
-        { 0.330, 0.096, 3 }, { 0.318, 0.140, 2.5 }, { 0.309, 0.176, 2.5 },
-    }, "finale_hang1", 0.12)
-    createBranchPath({
-        { 0.405, 0.140, 3 }, { 0.420, 0.184, 2.5 }, { 0.433, 0.219, 2.5 },
-    }, "finale_hang2", 0.12)
-
-    -- 尾段最后花枝（主枝中后段，末花所在）
-    createBranchPath({
-        { 0.473, 0.424, 4 }, { 0.508, 0.453, 3 }, { 0.544, 0.488, 2.5 }, { 0.572, 0.518, 2.5 },
-    }, "finale_tail_twig", 0.12)
-
-    -- 右壁题诗（母本右缘满纸行书，化作三柱可攀字柱）
-    createBranchPath({ { 0.806, 0.100, 4 }, { 0.806, 0.780, 4 } }, "poetry_col_1", 0)
-    createBranchPath({ { 0.866, 0.080, 4 }, { 0.866, 0.780, 4 } }, "poetry_col_2", 0)
-    createBranchPath({ { 0.926, 0.100, 4 }, { 0.926, 0.780, 4 } }, "poetry_col_3", 0)
-
-    for _, p in ipairs({
-        { "finale_spur1", 0.75 }, { "finale_spur2", 0.75 },
-        { "finale_upper", 0.10 }, { "finale_upper", 0.55 }, { "finale_upper", 0.93 },
-        { "finale_cross", 0.70 }, { "finale_droop", 0.85 },
-        { "finale_trunk", 0.40 },
-        { "finale_spray", 0.72 }, { "finale_tail_twig", 0.80 },
-        { "poetry_col_2", 0.55 },
-    }) do addTargetOnBranch(p[1], p[2], 34) end
-end
-
-function generateWentongZhu()
-    -- 第14关:母本复刻 - 文同《墨竹图》(台北故宫,绢本 1830x2880) 大画布精刻
-    -- S 形主竿自左上倒垂入谷再扬至右缘;每节双向生枝,枝梢缀叶(叶扇为渲染层)。
-    createBranchPath({
-        { 0.050, 0.205, 24 }, { 0.115, 0.262, 23 }, { 0.180, 0.325, 21 },
-        { 0.245, 0.395, 20 }, { 0.305, 0.465, 18 }, { 0.355, 0.535, 17 },
-        { 0.395, 0.600, 15 }, { 0.425, 0.650, 14 }, { 0.475, 0.668, 13 },
-        { 0.535, 0.668, 12 }, { 0.600, 0.655, 12 }, { 0.665, 0.632, 11 },
-        { 0.730, 0.607, 10 }, { 0.795, 0.588, 9 },  { 0.860, 0.580, 8 },
-        { 0.920, 0.592, 7 },  { 0.960, 0.615, 6 },
-    }, "wt_cane", 0.10)
-    createBranchPath({ { 0.180, 0.325, 7 }, { 0.125, 0.375, 5 }, { 0.080, 0.415, 4 } }, "wt_zhi1", 0.12)
-    createBranchPath({ { 0.115, 0.262, 6 }, { 0.075, 0.300, 4 }, { 0.045, 0.330, 3 } }, "wt_zhi1b", 0.12)
-    createBranchPath({ { 0.305, 0.465, 7 }, { 0.245, 0.530, 6 }, { 0.195, 0.585, 5 }, { 0.165, 0.625, 4 } }, "wt_zhi2", 0.12)
-    createBranchPath({ { 0.245, 0.395, 6 }, { 0.205, 0.450, 4 }, { 0.175, 0.495, 3 } }, "wt_zhi2b", 0.12)
-    createBranchPath({ { 0.425, 0.650, 7 }, { 0.380, 0.710, 5 }, { 0.345, 0.760, 4 } }, "wt_zhi3", 0.12)
-    createBranchPath({ { 0.395, 0.600, 5 }, { 0.355, 0.655, 4 }, { 0.325, 0.700, 3 } }, "wt_zhi3b", 0.12)
-    createBranchPath({ { 0.535, 0.668, 6 }, { 0.560, 0.730, 5 }, { 0.575, 0.775, 4 } }, "wt_zhi4", 0.12)
-    createBranchPath({ { 0.475, 0.668, 5 }, { 0.448, 0.730, 4 }, { 0.430, 0.778, 3 } }, "wt_zhi4b", 0.12)
-    createBranchPath({ { 0.665, 0.632, 7 }, { 0.715, 0.560, 6 }, { 0.760, 0.505, 5 }, { 0.790, 0.468, 4 } }, "wt_zhi5", 0.12)
-    createBranchPath({ { 0.665, 0.632, 5 }, { 0.690, 0.690, 4 }, { 0.710, 0.738, 3 } }, "wt_zhi5b", 0.12)
-    createBranchPath({ { 0.795, 0.588, 6 }, { 0.845, 0.650, 5 }, { 0.880, 0.700, 4 } }, "wt_zhi6", 0.12)
-    createBranchPath({ { 0.730, 0.607, 5 }, { 0.762, 0.665, 4 }, { 0.785, 0.710, 3 } }, "wt_zhi6b", 0.12)
-    createBranchPath({ { 0.920, 0.592, 6 }, { 0.950, 0.535, 5 }, { 0.968, 0.495, 4 } }, "wt_zhi7", 0.12)
-    createBranchPath({ { 0.860, 0.580, 5 }, { 0.900, 0.640, 4 }, { 0.928, 0.688, 3 } }, "wt_zhi8", 0.12)
-    for _, p in ipairs({
-        { "wt_zhi1", 0.8 }, { "wt_zhi1b", 0.8 },
-        { "wt_zhi2", 0.55 }, { "wt_zhi2", 0.92 }, { "wt_zhi2b", 0.8 },
-        { "wt_zhi3", 0.8 }, { "wt_zhi3b", 0.85 },
-        { "wt_zhi4", 0.85 }, { "wt_zhi4b", 0.85 },
-        { "wt_zhi5", 0.6 }, { "wt_zhi5", 0.95 }, { "wt_zhi5b", 0.85 },
-        { "wt_zhi6", 0.85 }, { "wt_zhi6b", 0.85 },
-        { "wt_zhi7", 0.8 }, { "wt_zhi8", 0.85 }, { "wt_cane", 0.50 },
-    }) do addTargetOnBranch(p[1], p[2], 36) end
-end
-
-function generatePlumXiyan()
-    -- 第15关:母本复刻 - 王冕《墨梅图》卷(北京故宫) 大画布精刻
-    -- 主干右出渐细成长梢、左端回锋;双枝上扬各带分梢;沿干小花枝;题诗四柱。
-    createBranchPath({
-        { 1.000, 0.500, 44 }, { 0.940, 0.472, 41 }, { 0.880, 0.450, 38 },
-        { 0.820, 0.435, 35 }, { 0.760, 0.420, 32 }, { 0.700, 0.412, 29 },
-        { 0.640, 0.416, 25 }, { 0.580, 0.428, 20 }, { 0.520, 0.448, 16 },
-        { 0.460, 0.466, 13 }, { 0.400, 0.492, 10 }, { 0.340, 0.512, 9 },
-        { 0.280, 0.528, 7 },  { 0.220, 0.545, 6 },  { 0.170, 0.552, 6 },
-    }, "xy_trunk", 0.10)
-    createBranchPath({ { 0.170, 0.552, 6 }, { 0.135, 0.512, 5 }, { 0.108, 0.462, 4 }, { 0.092, 0.418, 3.5 } }, "xy_hook", 0.12)
-    createBranchPath({
-        { 0.790, 0.408, 15 }, { 0.745, 0.330, 13 }, { 0.705, 0.258, 11 },
-        { 0.668, 0.196, 9 },  { 0.628, 0.146, 7 },  { 0.585, 0.112, 6 },
-        { 0.540, 0.098, 4 },  { 0.495, 0.105, 3.5 },
-    }, "xy_up_a", 0.10)
-    createBranchPath({ { 0.705, 0.258, 7 }, { 0.665, 0.232, 5 }, { 0.625, 0.218, 4 }, { 0.588, 0.214, 3 } }, "xy_up_a2", 0.12)
-    createBranchPath({ { 0.745, 0.330, 7 }, { 0.778, 0.276, 5 }, { 0.800, 0.235, 4 }, { 0.818, 0.202, 3 } }, "xy_up_a3", 0.12)
-    createBranchPath({
-        { 0.872, 0.428, 13 }, { 0.888, 0.345, 11 }, { 0.902, 0.270, 9 },
-        { 0.918, 0.205, 7 },  { 0.936, 0.152, 5 },  { 0.952, 0.118, 4 },
-    }, "xy_up_b", 0.10)
-    createBranchPath({ { 0.902, 0.270, 6 }, { 0.872, 0.225, 4 }, { 0.845, 0.192, 3.5 } }, "xy_up_b2", 0.12)
-    createBranchPath({ { 0.560, 0.432, 9 }, { 0.532, 0.498, 7 }, { 0.512, 0.556, 6 }, { 0.500, 0.600, 4 } }, "xy_down_mid", 0.12)
-    createBranchPath({
-        { 0.430, 0.478, 9 }, { 0.370, 0.530, 7 }, { 0.305, 0.568, 6 },
-        { 0.245, 0.588, 4 }, { 0.190, 0.595, 3.5 },
-    }, "xy_down_left", 0.12)
-    createBranchPath({ { 0.940, 0.474, 10 }, { 0.918, 0.530, 7 }, { 0.900, 0.578, 6 }, { 0.888, 0.615, 4 } }, "xy_right_drop", 0.12)
-    createBranchPath({ { 0.700, 0.412, 8 }, { 0.682, 0.352, 6 }, { 0.668, 0.300, 4 } }, "xy_twig1", 0.12)
-    createBranchPath({ { 0.640, 0.416, 7 }, { 0.615, 0.360, 5 }, { 0.595, 0.315, 4 } }, "xy_twig2", 0.12)
-    createBranchPath({ { 0.400, 0.492, 6 }, { 0.378, 0.442, 4 }, { 0.362, 0.402, 3.5 } }, "xy_mid_twig", 0.12)
-    createBranchPath({ { 0.280, 0.528, 6 }, { 0.258, 0.482, 4 }, { 0.242, 0.448, 3.5 } }, "xy_left_twig", 0.12)
-    createBranchPath({ { 0.315, 0.060, 6 }, { 0.315, 0.420, 6 } }, "poetry_col_1", 0)
-    createBranchPath({ { 0.355, 0.060, 6 }, { 0.355, 0.420, 6 } }, "poetry_col_2", 0)
-    createBranchPath({ { 0.395, 0.060, 6 }, { 0.395, 0.420, 6 } }, "poetry_col_3", 0)
-    createBranchPath({ { 0.435, 0.050, 6 }, { 0.435, 0.300, 6 } }, "poetry_col_4", 0)
-    for _, p in ipairs({
-        { "xy_up_a", 0.45 }, { "xy_up_a", 0.80 }, { "xy_up_a2", 0.8 }, { "xy_up_a3", 0.8 },
-        { "xy_up_b", 0.55 }, { "xy_up_b", 0.90 }, { "xy_up_b2", 0.8 },
-        { "xy_trunk", 0.30 }, { "xy_twig1", 0.8 }, { "xy_twig2", 0.8 },
-        { "xy_down_mid", 0.80 }, { "xy_down_left", 0.55 }, { "xy_down_left", 0.92 },
-        { "xy_mid_twig", 0.8 }, { "xy_left_twig", 0.8 },
-        { "xy_hook", 0.80 }, { "xy_right_drop", 0.80 }, { "poetry_col_2", 0.50 },
-    }) do addTargetOnBranch(p[1], p[2], 38) end
-end
-
-function generateXuweiGrape()
-    -- 第16关:母本复刻 - 徐渭《墨葡萄图》(北京故宫) 大画布精刻
-    -- 狂草主藤右上横垂;左右垂蔓各带分梢;缠绕圈藤;飘垂细蔓;葡萄串/泼墨叶为渲染层。
-    createBranchPath({
-        { 0.960, 0.285, 19 }, { 0.880, 0.330, 18 }, { 0.800, 0.368, 16 },
-        { 0.720, 0.400, 14 }, { 0.640, 0.428, 13 }, { 0.560, 0.452, 13 },
-        { 0.480, 0.478, 11 }, { 0.400, 0.500, 10 }, { 0.320, 0.522, 10 },
-        { 0.240, 0.540, 8 },  { 0.160, 0.552, 8 },  { 0.090, 0.558, 6 },
-    }, "xw_vine", 0.12)
-    createBranchPath({
-        { 0.160, 0.552, 8 }, { 0.135, 0.620, 6 }, { 0.118, 0.690, 6 },
-        { 0.108, 0.760, 5 }, { 0.105, 0.825, 5 }, { 0.112, 0.880, 4 },
-    }, "xw_left_drop", 0.12)
-    createBranchPath({
-        { 0.800, 0.368, 10 }, { 0.825, 0.440, 8 }, { 0.845, 0.515, 6 },
-        { 0.858, 0.590, 6 },  { 0.862, 0.660, 5 }, { 0.855, 0.730, 5 }, { 0.840, 0.795, 4 },
-    }, "xw_right_drop", 0.12)
-    createBranchPath({ { 0.845, 0.515, 6 }, { 0.890, 0.560, 5 }, { 0.920, 0.610, 5 }, { 0.938, 0.660, 4 } }, "xw_right_drop2", 0.12)
-    createBranchPath({ { 0.460, 0.482, 5 }, { 0.452, 0.560, 4 }, { 0.448, 0.635, 4 }, { 0.450, 0.705, 4 } }, "xw_trail1", 0)
-    createBranchPath({ { 0.560, 0.455, 5 }, { 0.572, 0.535, 4 }, { 0.580, 0.610, 4 }, { 0.585, 0.680, 4 } }, "xw_trail2", 0)
-    createBranchPath({ { 0.660, 0.425, 5 }, { 0.672, 0.500, 4 }, { 0.680, 0.572, 4 }, { 0.685, 0.640, 4 } }, "xw_trail3", 0)
-    createBranchPath({ { 0.640, 0.428, 8 }, { 0.565, 0.392, 6 }, { 0.495, 0.372, 5 }, { 0.435, 0.368, 4 } }, "xw_top_leaf", 0.12)
-    -- 狂草缠绕圈藤(近闭环)
-    createBranchPath({
-        { 0.480, 0.478, 7 }, { 0.508, 0.516, 6 }, { 0.500, 0.560, 5 },
-        { 0.462, 0.572, 5 }, { 0.432, 0.543, 5 }, { 0.446, 0.506, 5 }, { 0.474, 0.494, 5 },
-    }, "xw_curl1", 0.10)
-    createBranchPath({
-        { 0.320, 0.522, 6 }, { 0.348, 0.556, 5 }, { 0.336, 0.596, 4 },
-        { 0.300, 0.588, 4 }, { 0.292, 0.552, 4 },
-    }, "xw_curl2", 0.10)
-    for _, p in ipairs({
-        { "xw_vine", 0.25 }, { "xw_vine", 0.55 }, { "xw_vine", 0.85 },
-        { "xw_right_drop", 0.45 }, { "xw_right_drop", 0.85 }, { "xw_right_drop2", 0.85 },
-        { "xw_left_drop", 0.50 }, { "xw_left_drop", 0.90 },
-        { "xw_trail1", 0.85 }, { "xw_trail2", 0.85 }, { "xw_trail3", 0.85 },
-        { "xw_top_leaf", 0.80 }, { "xw_curl1", 0.45 },
-    }) do addTargetOnBranch(p[1], p[2], 40) end
-end
-
 
 local function generatePeach()
     waterLevel = H(0.86)
@@ -1752,49 +1338,6 @@ local function generateHuangshan()
     end
 end
 
-function generateMolong()
-    -- 第17关:意象复刻 - 陈容《九龙图》墨龙(波士顿美术馆)
-    -- 龙身三起三伏横贯全卷,是一条"活"的平台(运行时整条做行波起伏);
-    -- 龙首在右,角可攀,四爪探波;云团可踏;龙珠悬于云上与龙身。
-    createBranchPath({
-        { 0.040, 0.600, 14 }, { 0.085, 0.520, 18 }, { 0.130, 0.450, 22 },
-        { 0.180, 0.420, 26 }, { 0.235, 0.460, 29 }, { 0.285, 0.550, 31 },
-        { 0.330, 0.660, 32 }, { 0.385, 0.730, 32 }, { 0.440, 0.740, 32 },
-        { 0.495, 0.680, 31 }, { 0.545, 0.570, 29 }, { 0.595, 0.460, 27 },
-        { 0.645, 0.385, 25 }, { 0.700, 0.360, 23 }, { 0.755, 0.400, 21 },
-        { 0.805, 0.470, 19 }, { 0.850, 0.520, 18 }, { 0.895, 0.520, 17 },
-    }, "dragon_body", 0.08)
-    createBranchPath({
-        { 0.895, 0.520, 17 }, { 0.930, 0.480, 22 }, { 0.962, 0.450, 21 }, { 0.985, 0.440, 18 },
-    }, "dragon_head", 0.08)
-    createBranchPath({ { 0.940, 0.425, 7 }, { 0.922, 0.360, 5 }, { 0.905, 0.300, 4 } }, "dragon_horn", 0)
-    createBranchPath({ { 0.235, 0.490, 10 }, { 0.222, 0.558, 8 }, { 0.249, 0.624, 6 }, { 0.244, 0.685, 4 } }, "dragon_leg1", 0)
-    createBranchPath({ { 0.440, 0.770, 10 }, { 0.426, 0.832, 8 }, { 0.456, 0.884, 6 }, { 0.450, 0.925, 4 } }, "dragon_leg2", 0)
-    createBranchPath({ { 0.645, 0.415, 10 }, { 0.631, 0.478, 8 }, { 0.659, 0.538, 6 }, { 0.654, 0.595, 4 } }, "dragon_leg3", 0)
-    createBranchPath({ { 0.850, 0.550, 10 }, { 0.836, 0.614, 8 }, { 0.865, 0.674, 6 }, { 0.860, 0.740, 4 } }, "dragon_leg4", 0)
-    for _, c in ipairs({
-        { 0.10, 0.82, 210, 55, 0.0 }, { 0.27, 0.30, 190, 50, 1.3 },
-        { 0.47, 0.30, 200, 52, 2.2 }, { 0.62, 0.80, 210, 55, 3.1 },
-        { 0.80, 0.76, 190, 50, 4.0 }, { 0.93, 0.68, 160, 45, 5.0 },
-    }) do
-        cloudPlatforms[#cloudPlatforms + 1] = { x = W(c[1]), y = H(c[2]), rx = c[3], ry = c[4], bob = c[5] }
-    end
-    addTarget(W(0.27), H(0.165), 42)
-    addTarget(W(0.58), H(0.150), 42)
-    addTarget(W(0.74), H(0.620), 40)
-    for _, p in ipairs({
-        { "dragon_body", 0.30 }, { "dragon_body", 0.55 }, { "dragon_body", 0.80 },
-        { "dragon_head", 0.70 },
-    }) do addTargetOnBranch(p[1], p[2], 40) end
-end
-
--- ============================================================================
--- END scripts/src/30_level_generation.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/34_ldtk_grand_scroll_data.lua
--- ============================================================================
 -- AUTO-GENERATED FILE. Do not edit directly.
 -- Generated by tools/convert_ldtk_grand_to_lua.ps1 from ldtk/ink_grand_scroll.ldtk.
 
@@ -1906,14 +1449,6 @@ LDTK_GRAND_SCROLL = {
         { id = "RegionLabel", layer = "Labels", x = 6933, y = 783, w = 180, h = 28 },
     },
 }
-
--- ============================================================================
--- END scripts/src/34_ldtk_grand_scroll_data.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/35_ldtk_grand_scroll.lua
--- ============================================================================
 -- LDtk grand-scroll runtime bridge. Data is generated in 34_ldtk_grand_scroll_data.lua.
 
 LDTK_GRAND_SCROLL_ID = "ldtk_grand_scroll"
@@ -2400,14 +1935,6 @@ function updateLDtkGrandScrollSpecial()
 
     return false
 end
-
--- ============================================================================
--- END scripts/src/35_ldtk_grand_scroll.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/40_gameplay_targets.lua
--- ============================================================================
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 local function resetCollections()
     branches = {}
@@ -2478,7 +2005,7 @@ local function resetPlayer()
         local ns = branchGroups.main or {}
         local safe = ns[15]
         if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.05), H(0.72) end
-    elseif currentLevel.id == "plum" or currentLevel.id == "plum_parallax" then
+    elseif currentLevel.id == "plum" then
         local ns = branchGroups.main_trunk or {}
         local safe = ns[15]
         if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.90), H(0.55) end
@@ -2487,31 +2014,6 @@ local function resetPlayer()
         local ns = branchGroups.main_trunk or {}
         local safe = ns[15]
         if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.10), H(0.55) end
-        player.facingRight = true
-    elseif currentLevel.id == "plum_finale" then
-        local ns = branchGroups.finale_trunk or {}
-        local safe = ns[12]
-        if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.06), H(0.78) end
-        player.facingRight = true
-    elseif currentLevel.id == "wentong_zhu" then
-        local ns = branchGroups.wt_cane or {}
-        local safe = ns[10]
-        if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.08), H(0.18) end
-        player.facingRight = true
-    elseif currentLevel.id == "plum_xiyan" then
-        local ns = branchGroups.xy_trunk or {}
-        local safe = ns[12]
-        if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.95), H(0.45) end
-        player.facingRight = false
-    elseif currentLevel.id == "xuwei_grape" then
-        local ns = branchGroups.xw_vine or {}
-        local safe = ns[8]
-        if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.92), H(0.26) end
-        player.facingRight = false
-    elseif currentLevel.id == "molong" then
-        local ns = branchGroups.dragon_body or {}
-        local safe = ns[math.max(1, math.floor(#ns * 0.45))]
-        if safe then player.x, player.y = safe.x, safe.y - (safe.r + player.radius + 25) else player.x, player.y = W(0.40), H(0.65) end
         player.facingRight = true
     elseif currentLevel.id == "peach" then
         local ns = branchGroups.main_trunk or {}
@@ -2558,13 +2060,7 @@ local function loadLevel(index)
     elseif currentLevel.id == "eaves" then generateEaves()
     elseif currentLevel.id == "huangshan" then generateHuangshan()
     elseif currentLevel.id == "plum_master" then generatePlumMaster()
-    elseif currentLevel.id == "plum_parallax" then generatePlum() -- 视差关复用蟠梅长卷地形(sourceLevelIndex=4)
     elseif currentLevel.id == "plum_mirror" then generatePlumMirror()
-    elseif currentLevel.id == "plum_finale" then generatePlumFinale()
-    elseif currentLevel.id == "wentong_zhu" then generateWentongZhu()
-    elseif currentLevel.id == "plum_xiyan" then generatePlumXiyan()
-    elseif currentLevel.id == "xuwei_grape" then generateXuweiGrape()
-    elseif currentLevel.id == "molong" then generateMolong()
     elseif currentLevel.id == "ldtk_grand_scroll" then generateLDtkGrandScroll()
     end
 
@@ -2943,42 +2439,6 @@ local function updateSpecialBeforeMovement()
         return
     end
 
-    if currentLevel.id == "molong" then
-        -- 墨龙行波:整条龙身按行波起伏,玩家被驮起/抛出;龙首、角、爪随波同摆
-        local ph = elapsed * 3.0
-        local function wob(t) return math.sin(ph - t * 14.0) * 26 end
-        local body = branchGroups.dragon_body
-        if body then
-            for _, n in ipairs(body) do n.y = n.baseY + wob(n.t) end
-            refreshBranchNormalsForCurrentPose(body)
-        end
-        local hw = wob(1)
-        for _, bid in ipairs({ "dragon_head", "dragon_horn" }) do
-            local l = branchGroups[bid]
-            if l then for _, n in ipairs(l) do n.y = n.baseY + hw end end
-        end
-        local legRoots = { 0.22, 0.42, 0.62, 0.82 }
-        for i = 1, 4 do
-            local l = branchGroups["dragon_leg" .. i]
-            if l then
-                local o = wob(legRoots[i])
-                for _, n in ipairs(l) do n.y = n.baseY + o end
-            end
-        end
-        for _, t in ipairs(targets) do bindItemToBranch(t) end
-        for _, b in ipairs(blooms) do bindItemToBranch(b) end
-        for _, cp in ipairs(cloudPlatforms) do
-            local cy = cp.y + math.sin(elapsed * 1.2 + cp.bob) * 8
-            if math.abs(player.x - cp.x) < cp.rx and math.abs((player.y + player.radius) - cy) < cp.ry * 0.75 and player.vy >= 0 then
-                player.y = cy - player.radius
-                player.vy = 0
-                player.isGrounded = true
-                player.canDash = true
-            end
-        end
-        return
-    end
-
     if currentLevel.id == "bamboo" then
         local x1, x2 = W(0.32), W(0.80)
         if player.x > x1 and player.x < x2 and player.y > H(0.03) then
@@ -3135,14 +2595,6 @@ local function updateEavesMechanics()
     return false
 end
 
-
--- ============================================================================
--- END scripts/src/40_gameplay_targets.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/50_simulation_update.lua
--- ============================================================================
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 local function fixedStep()
     elapsed = elapsed + FIXED_DT
@@ -3393,14 +2845,6 @@ local function updateParticles()
     end
 end
 
-
--- ============================================================================
--- END scripts/src/50_simulation_update.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/60_background_render.lua
--- ============================================================================
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 local function updateCamera()
     local targetX = player.x - DESIGN_W * 0.5
@@ -4226,68 +3670,6 @@ local function drawBackground()
             strokeLine(W(0.82 + i * 0.04), H(0.24), W(0.82 + i * 0.04), H(0.66), 1.2, rgba(42, 30, 24, 48))
             strokeLine(W(0.82 + i * 0.04) + 7, H(0.24), W(0.82 + i * 0.04) + 7, H(0.66), 0.7, rgba(42, 30, 24, 20))
         end
-    elseif currentLevel.id == "plum_finale" then
-        -- 母本复刻：王冕《梅竹双清卷》梅段的旧纸底——无山无雾，只有岁月斑驳的卷纸、
-        -- 鉴藏朱印与右壁满纸行书。印章位置按母本描取。
-        drawVerticalWash(0, worldH, C(205, 180, 140), currentLevel.paper, 26, 10, 12)
-        -- 旧纸的水渍与霉斑
-        for i = 1, 14 do
-            local sx = hash01(i * 37.7) * worldW
-            local sy = hash01(i * 53.3) * worldH
-            drawInkBleed(sx, sy, 60 + hash01(i * 17) * 160, 40 + hash01(i * 23) * 90, C(168, 142, 102), 7 + hash01(i * 29) * 7, i * 7.1, 2)
-        end
-        -- 鉴藏印（仿乾隆鉴藏诸玺布局）：圆玺——细环 + 印泥斑点，避免大色块
-        local rsX, rsY, rsR = W(0.665), H(0.095), W(0.052)
-        drawCircle(rsX, rsY, rsR, rgba(186, 72, 48, 30))
-        drawCircle(rsX, rsY, rsR - 4, colorRGBA(currentLevel.paper, 235))
-        drawInkSpeckles(rsX - rsR * 0.8, rsY - rsR * 0.8, rsR * 1.6, rsR * 1.6, C(186, 72, 48), 64, 311.7, 22)
-        -- 方玺两枚（描边 + 印文斑点）
-        for _, s in ipairs({
-            { 0.585, 0.275, 0.095, 0.150 },
-            { 0.505, 0.455, 0.055, 0.100 },
-        }) do
-            local x1, y1, w1, h1 = W(s[1]), H(s[2]), W(s[3]), H(s[4])
-            drawRect(x1, y1, w1, h1, 0, rgba(186, 72, 48, 9))
-            strokeLine(x1, y1, x1 + w1, y1, 2.2, rgba(186, 72, 48, 46))
-            strokeLine(x1 + w1, y1, x1 + w1, y1 + h1, 2.2, rgba(186, 72, 48, 46))
-            strokeLine(x1 + w1, y1 + h1, x1, y1 + h1, 2.2, rgba(186, 72, 48, 46))
-            strokeLine(x1, y1 + h1, x1, y1, 2.2, rgba(186, 72, 48, 46))
-            drawInkSpeckles(x1 + 6, y1 + 6, w1 - 12, h1 - 12, C(186, 72, 48), 52, s[1] * 97.3, 26)
-        end
-        -- 边角小印（左缘与左下角，仿历代收传印记）
-        for _, s in ipairs({
-            { 0.006, 0.300, 0.020, 0.045 }, { 0.006, 0.360, 0.020, 0.040 },
-            { 0.022, 0.800, 0.030, 0.055 }, { 0.060, 0.840, 0.026, 0.048 },
-            { 0.014, 0.880, 0.034, 0.060 },
-        }) do
-            drawRect(W(s[1]), H(s[2]), W(s[3]), H(s[4]), 0, rgba(186, 72, 48, 26))
-            drawInkSpeckles(W(s[1]), H(s[2]), W(s[3]), H(s[4]), currentLevel.paper, 150, s[2] * 131.1, 12)
-        end
-        -- 右壁满纸行书（题诗柱的纸面墨痕：三主柱 + 两道残柱）
-        for i = 0, 4 do
-            local colX = W(0.806 + i * 0.045)
-            local topY, botY = H(0.080 + hash01(i * 13.7) * 0.030), H(0.780 - hash01(i * 19.3) * 0.040)
-            if i == 1 then colX = W(0.866) end
-            if i == 2 then colX = W(0.926) end
-            if i > 2 then colX = W(0.962 + (i - 3) * 0.022) end
-            strokeLine(colX + 8, topY, colX + 8, botY, 0.8, rgba(56, 46, 36, 20))
-            -- 行书字团：沿柱身的浓淡墨点
-            local steps = i > 2 and 9 or 14
-            for k = 0, steps do
-                local cy = topY + (botY - topY) * k / steps
-                local seed = i * 71.3 + k * 13.9
-                drawInkBleed(colX + (hash01(seed) - 0.5) * 10, cy, 7 + hash01(seed + 3) * 9, 5 + hash01(seed + 7) * 7, C(56, 46, 36), 26 + hash01(seed + 11) * 30, seed, 2)
-            end
-        end
-        -- 极疏的飘瓣（白描花瓣偶然离枝）
-        for i = 1, 12 do
-            local drift = elapsed * (5 + hash01(i * 13) * 8)
-            local x = (hash01(i * 67) * worldW - drift) % worldW
-            local y = (hash01(i * 71) * worldH + drift * 0.55) % worldH
-            local s = 3.5 + hash01(i * 77) * 4
-            local a = 20 + hash01(i * 83) * 34
-            drawTinyBlossom(x, y, s, C(238, 230, 212), C(222, 210, 188), C(90, 75, 58), i * 91.3, a, 5)
-        end
     elseif currentLevel.id == "peach" then
         drawVerticalWash(0, worldH, C(160, 184, 163), C(242, 230, 208), 126, 0, 30)
         drawMountainBandAt(810, 5, C(85, 115, 95), 13, 0.28, 0.35, 0.22, 0.45, -200)
@@ -4323,87 +3705,6 @@ local function drawBackground()
         drawMasterPlumBackground()
     elseif currentLevel.id == "plum_parallax" then
         drawParallaxBackground()
-    elseif currentLevel.id == "molong" then
-        -- 风雷烟云:旋涡云带横贯,斜雨如丝,远雷淡痕,下缘云涛
-        for band = 0, 2 do
-            local by = H(0.16 + band * 0.30)
-            for i = 1, 16 do
-                local seed = band * 97.7 + i * 13.1
-                local cx2 = hash01(seed) * worldW
-                local cy2 = by + (hash01(seed + 3) - 0.5) * H(0.14)
-                drawRotEllipse(cx2, cy2, 160 + hash01(seed + 7) * 240, 26 + hash01(seed + 11) * 40,
-                    (hash01(seed + 13) - 0.5) * 0.3, colorRGBA(currentLevel.paper2, 22 + hash01(seed + 17) * 26))
-            end
-            for i = 1, 10 do
-                local seed = band * 71.3 + i * 17.9
-                local cx2 = hash01(seed) * worldW
-                local cy2 = by + (hash01(seed + 5) - 0.5) * H(0.12)
-                local r0 = 36 + hash01(seed + 7) * 60
-                for k = 0, 5 do
-                    local a1 = k * 1.05 + hash01(seed + k) * 0.4
-                    strokeLine(cx2 + math.cos(a1) * r0, cy2 + math.sin(a1) * r0 * 0.5,
-                        cx2 + math.cos(a1 + 0.8) * r0 * 0.74, cy2 + math.sin(a1 + 0.8) * r0 * 0.38,
-                        1.1, colorRGBA(currentLevel.wash, 30 + hash01(seed + k + 9) * 22))
-                end
-            end
-        end
-        for i = 1, 130 do
-            local seed = i * 23.3
-            local x = hash01(seed) * worldW
-            local y = hash01(seed + 3) * worldH
-            local ln = 30 + hash01(seed + 7) * 60
-            strokeLine(x, y, x - ln * 0.26, y + ln, 0.7, colorRGBA(currentLevel.wash, 10 + hash01(seed + 11) * 14))
-        end
-        for i = 0, 1 do
-            local sx = W(0.30 + i * 0.40) + hash01(i * 7.1) * W(0.06)
-            local sy = H(0.04)
-            local px, py = sx, sy
-            for k = 1, 4 do
-                local nx2 = px + (hash01(i * 31 + k * 7) - 0.5) * 90 - 20
-                local ny2 = py + H(0.07 + hash01(i * 37 + k * 11) * 0.05)
-                strokeLine(px, py, nx2, ny2, 1.6, rgba(232, 222, 188, 34))
-                px, py = nx2, ny2
-            end
-        end
-        for i = 1, 22 do
-            local seed = i * 31.7
-            local cx2 = hash01(seed) * worldW
-            local cy2 = H(0.93 + hash01(seed + 3) * 0.05)
-            strokeQuad(cx2 - 70, cy2, cx2, cy2 - 34 - hash01(seed + 7) * 26, cx2 + 70, cy2, 2.2, colorRGBA(currentLevel.wash, 60))
-        end
-    elseif currentLevel.id == "wentong_zhu" or currentLevel.id == "plum_xiyan"
-        or currentLevel.id == "xuwei_grape" then
-        -- 母本复刻关:素纸/素绢,不画山;只铺岁月痕迹与母本固有的纸面元素
-        for i = 1, 12 do
-            local sx = hash01(i * 43.7) * worldW
-            local sy = hash01(i * 57.3) * worldH
-            drawInkBleed(sx, sy, 50 + hash01(i * 19) * 140, 36 + hash01(i * 27) * 80, currentLevel.paper2, 8 + hash01(i * 31) * 7, i * 9.3, 2)
-        end
-        if currentLevel.id == "wentong_zhu" then
-            -- 绢本横丝纹理 + 顶部题跋墨影带
-            for i = 0, 26 do
-                local y = worldH * i / 26 + hash01(i * 7.7) * 14
-                strokeLine(0, y, worldW, y + (hash01(i * 11.3) - 0.5) * 8, 0.6, rgba(120, 92, 50, 14))
-            end
-            for i = 1, 56 do
-                local cx2 = W(0.03 + hash01(i * 13.1) * 0.94)
-                local cy2 = H(0.022 + hash01(i * 17.9) * 0.12)
-                drawInkBleed(cx2, cy2, 5 + hash01(i * 23) * 7, 7 + hash01(i * 29) * 10, C(30, 24, 16), 30 + hash01(i * 37) * 30, i * 5.7, 2)
-            end
-        elseif currentLevel.id == "plum_xiyan" then
-            -- 右上鉴藏圆玺 + 左下收传印群(位置按母本)
-            local rx2, ry2, rr2 = W(0.835), H(0.085), W(0.030)
-            drawCircle(rx2, ry2, rr2, rgba(186, 72, 48, 30))
-            drawCircle(rx2, ry2, rr2 - 4, colorRGBA(currentLevel.paper, 235))
-            drawInkSpeckles(rx2 - rr2 * 0.8, ry2 - rr2 * 0.8, rr2 * 1.6, rr2 * 1.6, C(186, 72, 48), 60, 411.3, 16)
-            for _, s in ipairs({
-                { 0.020, 0.560, 0.022, 0.045 }, { 0.024, 0.640, 0.020, 0.040 },
-                { 0.018, 0.870, 0.026, 0.050 }, { 0.060, 0.900, 0.022, 0.045 },
-            }) do
-                drawRect(W(s[1]), H(s[2]), W(s[3]), H(s[4]), 0, rgba(186, 72, 48, 26))
-                drawInkSpeckles(W(s[1]), H(s[2]), W(s[3]), H(s[4]), currentLevel.paper, 150, s[2] * 97.1, 10)
-            end
-        end
     else
         drawMountainBand(100, 6, currentLevel.wash, 12, 0.28, 0.30)
     end
@@ -4414,14 +3715,6 @@ local function drawBackground()
         -- spring water is part of the scenic background and already includes its ripple field
     end
 end
-
--- ============================================================================
--- END scripts/src/60_background_render.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/65_inklab_render.lua
--- ============================================================================
 -- Source chunk for the Pine InkLab level.
 -- It uses raster brush stamps as a material layer over the existing procedural level.
 
@@ -5758,14 +5051,6 @@ function spawnInkLabHitFeedback(t)
     for i = 1, 10 do addBristle(t.x, t.y, -player.vx * 0.2, -player.vy * 0.2, "gold") end
     for i = 1, 16 do addBristle(t.x, t.y, player.vx * 0.15, player.vy * 0.15, "inkgas") end
 end
-
--- ============================================================================
--- END scripts/src/65_inklab_render.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/66_ldtk_grand_scroll_render.lua
--- ============================================================================
 -- Rendering helpers for the LDtk grand-scroll bridge.
 
 function ldtkVisible(x, y, w, h, pad)
@@ -5905,14 +5190,6 @@ function drawLDtkGrandScrollLabels()
         drawDryBrushLine(ldtkExit.x - 62, ldtkExit.y + 36, ldtkExit.x + 88, ldtkExit.y + 36, 5, currentLevel.ink, 128, ldtkExit.x * 0.01, 2)
     end
 end
-
--- ============================================================================
--- END scripts/src/66_ldtk_grand_scroll_render.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/70_entities_targets_render.lua
--- ============================================================================
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 
 local function masterPlumBranchAlpha(id)
@@ -5969,143 +5246,6 @@ function drawTinyBlossom(x, y, r, tintA, tintB, centerTint, seed, alpha, petals)
     drawInkSpeckles(x - r * 0.55, y - r * 0.55, r * 1.1, r * 1.1, centerTint, (alpha or 150) * 0.28, seed + 41, 7)
 end
 
-molongHeadImage = nil
-molongHeadImageTried = false
-
--- 加载从《九龙图》真迹抠出的龙首墨迹贴图(带透明通道,朝右)
-function tryLoadMolongHeadImage()
-    if molongHeadImageTried or vg == nil then return molongHeadImage ~= nil end
-    molongHeadImageTried = true
-    if type(nvgCreateImage) ~= "function" then return false end
-    for _, path in ipairs({ "assets/ink_atlas/dragon_head_chen_rong.png", "ink_atlas/dragon_head_chen_rong.png" }) do
-        local ok, img = pcall(nvgCreateImage, vg, path, 0)
-        if ok and img and img > 0 then
-            molongHeadImage = img
-            return true
-        end
-    end
-    return false
-end
-
--- 陈容《九龙图》式龙首精绘:分层 口腔/上颚/下颚/獠牙/金睛/火焰眉/鹿角/鬃毛/长须/颌髯
--- (hx,hy) 为颅心锚点(随龙身行波),sc 为整体缩放,面朝右
-function drawMolongHead(hx, hy, sc)
-    local ink = currentLevel.ink
-    local paper = currentLevel.paper
-    local function P(pts)
-        local out = {}
-        for _, q in ipairs(pts) do out[#out + 1] = { hx + q[1] * sc, hy + q[2] * sc } end
-        return out
-    end
-    -- 口腔(张口的留白)
-    fillPoly(P({ { 6, 0 }, { 78, -6 }, { 84, 18 }, { 8, 22 } }), colorRGBA(paper, 185))
-    -- 上颚与颅顶:长吻,鼻端隆起
-    fillPoly(P({
-        { -56, 6 }, { -54, -16 }, { -34, -26 }, { -8, -32 }, { 16, -28 },
-        { 40, -24 }, { 62, -18 }, { 80, -10 }, { 86, -4 }, { 74, -2 },
-        { 46, 0 }, { 14, 2 }, { -22, 6 },
-    }), colorRGBA(ink, 245))
-    -- 鼻端上卷
-    strokeQuad(hx + 84 * sc, hy - 8 * sc, hx + 94 * sc, hy - 18 * sc, hx + 86 * sc, hy - 26 * sc, 2.6 * sc, colorRGBA(ink, 230))
-    -- 下颚:钩状颌尖
-    fillPoly(P({
-        { 4, 12 }, { 32, 16 }, { 58, 20 }, { 80, 18 }, { 88, 24 },
-        { 64, 34 }, { 36, 36 }, { 8, 30 }, { -12, 20 },
-    }), colorRGBA(ink, 245))
-    -- 獠牙:上 4 下 3(纸色尖三角)
-    for k = 0, 3 do
-        local tx = (22 + k * 16) * sc
-        fillPoly({ { hx + tx, hy - 1 * sc }, { hx + tx + 4 * sc, hy + 11 * sc }, { hx + tx + 8 * sc, hy - 1 * sc } }, colorRGBA(paper, 235))
-    end
-    for k = 0, 2 do
-        local tx = (30 + k * 17) * sc
-        fillPoly({ { hx + tx, hy + 17 * sc }, { hx + tx + 4 * sc, hy + 7 * sc }, { hx + tx + 8 * sc, hy + 17 * sc } }, colorRGBA(paper, 225))
-    end
-    -- 金睛圆瞪:眼眶留白圈 + 金珠 + 浓墨点睛
-    nvgBeginPath(vg)
-    nvgCircle(vg, hx - 6 * sc, hy - 16 * sc, 10.5 * sc)
-    nvgStrokeWidth(vg, 2.2 * sc)
-    nvgStrokeColor(vg, colorRGBA(paper, 200))
-    nvgStroke(vg)
-    drawCircle(hx - 6 * sc, hy - 16 * sc, 8.2 * sc, rgba(216, 174, 64, 245))
-    drawCircle(hx - 4 * sc, hy - 16 * sc, 3.8 * sc, rgba(10, 8, 6, 250))
-    -- 火焰眉:眼上两束后掠焰
-    strokeQuad(hx + 2 * sc, hy - 26 * sc, hx - 16 * sc, hy - 38 * sc, hx - 38 * sc, hy - 40 * sc, 3.4 * sc, colorRGBA(ink, 235))
-    strokeQuad(hx + 4 * sc, hy - 30 * sc, hx - 10 * sc, hy - 46 * sc, hx - 30 * sc, hy - 52 * sc, 2.2 * sc, colorRGBA(ink, 195))
-    -- 鹿角双枝:主梁后掠 + 两级分叉
-    for side = 0, 1 do
-        local bx = hx + (-14 - side * 10) * sc
-        local by = hy + (-26 - side * 3) * sc
-        local a1x, a1y = bx - 26 * sc, by - 26 * sc
-        local a2x, a2y = bx - 58 * sc, by - 38 * sc
-        local a3x, a3y = bx - 84 * sc, by - 42 * sc
-        strokeQuad(bx, by, a1x, a1y, a2x, a2y, (3.6 - side) * sc, colorRGBA(ink, 240))
-        strokeQuad(a2x, a2y, (a2x + a3x) * 0.5, a2y - 6 * sc, a3x, a3y, (2.4 - side * 0.6) * sc, colorRGBA(ink, 225))
-        strokeQuad(a1x, a1y, a1x - 8 * sc, a1y - 16 * sc, a1x - 10 * sc, a1y - 28 * sc, 2.0 * sc, colorRGBA(ink, 215))
-        strokeQuad(a2x, a2y, a2x - 4 * sc, a2y - 14 * sc, a2x - 2 * sc, a2y - 24 * sc, 1.6 * sc, colorRGBA(ink, 200))
-    end
-    -- 鬃毛:颅后五束飞扬火焰
-    for k = 0, 4 do
-        local oy = (-18 + k * 8) * sc
-        local ln = (66 + hash01(k * 7.7) * 44) * sc
-        strokeQuad(hx - 30 * sc, hy + oy, hx - 30 * sc - ln * 0.5, hy + oy - 14 * sc - k * 2 * sc,
-            hx - 30 * sc - ln, hy + oy + (k - 2) * 6 * sc, (3.0 - k * 0.35) * sc, colorRGBA(ink, 215 - k * 18))
-    end
-    -- 长须:吻端两根细长 S 须
-    strokeQuad(hx + 78 * sc, hy - 8 * sc, hx + 120 * sc, hy - 30 * sc, hx + 165 * sc, hy - 22 * sc, 1.5 * sc, colorRGBA(ink, 200))
-    strokeQuad(hx + 165 * sc, hy - 22 * sc, hx + 196 * sc, hy - 16 * sc, hx + 214 * sc, hy - 30 * sc, 1.1 * sc, colorRGBA(ink, 165))
-    strokeQuad(hx + 80 * sc, hy + 14 * sc, hx + 124 * sc, hy + 34 * sc, hx + 170 * sc, hy + 30 * sc, 1.5 * sc, colorRGBA(ink, 200))
-    strokeQuad(hx + 170 * sc, hy + 30 * sc, hx + 200 * sc, hy + 26 * sc, hx + 220 * sc, hy + 40 * sc, 1.1 * sc, colorRGBA(ink, 165))
-    -- 颌髯:下颚四束短髯
-    for k = 0, 3 do
-        local bx = hx + (12 + k * 14) * sc
-        strokeQuad(bx, hy + 30 * sc, bx - 4 * sc, hy + 44 * sc, bx - 12 * sc, hy + 54 * sc, 1.6 * sc, colorRGBA(ink, 185 - k * 12))
-    end
-    -- 颊纹三道
-    for k = 0, 2 do
-        strokeQuad(hx + (-30 + k * 6) * sc, hy + (-6 + k * 7) * sc, hx + (-14 + k * 8) * sc, hy + (-2 + k * 7) * sc,
-            hx + (2 + k * 8) * sc, hy + (2 + k * 6) * sc, 1.1 * sc, colorRGBA(paper, 60))
-    end
-end
-
-function drawOutlineBlossom(x, y, r, inkTint, alpha, seed)
-    -- 圈花白描（王冕双钩圈花法）：空心花瓣圈 + 浓墨点蕊
-    local isBud = hash01(seed + 51) > 0.66
-    nvgSave(vg)
-    nvgTranslate(vg, x, y)
-    nvgRotate(vg, hash01(seed + 3) * math.pi * 2)
-    if isBud then
-        nvgBeginPath(vg)
-        nvgCircle(vg, 0, 0, r * 0.52)
-        nvgStrokeWidth(vg, 1.5)
-        nvgStrokeColor(vg, colorRGBA(inkTint, alpha))
-        nvgStroke(vg)
-        drawCircle(0, -r * 0.18, r * 0.16, colorRGBA(inkTint, alpha * 0.9))
-    else
-        for i = 0, 4 do
-            local a = i / 5 * math.pi * 2 + (hash01(seed + i * 13) - 0.5) * 0.3
-            local d = r * (0.55 + hash01(seed + i * 17) * 0.12)
-            local pr = r * (0.40 + hash01(seed + i * 19) * 0.10)
-            nvgBeginPath(vg)
-            nvgCircle(vg, math.cos(a) * d, math.sin(a) * d, pr)
-            nvgStrokeWidth(vg, 1.4 + hash01(seed + i * 23) * 0.5)
-            nvgStrokeColor(vg, colorRGBA(inkTint, alpha * (0.78 + hash01(seed + i * 29) * 0.22)))
-            nvgStroke(vg)
-        end
-        -- 点蕊：浓墨数点 + 细蕊丝
-        for i = 1, 5 do
-            local a = hash01(seed + i * 31) * math.pi * 2
-            local d = r * 0.30 * hash01(seed + i * 37)
-            drawCircle(math.cos(a) * d, math.sin(a) * d, 1.1 + hash01(seed + i * 41) * 0.9, colorRGBA(inkTint, math.min(255, alpha * 1.25)))
-        end
-        for i = 1, 3 do
-            local a = hash01(seed + i * 43) * math.pi * 2
-            strokeLine(0, 0, math.cos(a) * r * 0.42, math.sin(a) * r * 0.42, 0.7, colorRGBA(inkTint, alpha * 0.8))
-        end
-    end
-    nvgRestore(vg)
-end
-
 local function drawBranches()
     local inkLabWorldLayerActive = false
     if currentLevelIsInkLab and currentLevelIsInkLab() and currentLevel.id == "pine" and drawInkLabWorldStrokeLayer then
@@ -6128,12 +5268,7 @@ local function drawBranches()
         if isLDtkRoute then mainTint, mainAlpha = C(34, 30, 24), 112 end
         local isPavilion = id:find("pavilion") ~= nil
         if isPavilion then mainTint, mainAlpha = currentLevel.ink, 95 end
-        -- 墨龙关:龙首/龙角的视觉交给真迹贴图,默认色带隐藏(碰撞仍在)
-        local isMolongHeadPart = currentLevel.id == "molong" and (id == "dragon_head" or id == "dragon_horn")
-        if isMolongHeadPart and not showDebug then
-            mainAlpha = 0
-        end
-        if ((not isPavilion) or showDebug) and inkLabVisibleBranch and not (isMolongHeadPart and not showDebug) then
+        if ((not isPavilion) or showDebug) and inkLabVisibleBranch then
             if (not isPavilion) and not (currentLevel.id == "plum_master" and id:find("twig")) then
                 local isInkLabBranch = isInkLabPine and drawInkLabSoftRibbon
                 if isLDtkRoute then
@@ -6158,7 +5293,7 @@ local function drawBranches()
                     if isLDtkRoute then
                         showBrushNode = false
                     end
-                    if currentLevel.id == "plum_mirror" or currentLevel.id == "plum_finale" then
+                    if currentLevel.id == "plum_mirror" then
                         showBrushNode = (i == 1 or i % 16 == 0)
                     end
                     if showBrushNode then
@@ -6170,7 +5305,7 @@ local function drawBranches()
                         end
                         drawRotEllipse(n1.x, n1.y, n1.r * nodeScale * (0.82 + hash01(i + n1.x) * 0.18), n1.r * nodeScale * (0.55 + hash01(i + n1.y) * 0.18), angle, colorRGBA(mainTint, isPavilion and mainAlpha or nodeAlpha))
                     end
-                    if (not isLDtkRoute) and (not isPavilion) and (not isInkLabPine) and currentLevel.id ~= "plum_master" and currentLevel.id ~= "plum_mirror" and currentLevel.id ~= "plum_finale" and i % 11 == 0 then
+                    if (not isLDtkRoute) and (not isPavilion) and (not isInkLabPine) and currentLevel.id ~= "plum_master" and currentLevel.id ~= "plum_mirror" and i % 11 == 0 then
                         drawInkBleed(n1.x, n1.y, n1.r * 1.15, n1.r * 0.68, mainTint, 28, n1.x * 0.019 + n1.y * 0.013 + i, 2)
                     end
                     if showDebug then drawCircle(n1.x, n1.y, 2, rgba(255, 220, 20, 180)) end
@@ -6190,13 +5325,13 @@ local function drawBranches()
                         end
                         if isInkLabPine then
                             -- Pine InkLab branches are rendered as one pre-baked world brush layer above.
-                        elseif currentLevel.id == "pine" or currentLevel.id == "huangshan" or currentLevel.id == "maple" or currentLevel.id == "plum_mirror" or currentLevel.id == "plum_finale" then
-                            local edgeStep = (currentLevel.id == "maple" or currentLevel.id == "plum_mirror" or currentLevel.id == "plum_finale") and 3 or 4
+                        elseif currentLevel.id == "pine" or currentLevel.id == "huangshan" or currentLevel.id == "maple" or currentLevel.id == "plum_mirror" then
+                            local edgeStep = currentLevel.id == "maple" and 3 or (currentLevel.id == "plum_mirror" and 3 or 4)
                             if i % edgeStep == 0 then
                                 strokeLine(n1.x + n1.normX * n1.r, n1.y + n1.normY * n1.r, n2.x + n2.normX * n2.r, n2.y + n2.normY * n2.r, 1.25, colorRGBA(edgeTint, 118))
                                 strokeLine(n1.x - n1.normX * n1.r, n1.y - n1.normY * n1.r, n2.x - n2.normX * n2.r, n2.y - n2.normY * n2.r, 1.0, colorRGBA(edgeTint, 92))
                             end
-                            if (currentLevel.id == "maple" or currentLevel.id == "plum_mirror" or currentLevel.id == "plum_finale") and i % 21 == 0 then
+                            if (currentLevel.id == "maple" or currentLevel.id == "plum_mirror") and i % 21 == 0 then
                                 drawInkSpeckles(n1.x - n1.r, n1.y - n1.r, n1.r * 2, n1.r * 2, edgeTint, 48, i * 23 + n1.x, 2)
                             end
                         else
@@ -6220,222 +5355,6 @@ local function drawBranches()
                     drawTinyBlossom(n.x + n.normX * (n.r + 18), n.y + n.normY * (n.r + 18), 10 + hash01(seed) * 5, C(240, 95, 120), C(255, 178, 190), C(90, 34, 48), seed, 72, 5)
                     if i % 28 == 0 then
                         drawTinyBlossom(n.x + n.normX * (n.r + 38) + (hash01(seed + 7) - 0.5) * 24, n.y + n.normY * (n.r + 34) + (hash01(seed + 11) - 0.5) * 24, 7 + hash01(seed + 13) * 4, C(255, 184, 196), C(240, 95, 120), C(95, 40, 52), seed + 811, 56, 5)
-                    end
-                end
-            end
-        end
-    end
-    if currentLevel.id == "plum_finale" then
-        -- 圈花白描：按母本疏密布花——上弧枝繁花尽缀，主枝前段与小枝中等，
-        -- 长鞭梢与题诗柱不点花
-        local blossomDensity = {
-            finale_upper = 3,
-            finale_spur1 = 3, finale_spur2 = 3,
-            finale_hang1 = 3, finale_hang2 = 3,
-            finale_droop = 4, finale_droop2 = 4,
-            finale_cross = 4,
-            finale_spray = 8, finale_spray_fork = 7,
-            finale_tail_twig = 7,
-            finale_trunk = 12,
-        }
-        local inkTint = C(70, 58, 44)
-        for id, list in pairs(branchGroups) do
-            local step = blossomDensity[id]
-            if step then
-                local trunkLimit = id == "finale_trunk" and math.floor(#list * 0.5) or (#list - 1)
-                for i = 3, trunkLimit, step do
-                    local n = list[i]
-                    local seed = i * 53 + n.x * 0.013 + n.y * 0.019
-                    local side = hash01(seed + 61) > 0.42 and 1 or -1
-                    local off = n.r + 10 + hash01(seed + 67) * 8
-                    -- 团簇式圈花：主花 + 必带一朵伴花，部分再加第三朵，贴近母本繁花团
-                    local bx = n.x + n.normX * off * side
-                    local by = n.y + n.normY * off * side
-                    drawOutlineBlossom(bx, by, 11 + hash01(seed) * 5, inkTint, 162, seed)
-                    drawOutlineBlossom(bx + (hash01(seed + 7) - 0.5) * 26, by + (hash01(seed + 11) - 0.5) * 22, 8 + hash01(seed + 13) * 4, inkTint, 132, seed + 733)
-                    if hash01(seed + 71) > 0.45 then
-                        drawOutlineBlossom(n.x - n.normX * (off * 0.75) * side + (hash01(seed + 17) - 0.5) * 18, n.y - n.normY * (off * 0.75) * side + (hash01(seed + 19) - 0.5) * 18, 7 + hash01(seed + 23) * 4, inkTint, 116, seed + 1517)
-                    end
-                end
-            end
-        end
-        -- 主枝芽刺：沿粗枝两侧的短小逆笔刺芽（母本枝身的小刺）
-        local trunk = branchGroups.finale_trunk
-        if trunk then
-            for i = 5, #trunk - 2, 7 do
-                local n = trunk[i]
-                local seed = i * 29.7 + n.x * 0.011
-                local side = (i % 14 < 7) and 1 or -1
-                local a = math.atan2(n.normY, n.normX) + (hash01(seed) - 0.5) * 0.9
-                local len = 7 + hash01(seed + 3) * 9
-                strokeLine(n.x + n.normX * n.r * side, n.y + n.normY * n.r * side,
-                    n.x + n.normX * n.r * side + math.cos(a) * len * side, n.y + n.normY * n.r * side + math.sin(a) * len * side,
-                    1.1, colorRGBA(inkTint, 96))
-            end
-        end
-    end
-    if currentLevel.id == "molong" then
-        -- 龙体:火焰背鳍 / 网纹鳞甲 / 腹甲横纹 / 龙首精绘 / 三趾钩爪
-        local body = branchGroups.dragon_body
-        if body then
-            for i = 3, #body - 2, 4 do
-                local n = body[i]
-                local seed = i * 13.7
-                local fl = 16 + hash01(seed) * 24
-                local bx1, by1 = n.x + n.normX * n.r, n.y + n.normY * n.r
-                local tx2, ty2 = n.x + n.normX * (n.r + fl) - 8, n.y + n.normY * (n.r + fl)
-                fillPoly({ { bx1 - 9, by1 + 2 }, { tx2, ty2 }, { bx1 + 9, by1 - 2 } }, colorRGBA(currentLevel.ink, 215))
-                strokeQuad(tx2, ty2, tx2 - 10, ty2 - 8, tx2 - 20, ty2 - 10, 1.2, colorRGBA(currentLevel.ink, 150))
-            end
-            -- 网纹鳞:两排交错半圆鳞 + 鳞心点,贴近真迹留白勾鳞
-            for i = 2, #body - 1, 2 do
-                local n = body[i]
-                for row = -1, 1 do
-                    local ox = n.x + n.normX * n.r * row * 0.42
-                    local oy = n.y + n.normY * n.r * row * 0.42
-                    nvgBeginPath(vg)
-                    nvgCircle(vg, ox + (i % 4 - 2) * 3, oy, n.r * 0.30)
-                    nvgStrokeWidth(vg, 1.2)
-                    nvgStrokeColor(vg, colorRGBA(currentLevel.paper, row == 0 and 78 or 56))
-                    nvgStroke(vg)
-                end
-            end
-            -- 腹甲横纹:沿腹侧的节状横线
-            for i = 2, #body - 2, 2 do
-                local n1, n2 = body[i], body[i + 1]
-                local ax = n1.x - n1.normX * n1.r * 0.74
-                local ay = n1.y - n1.normY * n1.r * 0.74
-                local bx2 = n2.x - n2.normX * n2.r * 0.74
-                local by2 = n2.y - n2.normY * n2.r * 0.74
-                strokeLine(ax, ay, bx2, by2, 2.4, colorRGBA(currentLevel.paper, 64))
-                if i % 4 == 0 then
-                    strokeLine(ax, ay, ax + n1.normX * n1.r * 0.34, ay + n1.normY * n1.r * 0.34, 1.6, colorRGBA(currentLevel.paper, 70))
-                end
-            end
-        end
-        local head = branchGroups.dragon_head
-        if head and #head > 4 then
-            local sk = head[math.floor(#head * 0.45)]
-            if tryLoadMolongHeadImage() and type(nvgImagePattern) == "function" and type(nvgFillPaint) == "function" then
-                -- 真迹龙首:陈容亲笔(镜像朝右),颈部左缘搭在龙身末节
-                local bodyEnd = body and body[#body] or sk
-                local dw, dh = 440 * 0.82, 350 * 0.82
-                local x0 = bodyEnd.x - dw * 0.16
-                local y0 = bodyEnd.y - dh * 0.60
-                local ok, paint = pcall(nvgImagePattern, vg, x0, y0, dw, dh, 0, molongHeadImage, 1.0)
-                if ok and paint then
-                    nvgBeginPath(vg)
-                    nvgRect(vg, x0, y0, dw, dh)
-                    nvgFillPaint(vg, paint)
-                    nvgFill(vg)
-                end
-            else
-                drawMolongHead(sk.x, sk.y - sk.r * 0.2, 1.45)
-            end
-        end
-        for li = 1, 4 do
-            local l = branchGroups["dragon_leg" .. li]
-            if l and #l > 1 then
-                local tip = l[#l]
-                local root = l[1]
-                -- 肘毛火焰
-                strokeQuad(root.x - 6, root.y + 10, root.x - 26, root.y + 2, root.x - 40, root.y - 10, 2.0, colorRGBA(currentLevel.ink, 170))
-                strokeQuad(root.x - 4, root.y + 18, root.x - 28, root.y + 16, root.x - 44, root.y + 6, 1.6, colorRGBA(currentLevel.ink, 140))
-                -- 三趾钩爪:弧形利爪
-                for k = -1, 1 do
-                    local spread = k * 12
-                    strokeQuad(tip.x, tip.y, tip.x + spread * 0.6 - 2, tip.y + 12, tip.x + spread, tip.y + 20, 2.6, colorRGBA(currentLevel.ink, 235))
-                    strokeQuad(tip.x + spread, tip.y + 20, tip.x + spread + 4, tip.y + 26, tip.x + spread + 9, tip.y + 27, 1.8, colorRGBA(currentLevel.ink, 235))
-                end
-            end
-        end
-    end
-    if currentLevel.id == "wentong_zhu" then
-        -- 竹叶扇(个字/介字撇叶):沿小枝每隔数节,下垂扇形 3-6 片浓淡叶
-        for id, list in pairs(branchGroups) do
-            local isZhi = id:find("^wt_zhi") ~= nil
-            local step = isZhi and 3 or 9
-            for i = 2, #list - 1, step do
-                local n = list[i]
-                local seed = i * 37.3 + n.x * 0.011 + n.y * 0.017
-                if isZhi or hash01(seed + 91) > 0.5 then
-                    local blades = 3 + math.floor(hash01(seed) * 4)
-                    for b = 1, blades do
-                        local a = math.pi * 0.5 + (b - (blades + 1) * 0.5) * 0.46 + (hash01(seed + b * 7) - 0.5) * 0.34
-                        local len = 40 + hash01(seed + b * 11) * 34
-                        local wid = 9 + hash01(seed + b * 13) * 6
-                        nvgSave(vg)
-                        nvgTranslate(vg, n.x + (hash01(seed + b * 3) - 0.5) * 10, n.y + (hash01(seed + b * 5) - 0.5) * 8)
-                        nvgRotate(vg, a)
-                        fillPetalShape(len, wid, colorRGBA(currentLevel.ink, 132 + hash01(seed + b * 17) * 96))
-                        nvgRestore(vg)
-                    end
-                end
-            end
-        end
-    elseif currentLevel.id == "plum_xiyan" then
-        -- 淡墨点花(故宫卷花以淡墨染瓣、浓墨点蕊):上扬枝与垂枝密,主干前段疏
-        local payTint = C(132, 126, 118)
-        for id, list in pairs(branchGroups) do
-            if not id:find("poetry") and id ~= "xy_trunk" then
-                for i = 2, #list - 1, 4 do
-                    local n = list[i]
-                    local seed = i * 41.7 + n.x * 0.013
-                    local side = hash01(seed + 61) > 0.45 and 1 or -1
-                    local off = n.r + 9 + hash01(seed + 67) * 9
-                    drawTinyBlossom(n.x + n.normX * off * side, n.y + n.normY * off * side,
-                        9 + hash01(seed) * 6, payTint, C(160, 154, 146), C(58, 52, 46), seed, 118, 5)
-                    if hash01(seed + 71) > 0.5 then
-                        drawTinyBlossom(n.x - n.normX * off * 0.7 * side + (hash01(seed + 7) - 0.5) * 16,
-                            n.y - n.normY * off * 0.7 * side + (hash01(seed + 11) - 0.5) * 16,
-                            7 + hash01(seed + 13) * 4, C(160, 154, 146), payTint, C(64, 58, 52), seed + 733, 92, 5)
-                    end
-                end
-            end
-        end
-        local xt = branchGroups.xy_trunk
-        if xt then
-            for i = 2, math.floor(#xt * 0.55), 9 do
-                local n = xt[i]
-                local seed = i * 53.1 + n.x * 0.01
-                drawTinyBlossom(n.x + n.normX * (n.r + 12), n.y + n.normY * (n.r + 12),
-                    8 + hash01(seed) * 5, payTint, C(160, 154, 146), C(58, 52, 46), seed, 104, 5)
-            end
-        end
-    elseif currentLevel.id == "xuwei_grape" then
-        -- 狂草泼墨叶团 + 垂串葡萄(浓淡紫黑圆珠,串作三角下垂)
-        for id, list in pairs(branchGroups) do
-            local leafy = id == "xw_vine" or id == "xw_top_leaf" or id == "xw_curl1" or id == "xw_curl2"
-            if leafy then
-                for i = 3, #list - 2, 5 do
-                    local n = list[i]
-                    local seed = i * 31.9 + n.x * 0.012
-                    if hash01(seed + 41) > 0.35 then
-                        local side = hash01(seed + 47) > 0.5 and 1 or -1
-                        drawInkBleed(n.x + (hash01(seed) - 0.5) * 36, n.y - 20 - hash01(seed + 3) * 46 * side,
-                            34 + hash01(seed + 7) * 46, 24 + hash01(seed + 11) * 30,
-                            currentLevel.ink, 52 + hash01(seed + 13) * 46, seed, 3)
-                    end
-                end
-            end
-            if id == "xw_left_drop" or id == "xw_right_drop" or id == "xw_right_drop2"
-                or id:find("^xw_trail") or id == "xw_vine" then
-                for i = 4, #list - 2, 7 do
-                    local n = list[i]
-                    local seed = i * 43.7 + n.y * 0.012
-                    if hash01(seed + 51) > 0.45 then
-                        local bx, by = n.x + (hash01(seed) - 0.5) * 14, n.y + n.r + 12
-                        local rows = 3 + math.floor(hash01(seed + 5) * 2)
-                        for ry = 0, rows - 1 do
-                            for rx = 0, rows - 1 - ry do
-                                local gseed = seed + ry * 13 + rx * 7
-                                local gx = bx + (rx - (rows - 1 - ry) * 0.5) * 13 + (hash01(gseed) - 0.5) * 3
-                                local gy = by + ry * 12
-                                local gr = 6 + hash01(gseed + 3) * 3
-                                drawCircle(gx, gy, gr, rgba(70, 56, 86, 120 + hash01(gseed + 7) * 110))
-                                drawCircle(gx - gr * 0.3, gy - gr * 0.3, gr * 0.3, rgba(214, 202, 176, 90))
-                            end
-                        end
                     end
                 end
             end
@@ -6641,17 +5560,14 @@ local function drawRoofsAndGears()
 end
 
 local function drawCloudsAndCranes()
-    -- 深底关卡(墨龙)云用亮雾色,浅纸关卡用纸色
-    local cloudTint = currentLevel.id == "molong" and C(232, 226, 210) or currentLevel.paper
-    local cloudEdgeA = currentLevel.id == "molong" and 110 or 58
     for _, cp in ipairs(cloudPlatforms) do
         local cy = cp.y + math.sin(elapsed * 1.2 + cp.bob) * 8
-        drawInkBleed(cp.x, cy, cp.rx * 0.65, cp.ry * 0.65, cloudTint, 88, cp.x * 0.01 + cp.y * 0.017, 5)
+        drawInkBleed(cp.x, cy, cp.rx * 0.65, cp.ry * 0.65, currentLevel.paper, 88, cp.x * 0.01 + cp.y * 0.017, 5)
         for i = 0, 6 do
             local k = i - 3
-            drawEllipse(cp.x + k * cp.rx * 0.18, cy + math.sin(elapsed + i) * 5, cp.rx * (0.24 + hash01(i + cp.x) * 0.08), cp.ry * (0.62 + hash01(i + cp.y) * 0.25), colorRGBA(cloudTint, 150))
+            drawEllipse(cp.x + k * cp.rx * 0.18, cy + math.sin(elapsed + i) * 5, cp.rx * (0.24 + hash01(i + cp.x) * 0.08), cp.ry * (0.62 + hash01(i + cp.y) * 0.25), colorRGBA(currentLevel.paper, 150))
         end
-        drawDryBrushLine(cp.x - cp.rx, cy + cp.ry * 0.55, cp.x + cp.rx, cy + cp.ry * 0.55, 2.0, currentLevel.ink, cloudEdgeA, cp.x * 0.01 + cp.y * 0.01, 2)
+        drawDryBrushLine(cp.x - cp.rx, cy + cp.ry * 0.55, cp.x + cp.rx, cy + cp.ry * 0.55, 2.0, currentLevel.ink, 58, cp.x * 0.01 + cp.y * 0.01, 2)
         drawDryBrushLine(cp.x - cp.rx * 0.62, cy + cp.ry * 0.72, cp.x + cp.rx * 0.62, cy + cp.ry * 0.72, 1.0, C(190, 207, 198), 56, cp.x * 0.02 + cp.y * 0.01, 1)
     end
     for _, c in ipairs(cranes) do
@@ -6940,22 +5856,6 @@ local function drawTargets()
                 drawNeedleEnemyTarget(t, r, true)
             elseif currentLevel.id == "plum_master" then
                 drawMasterPlumBudTarget(t, r)
-            elseif currentLevel.id == "molong" then
-                drawCircle(t.x, t.y, r * 1.18, rgba(216, 174, 64, 46))
-                drawCircle(t.x, t.y, r * 0.82, rgba(216, 174, 64, 235))
-                nvgBeginPath(vg)
-                nvgCircle(vg, t.x, t.y, r * 0.82)
-                nvgStrokeWidth(vg, 2.2)
-                nvgStrokeColor(vg, colorRGBA(currentLevel.ink, 200))
-                nvgStroke(vg)
-                drawCircle(t.x - r * 0.26, t.y - r * 0.30, r * 0.18, rgba(248, 240, 214, 220))
-                for k = 0, 3 do
-                    local a = elapsed * 1.4 + k * math.pi * 0.5
-                    strokeQuad(t.x + math.cos(a) * r, t.y + math.sin(a) * r,
-                        t.x + math.cos(a + 0.5) * r * 1.5, t.y + math.sin(a + 0.5) * r * 1.5,
-                        t.x + math.cos(a + 0.9) * r * 1.9, t.y + math.sin(a + 0.9) * r * 1.9,
-                        1.4, rgba(216, 174, 64, 110))
-                end
             elseif currentLevel.id == "peach" then
                 drawLeafTarget(t, r, rgba(240, 95, 120, 245))
             elseif currentLevel.id == "eaves" then
@@ -7022,88 +5922,6 @@ local function drawTargets()
                 local d = 32 + hash01(seed + 5) * 28
                 drawTinyBlossom(math.cos(a) * d, math.sin(a) * d * 0.76, 12 + hash01(seed + 9) * 7, C(188, 70, 70), C(218, 165, 32), C(58, 32, 14), seed + 211, 112 + 30 * clamp(b.progress or 1, 0, 1), 5)
             end
-        elseif b.kind == "molong" then
-            -- 碎珠雷光:金墨电光放射 + 墨环扩散
-            local pr2 = clamp(b.progress or 1, 0, 1)
-            for i = 0, 7 do
-                local seed = b.x * 0.013 + i * 41
-                local a = i / 8 * math.pi * 2 + hash01(seed) * 0.4
-                local r1 = 16 + 52 * pr2
-                local mx2 = math.cos(a + 0.32) * r1 * 0.55
-                local my2 = math.sin(a + 0.32) * r1 * 0.55
-                local ex2 = math.cos(a) * r1 * (0.9 + hash01(seed + 7) * 0.5)
-                local ey2 = math.sin(a) * r1 * (0.9 + hash01(seed + 7) * 0.5)
-                strokeLine(0, 0, mx2, my2, 2.4, rgba(216, 174, 64, 235 * (1.2 - pr2)))
-                strokeLine(mx2, my2, ex2, ey2, 1.7, rgba(22, 20, 18, 215 * (1.2 - pr2)))
-            end
-            nvgBeginPath(vg)
-            nvgCircle(vg, 0, 0, 18 + 64 * pr2)
-            nvgStrokeWidth(vg, 2.6 * (1.1 - pr2))
-            nvgStrokeColor(vg, rgba(216, 174, 64, 190 * (1.05 - pr2)))
-            nvgStroke(vg)
-            drawInkSpeckles(-30, -30, 60, 60, currentLevel.ink, 90 * (1.1 - pr2), b.x * 0.01, 7)
-        elseif b.kind == "wentong_zhu" then
-            -- 竹叶爆扇:浓淡墨叶自枝节撇出,溅起墨点(贴合文同浓墨为面淡墨为背)
-            local pr2 = clamp(b.progress or 1, 0, 1)
-            for i = 1, 7 do
-                local seed = b.x * 0.013 + b.y * 0.017 + i * 53
-                local a = math.pi * 0.5 + (i - 4) * 0.40 + (hash01(seed) - 0.5) * 0.34
-                nvgSave(vg)
-                nvgRotate(vg, a)
-                fillPetalShape(44 + hash01(seed + 3) * 30, 10 + hash01(seed + 7) * 6,
-                    colorRGBA(currentLevel.ink, (136 + hash01(seed + 11) * 100) * pr2))
-                nvgRestore(vg)
-            end
-            drawInkSpeckles(-34, -34, 68, 68, currentLevel.ink, 70 * pr2, b.x * 0.011 + b.y * 0.013, 8)
-        elseif b.kind == "plum_xiyan" then
-            -- 淡墨梅:灰墨染瓣、浓墨点蕊(『个个花开淡墨痕』)
-            drawFlowerBloom(b, {
-                outerA = rgba(150, 144, 136, 232), outerB = rgba(122, 116, 108, 232),
-                inner = rgba(172, 166, 158, 232), outerLen = 40, outerWidth = 27,
-                innerLen = 23, innerWidth = 16, darkKnots = true,
-            })
-            for i = 0, 11 do
-                local a = i / 12 * math.pi * 2
-                local len = 14 + hash01(i * 23 + b.x) * 6
-                strokeLine(0, 0, math.cos(a) * len, math.sin(a) * len, 1.2, rgba(46, 40, 34, 215))
-                drawCircle(math.cos(a) * len, math.sin(a) * len, 1.8, rgba(40, 34, 28, 230))
-            end
-            for i = 1, 2 do
-                local seed = b.x * 0.017 + b.y * 0.013 + i * 79
-                local a = hash01(seed) * math.pi * 2
-                local d = 32 + hash01(seed + 3) * 26
-                drawTinyBlossom(math.cos(a) * d, math.sin(a) * d * 0.8, 8 + hash01(seed + 7) * 4,
-                    C(150, 144, 136), C(172, 166, 158), C(58, 52, 46), seed + 311, 100 * clamp(b.progress or 1, 0, 1), 5)
-            end
-        elseif b.kind == "xuwei_grape" then
-            -- 墨葡萄串:墨紫圆珠成串显形 + 泼墨晕(『笔底明珠』)
-            local pr2 = clamp(b.progress or 1, 0, 1)
-            drawInkBleed(0, -10, 36, 26, currentLevel.ink, 78 * pr2, b.x * 0.012 + b.y * 0.014, 3)
-            local rows = 4
-            for ry = 0, rows - 1 do
-                for rx = 0, rows - 1 - ry do
-                    local gseed = b.x * 0.01 + ry * 13 + rx * 7
-                    local gx = (rx - (rows - 1 - ry) * 0.5) * 15 + (hash01(gseed) - 0.5) * 3
-                    local gy = ry * 14 + 6
-                    local gr = (7.5 + hash01(gseed + 3) * 3.5) * (0.5 + 0.5 * pr2)
-                    drawCircle(gx, gy, gr, rgba(70, 56, 86, (140 + hash01(gseed + 7) * 100) * pr2))
-                    drawCircle(gx - gr * 0.3, gy - gr * 0.3, gr * 0.3, rgba(220, 210, 188, 110 * pr2))
-                end
-            end
-        elseif b.kind == "plum_finale" then
-            -- 白描圈花绽放：纸色花瓣、墨色勾边点蕊，呼应母本不设色的圈花法
-            drawFlowerBloom(b, {
-                outerA = rgba(238, 230, 212, 240), outerB = rgba(222, 210, 188, 240),
-                inner = rgba(244, 238, 222, 240), outerLen = 40, outerWidth = 27,
-                innerLen = 23, innerWidth = 16, stamen = true, stamenLen = 20,
-                darkKnots = true,
-            })
-            for i = 1, 3 do
-                local seed = b.x * 0.017 + b.y * 0.013 + i * 79
-                local a = hash01(seed) * math.pi * 2
-                local d = 30 + hash01(seed + 3) * 26
-                drawOutlineBlossom(math.cos(a) * d, math.sin(a) * d * 0.8, 8 + hash01(seed + 7) * 4, C(70, 58, 44), 96 + 40 * clamp(b.progress or 1, 0, 1), seed + 211)
-            end
         else
             drawFlowerBloom(b, {
                 outerA = rgba(195, 18, 18, 245), outerB = rgba(148, 10, 10, 245),
@@ -7117,14 +5935,6 @@ local function drawTargets()
     end
 end
 
-
--- ============================================================================
--- END scripts/src/70_entities_targets_render.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/80_fluid_player_render.lua
--- ============================================================================
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 local function fluidQuadTo(fromX, fromY, cx, cy, x, y)
     nvgBezierTo(
@@ -7136,12 +5946,6 @@ local function fluidQuadTo(fromX, fromY, cx, cy, x, y)
         x,
         y
     )
-end
-
--- 取当前关卡墨色的浓淡变体（mul 越小越浓黑）
-function inkShade(mul, alpha)
-    local c = currentLevel.ink
-    return rgba(c[1] * mul, c[2] * mul, c[3] * mul, alpha)
 end
 
 local function fillFluidPath(left, right, color)
@@ -7181,7 +5985,6 @@ local function drawDashFluidRibbon()
     local targetBlend = fluidTrailIsEnhanced() and 1.0 or 0.0
     fluidTrailDashBlend = fluidTrailDashBlend + (targetBlend - fluidTrailDashBlend) * 0.12
 
-    local haloLeft, haloRight = {}, {}
     for i = 1, #dashFluidPoints do
         local curr = dashFluidPoints[i]
         local prev = dashFluidPoints[i - 1] or curr
@@ -7247,31 +6050,18 @@ local function drawDashFluidRibbon()
         end
 
         local innerHalfW = outerHalfW * (0.62 - fluidTrailDashBlend * 0.12)
-        local haloHalfW = outerHalfW * 1.62 + 1.4
         outerLeft[#outerLeft + 1] = { x = cx + nx * outerHalfW, y = cy + ny * outerHalfW }
         outerRight[#outerRight + 1] = { x = cx - nx * outerHalfW, y = cy - ny * outerHalfW }
         innerLeft[#innerLeft + 1] = { x = cx + nx * innerHalfW, y = cy + ny * innerHalfW }
         innerRight[#innerRight + 1] = { x = cx - nx * innerHalfW, y = cy - ny * innerHalfW }
-        haloLeft[#haloLeft + 1] = { x = cx + nx * haloHalfW, y = cy + ny * haloHalfW }
-        haloRight[#haloRight + 1] = { x = cx - nx * haloHalfW, y = cy - ny * haloHalfW }
     end
 
     local outerAlpha = 115 * (1.0 - fluidTrailDashBlend) + 72 * fluidTrailDashBlend
     local innerAlpha = 238 * (1.0 - fluidTrailDashBlend) + 230 * fluidTrailDashBlend
-    -- 三层水墨：最外湿晕（纸面洇开）→ 中层墨身 → 内芯浓墨
-    fillFluidPath(haloLeft, haloRight, inkShade(0.92, 15 + 9 * (1.0 - fluidTrailDashBlend)))
-    fillFluidPath(outerLeft, outerRight, inkShade(0.82, outerAlpha))
-    fillFluidPath(innerLeft, innerRight, inkShade(0.52, innerAlpha))
-    -- 尾端飞白散锋：沿两缘交替甩出干笔细丝，越近尾端越实
-    local m = math.min(16, #outerLeft - 1)
-    for i = 1, m do
-        local fade = 1 - i / (m + 1)
-        local edge = (i % 2 == 0) and outerLeft or outerRight
-        local a, b = edge[i], edge[i + 1]
-        strokeLine(a.x, a.y, b.x + (b.x - a.x) * 0.8, b.y + (b.y - a.y) * 0.8, 0.9 + fade * 0.5, inkShade(0.6, 86 * fade))
-    end
+    fillFluidPath(outerLeft, outerRight, rgba(24, 24, 24, outerAlpha))
+    fillFluidPath(innerLeft, innerRight, rgba(17, 17, 17, innerAlpha))
     for _, f in ipairs(fiberLines) do
-        strokeLine(f.x1, f.y1, f.x2, f.y2, f.width, inkShade(0.5, f.alpha))
+        strokeLine(f.x1, f.y1, f.x2, f.y2, f.width, rgba(18, 18, 18, f.alpha))
     end
 end
 
@@ -7279,11 +6069,10 @@ local function drawDashFluidDroplets()
     for _, d in ipairs(dashFluidDroplets) do
         local r = d.radius * math.max(0, d.life)
         if d.kind == "dash_streak" then
-            strokeLine(d.x, d.y, d.x - d.vx * 1.4, d.y - d.vy * 1.4, math.max(0.4, r * 1.3), inkShade(0.62, 190 * d.life))
+            strokeLine(d.x, d.y, d.x - d.vx * 1.4, d.y - d.vy * 1.4, math.max(0.4, r * 1.3), rgba(24, 24, 24, 190 * d.life))
         else
-            drawCircle(d.x, d.y, r * 1.55, inkShade(0.95, 26 * d.life))
-            drawCircle(d.x, d.y, r, inkShade(0.82, 115 * d.life))
-            drawCircle(d.x, d.y, r * 0.60, inkShade(0.52, 238 * d.life))
+            drawCircle(d.x, d.y, r, rgba(24, 24, 24, 115 * d.life))
+            drawCircle(d.x, d.y, r * 0.60, rgba(17, 17, 17, 238 * d.life))
         end
     end
 end
@@ -7311,131 +6100,19 @@ local function drawParticles()
     end
 end
 
--- 活体墨滴：闭合贝塞尔轮廓 + 表面波动 + 速度形变（squash & stretch）
-function buildInkBlobOutline(cx, cy, baseR, spd, ang, squash, tear, wallAng)
-    local pts = {}
-    local n = 14
-    local stretchE = player.isDashing and 0.40 or clamp(spd * 0.027, 0, 0.30)
-    for k = 0, n - 1 do
-        local th = k / n * math.pi * 2
-        -- 三重表面波（整数倍频保证首尾无缝），墨滴永远在"呼吸"
-        local wob = 0.055 * math.sin(th * 3 + elapsed * 4.1)
-            + 0.040 * math.sin(th * 5 - elapsed * 3.3 + 1.7)
-            + 0.028 * math.sin(th * 7 + elapsed * 5.9 + 4.2)
-        local r = baseR * (1 + wob)
-        -- 沿速度方向拉伸（垂直方向等量收缩，体积守恒感）
-        r = r * (1 + stretchE * math.cos(2 * (th - ang)))
-        -- 落地挤压：横向变宽、纵向压扁
-        r = r * (1 + squash * math.cos(2 * th))
-        -- 运动拖墨：尾侧微微隆起拖长
-        if tear > 0.01 then
-            local rear = math.cos(th - ang - math.pi)
-            if rear > 0 then r = r * (1 + tear * rear * rear) end
-        end
-        -- 贴墙：朝墙一侧压平
-        if wallAng then
-            local press = math.cos(th - wallAng)
-            if press > 0 then r = r * (1 - 0.24 * press * press) end
-        end
-        pts[#pts + 1] = { x = cx + math.cos(th) * r, y = cy + math.sin(th) * r }
-    end
-    return pts
-end
-
-function fillInkBlob(pts, color)
-    if #pts < 3 then return end
-    nvgBeginPath(vg)
-    local prev = pts[#pts]
-    local curX, curY = (prev.x + pts[1].x) * 0.5, (prev.y + pts[1].y) * 0.5
-    nvgMoveTo(vg, curX, curY)
-    for i = 1, #pts do
-        local a = pts[i]
-        local b = pts[i % #pts + 1]
-        local mx, my = (a.x + b.x) * 0.5, (a.y + b.y) * 0.5
-        fluidQuadTo(curX, curY, a.x, a.y, mx, my)
-        curX, curY = mx, my
-    end
-    nvgClosePath(vg)
-    nvgFillColor(vg, color)
-    nvgFill(vg)
-end
-
 local function drawPlayer()
-    local spd = dist2(player.vx or 0, player.vy or 0)
-    local r0 = player.radius
-
-    -- 落地挤压检测（用 player 表存帧间状态，避免新增 chunk 级 local）
-    if player.isGrounded and (player.blobPrevVy or 0) > 5.5 then
-        player.blobSquash = math.min(0.42, (player.blobPrevVy or 0) * 0.035)
-    end
-    player.blobPrevVy = player.vy
-    player.blobSquash = (player.blobSquash or 0) * 0.85
-
-    local ang
-    if spd > 0.6 then
-        ang = math.atan2(player.vy, player.vx)
-    else
-        ang = player.facingRight and 0 or math.pi
-    end
-    local tear = player.isDashing and 0.34 or clamp(spd * 0.016, 0, 0.24)
-    local wallAng = nil
-    if player.isWallClinging then
-        wallAng = player.wallSide > 0 and 0 or math.pi
-    end
-
-    -- 冲刺彗尾：三层拖影 + 速度线
     if player.isDashing then
-        drawRotEllipse(player.x - player.vx * 0.58, player.y - player.vy * 0.58, r0 + 26, r0 * 1.05, ang, inkShade(0.95, 36))
-        drawRotEllipse(player.x - player.vx * 0.40, player.y - player.vy * 0.40, r0 + 18, r0 * 0.84, ang, inkShade(0.75, 62))
-        drawRotEllipse(player.x - player.vx * 0.24, player.y - player.vy * 0.24, r0 + 9, r0 * 0.58, ang, inkShade(0.45, 92))
-        for i = 1, 3 do
-            local seed = math.floor(elapsed * 40) * 13 + i * 57
-            local side = (hash01(seed) - 0.5) * r0 * 2.6
-            local nx2, ny2 = -math.sin(ang), math.cos(ang)
-            local sx = player.x - math.cos(ang) * r0 * (1.2 + hash01(seed + 3) * 1.6) + nx2 * side
-            local sy = player.y - math.sin(ang) * r0 * (1.2 + hash01(seed + 3) * 1.6) + ny2 * side
-            local ln = 10 + hash01(seed + 7) * 22
-            strokeLine(sx, sy, sx - math.cos(ang) * ln, sy - math.sin(ang) * ln, 0.8 + hash01(seed + 11) * 0.8, inkShade(0.5, 70 + hash01(seed + 13) * 60))
-        end
+        local ang = math.atan2(player.vy, player.vx)
+        drawRotEllipse(player.x - player.vx * 0.44, player.y - player.vy * 0.44, player.radius + 23, player.radius * 0.95, ang, rgba(8, 7, 6, 58))
+        drawRotEllipse(player.x - player.vx * 0.28, player.y - player.vy * 0.28, player.radius + 12, player.radius * 0.62, ang, rgba(2, 2, 2, 86))
     end
-
-    -- 贴墙：墨珠沿墙面滑出细痕
-    if player.isWallClinging then
-        local wx = player.x + player.wallSide * (r0 - 2)
-        strokeLine(wx, player.y - 4, wx + player.wallSide * 1.5, player.y + r0 + 10, 1.6, inkShade(0.6, 96))
-        if hash01(elapsed * 80) > 0.45 then
-            drawCircle(player.x + player.wallSide * 8, player.y + (hash01(elapsed * 100) - 0.5) * 10, 2.8, colorRGBA(currentLevel.ink, 110))
-        end
+    if player.isWallClinging and hash01(elapsed * 80) > 0.45 then
+        drawCircle(player.x + player.wallSide * 8, player.y + (hash01(elapsed * 100) - 0.5) * 10, 2.8, colorRGBA(currentLevel.ink, 110))
     end
-
-    -- 静止沉积：墨珠落定时在脚下洇出一圈淡墨（缓慢呼吸）
-    if player.isGrounded and not player.isDashing and spd < 0.8 then
-        local soak = 0.5 + 0.5 * math.sin(elapsed * 1.7)
-        drawEllipse(player.x, player.y + r0 * 0.82, r0 * (0.9 + soak * 0.35), r0 * 0.26, inkShade(0.95, 26 + soak * 16))
-    end
-
-    -- 湿晕（随速度变大，像快速运笔时墨来不及渗）
-    local bleedScale = 1.42 + math.min(0.5, spd * 0.022)
-    drawInkBleed(player.x, player.y, r0 * bleedScale, r0 * (bleedScale - 0.25), currentLevel.ink, 50, elapsed * 7.1 + player.x * 0.01, 3)
-
-    -- 墨滴本体：外层墨身 + 滞后的内芯浓墨
-    local body = buildInkBlobOutline(player.x, player.y, r0 * 1.04, spd, ang, player.blobSquash, tear, wallAng)
-    fillInkBlob(body, inkShade(0.78, 248))
-    local coreLagX = spd > 0.6 and -math.cos(ang) * r0 * 0.20 or 0
-    local coreLagY = spd > 0.6 and -math.sin(ang) * r0 * 0.20 or 0
-    local core = buildInkBlobOutline(
-        player.x + coreLagX, player.y + coreLagY + math.sin(elapsed * 2.3) * 0.6,
-        r0 * 0.58, spd, ang, player.blobSquash * 0.6, tear * 0.5, nil)
-    fillInkBlob(core, inkShade(0.42, 252))
-
-    -- 飞白颗粒 + 行进向高光（湿亮点）
-    drawInkSpeckles(player.x - r0, player.y - r0, r0 * 2, r0 * 2, currentLevel.paper, 42, elapsed * 3.7 + player.y * 0.01, 5)
-    local hlA = ang
-    if spd <= 0.6 then hlA = player.facingRight and -0.5 or math.pi + 0.5 end
-    local hx = player.x + math.cos(hlA) * r0 * 0.36
-    local hy = player.y + math.sin(hlA) * r0 * 0.36 - 1.5
-    drawCircle(hx, hy, 2.6, colorRGBA(currentLevel.paper, 235))
-    drawCircle(hx + 2.2, hy + 1.8, 1.2, colorRGBA(currentLevel.paper, 160))
+    drawInkBleed(player.x, player.y, player.radius * 1.45, player.radius * 1.20, currentLevel.ink, 54, elapsed * 7.1 + player.x * 0.01, 3)
+    drawCircle(player.x, player.y, player.radius, colorRGBA(currentLevel.ink, 248))
+    drawInkSpeckles(player.x - player.radius, player.y - player.radius, player.radius * 2, player.radius * 2, currentLevel.paper, 42, elapsed * 3.7 + player.y * 0.01, 5)
+    drawCircle(player.x + (player.facingRight and 3 or -3), player.y - 2, 2.5, colorRGB(currentLevel.paper))
 end
 
 local function drawPoetry()
@@ -7445,8 +6122,6 @@ local function drawPoetry()
         maple = { x = W(0.08), y = H(0.28), lines = { "停车坐爱枫林晚", "霜叶红于二月花" } },
         plum = { x = W(0.18), y = H(0.28), lines = { "吾家洗砚池头树", "个个花开淡墨痕", "不要人夸好颜色", "只留清气满乾坤" } },
         eaves = { x = W(0.08), y = H(0.18), lines = { "界画楼台工整描", "金碧山水自天娇" } },
-        plum_xiyan = { x = W(0.295), y = H(0.08), lines = { "吾家洗砚池头树", "个个花开淡墨痕", "不要人夸好颜色", "只留清气满乾坤" } },
-        xuwei_grape = { x = W(0.06), y = H(0.07), lines = { "半生落魄已成翁", "独立书斋啸晚风", "笔底明珠无处卖", "闲抛闲掷野藤中" } },
     }
     local p = poems[currentLevel.id]
     if not p then return end
@@ -7460,14 +6135,6 @@ local function drawPoetry()
     drawRect(p.x + 45, p.y - 45, 24, 24, 0, rgba(168, 43, 43, 165))
 end
 
-
--- ============================================================================
--- END scripts/src/80_fluid_player_render.lua
--- ============================================================================
-
--- ============================================================================
--- BEGIN scripts/src/90_world_seal_runtime.lua
--- ============================================================================
 -- Source chunk from original scripts/main.lua. Runtime bundle keeps chunks in filename order.
 local function drawWorld()
     drawPaper()
@@ -7529,16 +6196,6 @@ function sealInfoForCurrentLevel()
         return { x = 0.94, y = 0.45, size = 130, primaryA = "春水", primaryB = "破境", vertical = "春江水暖", paper = C(236, 241, 226), wear = 80 }
     elseif currentLevel.id == "eaves" then
         return { x = 0.94, y = 0.45, size = 130, primaryA = "古阁", primaryB = "飞檐", vertical = "古阁金秋", paper = C(239, 230, 213), wear = 80 }
-    elseif currentLevel.id == "plum_finale" then
-        return { x = 0.94, y = 0.88, size = 110, primaryA = "双清", primaryB = "梅卷", vertical = "梅竹双清", paper = C(214, 190, 152), wear = 80 }
-    elseif currentLevel.id == "wentong_zhu" then
-        return { x = 0.06, y = 0.85, size = 110, primaryA = "与可", primaryB = "倒垂", vertical = "胸有成竹", paper = C(172, 140, 86), wear = 90 }
-    elseif currentLevel.id == "plum_xiyan" then
-        return { x = 0.06, y = 0.80, size = 110, primaryA = "洗砚", primaryB = "清气", vertical = "淡墨痕", paper = C(206, 202, 192), wear = 80 }
-    elseif currentLevel.id == "molong" then
-        return { x = 0.03, y = 0.08, size = 110, primaryA = "九龙", primaryB = "行雨", vertical = "神龙见首", paper = C(166, 158, 140), wear = 90 }
-    elseif currentLevel.id == "xuwei_grape" then
-        return { x = 0.80, y = 0.88, size = 110, primaryA = "青藤", primaryB = "明珠", vertical = "笔底明珠", paper = C(214, 202, 176), wear = 90 }
     else
         return { x = 0.94, y = 0.45, size = 130, primaryA = "弄梅", primaryB = "破境", vertical = "清气乾坤", paper = C(246, 237, 225), wear = 80 }
     end
@@ -7827,8 +6484,3 @@ function HandleNanoVGRender(eventType, eventData)
     nvgRestore(vg)
     nvgEndFrame(vg)
 end
-
--- ============================================================================
--- END scripts/src/90_world_seal_runtime.lua
--- ============================================================================
-
