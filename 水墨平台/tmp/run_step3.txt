@@ -1,0 +1,233 @@
+[2026-06-11 13_59_35_876][0] ERROR: Could not open file C:/Program Files/TapTap/UrhoXRuntime/logs/game/urhox_runtime-2026-06-11 13_59_35_876.log
+[2026-06-11 13_59_35_876][0] ERROR: Failed to create log file C:/Program Files/TapTap/UrhoXRuntime/logs/game/urhox_runtime-2026-06-11 13_59_35_876.log
+[2026-06-11 13_59_35_828][0] INFO: DownloadManager initialized
+[2026-06-11 13_59_35_873][0] INFO: a couple of Subsystems registered finish.
+[2026-06-11 13_59_35_873][0] INFO: Engine construct finish.
+[2026-06-11 13_59_35_876][0] INFO: =======Git Info=======
+[2026-06-11 13_59_35_876][0] INFO: Client: unknown; Urho: unknown; Script: unknown; SVN: unknown; BuildTime: unknown
+[2026-06-11 13_59_35_876][0] INFO: ======================
+[2026-06-11 13_59_35_876][0] INFO: Engine initialize begin.
+[2026-06-11 13_59_35_876][0] INFO: enable MSAA
+[2026-06-11 13_59_35_881][0] INFO: Created 7 worker threads
+[2026-06-11 13_59_35_881][0] INFO: Engine resourcePrefixPath: C:/Program Files/TapTap/UrhoXRuntime/, resource: ResCache
+[2026-06-11 13_59_35_882][0] INFO: Added resource path C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 13_59_35_882][0] INFO: Now resource dir: 
+[2026-06-11 13_59_35_882][0] INFO: 0 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 13_59_35_882][0] INFO: Engine resourcePrefixPath: C:/Program Files/TapTap/UrhoXRuntime/, resource: Res
+[2026-06-11 13_59_35_882][0] INFO: Added resource path C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 13_59_35_882][0] INFO: Now resource dir: 
+[2026-06-11 13_59_35_882][0] INFO: 0 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 13_59_35_882][0] INFO: 1 - C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 13_59_35_882][0] INFO: Engine resourcePrefixPath: C:/Program Files/TapTap/UrhoXRuntime/, resource: Data
+[2026-06-11 13_59_35_882][0] INFO: Added resource path C:/Program Files/TapTap/UrhoXRuntime/Data/
+[2026-06-11 13_59_35_882][0] INFO: Now resource dir: 
+[2026-06-11 13_59_35_882][0] INFO: 0 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 13_59_35_882][0] INFO: 1 - C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 13_59_35_882][0] INFO: 2 - C:/Program Files/TapTap/UrhoXRuntime/Data/
+[2026-06-11 13_59_35_882][0] INFO: Engine resourcePrefixPath: C:/Program Files/TapTap/UrhoXRuntime/, resource: CoreData
+[2026-06-11 13_59_35_882][0] INFO: Added resource path C:/Program Files/TapTap/UrhoXRuntime/CoreData/
+[2026-06-11 13_59_35_882][0] INFO: Now resource dir: 
+[2026-06-11 13_59_35_882][0] INFO: 0 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 13_59_35_882][0] INFO: 1 - C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 13_59_35_882][0] INFO: 2 - C:/Program Files/TapTap/UrhoXRuntime/Data/
+[2026-06-11 13_59_35_882][0] INFO: 3 - C:/Program Files/TapTap/UrhoXRuntime/CoreData/
+[2026-06-11 13_59_35_882][0] INFO: Engine resourcePrefixPath: C:/Program Files/TapTap/UrhoXRuntime/, resource: Data/LuaScripts
+[2026-06-11 13_59_35_882][0] INFO: Added resource path C:/Program Files/TapTap/UrhoXRuntime/Data/LuaScripts/
+[2026-06-11 13_59_35_882][0] INFO: Now resource dir: 
+[2026-06-11 13_59_35_882][0] INFO: 0 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 13_59_35_882][0] INFO: 1 - C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 13_59_35_882][0] INFO: 2 - C:/Program Files/TapTap/UrhoXRuntime/Data/
+[2026-06-11 13_59_35_882][0] INFO: 3 - C:/Program Files/TapTap/UrhoXRuntime/CoreData/
+[2026-06-11 13_59_35_882][0] INFO: 4 - C:/Program Files/TapTap/UrhoXRuntime/Data/LuaScripts/
+[2026-06-11 13_59_36_467][0] INFO: computeShaderSupport 1,caps->supported:4,aps->supported & BGFX_CAPS_INDEX32:4096
+[2026-06-11 13_59_36_467][0] INFO: Detected 4 GPUs
+[2026-06-11 13_59_36_467][0] INFO: GPU 0 Name: NVIDIA GeForce RTX 3070
+[2026-06-11 13_59_36_467][0] INFO: GPU 1 Name: Intel(R) UHD Graphics 630
+[2026-06-11 13_59_36_467][0] INFO: GPU 2 Name: NVIDIA GeForce RTX 3070
+[2026-06-11 13_59_36_467][0] INFO: GPU 3 Name: Microsoft Basic Render Driver
+[2026-06-11 13_59_36_467][0] INFO: Selected GPU name: NVIDIA GeForce RTX 3070
+[2026-06-11 13_59_36_467][0] INFO: Renderer Type: Direct3D 11
+[2026-06-11 13_59_36_467][0] INFO: CheckFeatureSupport => CpuInstance=1, _R32I=1, _R32U=1, _R32F=1, _RGBA16F=1, _RGBA32F=1, MaxTextureSizeLimit=16384
+[2026-06-11 13_59_36_484][0] INFO: Graphics mode: 1280x720 (logic=1280x720, dpr=1) windowed resizable high[2026-06-11 13_59_36_485][0] ERROR: Could not find resource Cube/Day/DaySpecularHDR.dds
+[2026-06-11 13_59_36_556][0] ERROR: Could not open file C:/Program Files/TapTap/UrhoXRuntime/User/user_info-e.master.sce.xd.com.json
+DPI monitor 0
+[2026-06-11 13_59_36_485][0] INFO: Initialized input
+[2026-06-11 13_59_36_485][0] INFO: Initialized user interface
+[2026-06-11 13_59_36_490][0] INFO: Initialized renderer
+[2026-06-11 13_59_36_556][0] INFO: Set audio mode 44100 Hz stereo interpolated
+[2026-06-11 13_59_36_556][0] INFO: Initialized graphics & audio output.
+[2026-06-11 13_59_36_556][0] INFO: Initialized engine
+[2026-06-11 13_59_36_557][0] INFO: LogUploader disabled (no SLS URL)
+[2026-06-11 13_59_36_557][0] INFO: HttpManager initialized (Native with libhv HttpClient)
+[2026-06-11 13_59_36_559][0] INFO: Device Max Storage Block Binding Range: 16
+[2026-06-11 13_59_38_203][0] INFO: Added resource path C:/Users/202102-91/Desktop/项目/横板平台跳跃/UrhoX2/
+[2026-06-11 13_59_38_203][0] INFO: Now resource dir: 
+[2026-06-11 13_59_38_203][0] INFO: 0 - C:/Users/202102-91/Desktop/项目/横板平台跳跃/UrhoX2/
+[2026-06-11 13_59_38_203][0] INFO: 1 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 13_59_38_203][0] INFO: 2 - C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 13_59_38_203][0] INFO: 3 - C:/Program Files/TapTap/UrhoXRuntime/Data/
+[2026-06-11 13_59_38_203][0] INFO: 4 - C:/Program Files/TapTap/UrhoXRuntime/CoreData/
+[2026-06-11 13_59_38_203][0] INFO: 5 - C:/Program Files/TapTap/UrhoXRuntime/Data/LuaScripts/
+[2026-06-11 13_59_38_203][0] INFO: 查看启动参数
+[2026-06-11 13_59_38_203][0] INFO: argv ===> scripts/main_kingsbird.lua 
+[2026-06-11 13_59_38_203][0] INFO: argv ===> project_dir C:\Users\202102-91\Desktop\项目\横板平台跳跃\UrhoX2
+[2026-06-11 13_59_38_203][0] INFO: argv ===> debug_local true
+[2026-06-11 13_59_38_203][0] INFO: argv ===> use_local_res true
+[2026-06-11 13_59_38_203][0] INFO: argv ===> skip_login true
+[2026-06-11 13_59_38_203][0] INFO: argv ===> width 1280
+[2026-06-11 13_59_38_203][0] INFO: argv ===> height 720
+[2026-06-11 13_59_38_204][0] INFO: PackageFile::Open, C:/Program Files/TapTap/UrhoXRuntime/Res/shadercache_runtime/shadercache_dx11.pak, 0
+[2026-06-11 13_59_38_359][0] INFO: ULZM package opened: C:/Program Files/TapTap/UrhoXRuntime/Res/shadercache_runtime/shadercache_dx11.pak, decompressed 1003773 -> 117331003 bytes
+[2026-06-11 13_59_38_360][0] INFO: Added resource package shadercache_runtime
+[2026-06-11 13_59_38_371][0] INFO: Loaded shader cache package: C:/Program Files/TapTap/UrhoXRuntime/Res/shadercache_runtime/shadercache_dx11.pak
+[2026-06-11 13_59_38_371][0] INFO: Custom Lua require system installed (module cache active)
+[2026-06-11 13_59_38_377][0] INFO: Lua 5.4: Generational GC enabled.
+[2026-06-11 13_59_38_377][0] INFO: Lua official log file initialized: C:/Program Files/TapTap/UrhoXRuntime/logs/lua/lua-2026-06-11 13_59_38_377.log
+[2026-06-11 13_59_38_378][0] WARNING: Localization::ReadUserPrefLanguage: userPrefPath_ is empty
+[2026-06-11 13_59_38_378][0] INFO: Localization: auto-selected 'zh_CN' from [en, zh_CN]
+[2026-06-11 13_59_38_378][0] INFO: BootstrapManager: Localization initialized, language=zh_CN
+[2026-06-11 13_59_38_378][0] INFO: BootstrapManager: starting with gameUrl=
+[2026-06-11 13_59_38_378][0] INFO: LoadingUI::Show()
+[2026-06-11 13_59_38_380][0] INFO: Font Fonts/Anonymous Pro.ttf has NO color glyphs, face_flags=0xa39
+[2026-06-11 13_59_38_380][0] INFO: Font Fonts/Anonymous Pro.ttf has NO color glyphs, face_flags=0xa39
+[2026-06-11 13_59_38_380][0] INFO: BootstrapPipeline: starting with 1 steps, total weight 0.05
+[2026-06-11 13_59_38_380][0] INFO: BootstrapPipeline: executing step [1/1] 'Ready'
+[2026-06-11 13_59_38_380][0] INFO: [Bootstrap/Ready] Starting...
+[2026-06-11 13_59_38_380][0] INFO: [Bootstrap/Ready] settings.json not found, single player mode assumed
+[2026-06-11 13_59_38_382][1] INFO: Shader::BeginLoad: Shaders/BLGL/UI.glsl
+[2026-06-11 13_59_38_382][1] INFO: Shader::EndLoad
+[2026-06-11 13_59_38_382][1] INFO: Loaded cached vertex shader UI(DIFFMAP GAMMA_IN_SHADERING MIXCOLOR VERTEXCOLOR)
+[2026-06-11 13_59_38_382][1] INFO: Loaded cached pixel shader UI(DIFFMAP GAMMA_IN_SHADERING MIXCOLOR OPACITY VERTEXCOLOR)
+[2026-06-11 13_59_38_382][1] INFO: Loaded cached vertex shader UI(DIFFMAP)
+[2026-06-11 13_59_38_382][1] INFO: Loaded cached pixel shader UI(DIFFMAP OPACITY)
+[2026-06-11 13_59_38_382][1] INFO: BXLOG:C:\UrhoX\engine\Source\ThirdParty\bgfx-all\bgfx\src\dxgi.cpp (428): Display Width: 1280, Height: 720, RefreshRate: 60/1
+
+[2026-06-11 13_59_39_390][69] INFO: [Bootstrap/Ready] Completed successfully
+[2026-06-11 13_59_39_390][69] INFO: BootstrapPipeline: step 'Ready' completed successfully
+[2026-06-11 13_59_39_390][69] INFO: BootstrapPipeline: completed successfully
+[2026-06-11 13_59_39_390][69] INFO: LoadingUI::Hide()
+[2026-06-11 13_59_39_390][69] INFO: BootstrapManager: pipeline completed successfully
+[2026-06-11 13_59_39_390][69] INFO: BootstrapManager: using provided scriptFileName: scripts/main_kingsbird.lua
+[2026-06-11 13_59_39_390][69] WARNING: RuntimeRetargeterCache: Cannot load mapping table: uuid://F4ItQUiV0gmvAelLXpk5yrTs
+[2026-06-11 13_59_39_391][69] INFO: Loaded Lua script LuaScripts/Utilities/EnginePreview.lua
+[2026-06-11 13_59_39_391][69][Script] IsNetworkMode:    false
+[2026-06-11 13_59_39_392][69] INFO: Loaded Lua script urhox-libs/Engine/init.lua
+[2026-06-11 13_59_39_393][69] INFO: Loaded Lua script urhox-libs/Engine/InputExtensions.lua
+[2026-06-11 13_59_39_393][69] INFO: Lua module loaded successfully: 'InputExtensions' -> 'urhox-libs/Engine/InputExtensions.lua' (cached as 'urhox-libs/Engine/InputExtensions')
+[2026-06-11 13_59_39_393][69] INFO: Loaded Lua script urhox-libs/Engine/ResourceCacheExtensions.lua
+[2026-06-11 13_59_39_393][69] INFO: Lua module loaded successfully: 'ResourceCacheExtensions' -> 'urhox-libs/Engine/ResourceCacheExtensions.lua' (cached as 'urhox-libs/Engine/ResourceCacheExtensions')
+[2026-06-11 13_59_39_394][69] INFO: Loaded Lua script urhox-libs/Engine/i18n.lua
+[2026-06-11 13_59_39_394][69] WARNING: [i18n] GetLanguage: no language resolved
+[2026-06-11 13_59_39_394][69] INFO: [i18n] loadConfig: i18n.json not found, i18n disabled
+[2026-06-11 13_59_39_394][69] WARNING: [i18n] init: no config found, hooks NOT installed
+[2026-06-11 13_59_39_394][69] INFO: Lua module loaded successfully: 'i18n' -> 'urhox-libs/Engine/i18n.lua' (cached as 'urhox-libs/Engine/i18n')
+[2026-06-11 13_59_39_394][69] INFO: Lua module loaded successfully: 'urhox-libs/Engine' -> 'urhox-libs/Engine/init.lua' (cached as 'urhox-libs/Engine')
+[2026-06-11 13_59_39_395][69] INFO: Loaded Lua script LuaScripts/Utilities/Previews/InputAdaptor.lua
+[2026-06-11 13_59_39_395][69][Script] [InputAdaptor] Loading input event adaptor...
+[2026-06-11 13_59_39_395][69][Script] [InputAdaptor] Hooked SubscribeToEvent for event mapping.
+[2026-06-11 13_59_39_395][69][Script] [InputAdaptor] Platform: Windows, isTouchPlatform: false
+[2026-06-11 13_59_39_396][69][Script] [InputAdaptor] Hooked Input methods for touch emulation fallback.
+[2026-06-11 13_59_39_396][69] INFO: Lua module loaded successfully: 'LuaScripts/Utilities/Previews/InputAdaptor' -> 'LuaScripts/Utilities/Previews/InputAdaptor.lua' (cached as 'LuaScripts/Utilities/Previews/InputAdaptor')
+[2026-06-11 13_59_39_397][69] INFO: Loaded Lua script LuaScripts/Utilities/Previews/Scene.lua
+[2026-06-11 13_59_39_397][69] INFO: Lua module loaded successfully: 'LuaScripts/Utilities/Previews/Scene' -> 'LuaScripts/Utilities/Previews/Scene.lua' (cached as 'LuaScripts/Utilities/Previews/Scene')
+[2026-06-11 13_59_39_398][69] INFO: Loaded Lua script LuaScripts/Utilities/Previews/SceneGuard.lua
+[2026-06-11 13_59_39_398][69] INFO: Lua module loaded successfully: 'LuaScripts/Utilities/Previews/SceneGuard' -> 'LuaScripts/Utilities/Previews/SceneGuard.lua' (cached as 'LuaScripts/Utilities/Previews/SceneGuard')
+[2026-06-11 13_59_39_399][69] INFO: Loaded Lua script LuaScripts/Utilities/Previews/UIGuard.lua
+[2026-06-11 13_59_39_399][69] INFO: Lua module loaded successfully: 'LuaScripts/Utilities/Previews/UIGuard' -> 'LuaScripts/Utilities/Previews/UIGuard.lua' (cached as 'LuaScripts/Utilities/Previews/UIGuard')
+[2026-06-11 13_59_39_400][69] INFO: Loaded Lua script LuaScripts/Utilities/Previews/UserInfo.lua
+[2026-06-11 13_59_39_400][69] INFO: Lua module loaded su[2026-06-11 13_59_39_416][69] ERROR: Could not open file C:/Program Files/TapTap/UrhoXRuntime/logs/lua/lua-2026-06-11 13_59_38_377.log
+ccessfully: 'LuaScripts/Utilities/Previews/UserInfo' -> 'LuaScripts/Utilities/Previews/UserInfo.lua' (cached as 'LuaScripts/Utilities/Previews/UserInfo')
+[2026-06-11 13_59_39_400][69][Script] Check Transition.lua SimpleGrid.lua
+[2026-06-11 13_59_39_401][69] INFO: Loaded Lua script LuaScripts/Utilities/Previews/Isolation_Client.lua
+[2026-06-11 13_59_39_402][69] INFO: Loaded Lua script LuaScripts/Utilities/Previews/Isolation_Common.lua
+[2026-06-11 13_59_39_402][69] INFO: Lua module loaded successfully: 'LuaScripts/Utilities/Previews/Isolation_Common' -> 'LuaScripts/Utilities/Previews/Isolation_Common.lua' (cached as 'LuaScripts/Utilities/Previews/Isolation_Common')
+[2026-06-11 13_59_39_402][69] WARNING: GetProjectRoot failed, falling back to UserDocumentsDir
+[2026-06-11 13_59_39_402][69] WARNING: userId is 0, savedata will not be per-user isolated
+[2026-06-11 13_59_39_402][69] INFO: Lua module loaded successfully: 'LuaScripts/Utilities/Previews/Isolation_Client' -> 'LuaScripts/Utilities/Previews/Isolation_Client.lua' (cached as 'LuaScripts/Utilities/Previews/Isolation_Client')
+[2026-06-11 13_59_39_402][69] INFO: Executed Lua script LuaScripts/Utilities/EnginePreview.lua
+[2026-06-11 13_59_39_415][69] INFO: Loaded Lua script scripts/main_kingsbird.lua
+[2026-06-11 13_59_39_416][69] INFO: Executed Lua script scripts/main_kingsbird.lua
+[2026-06-11 13_59_39_416][69][Script] [kingsbird] === v3 multi-level start ===
+[2026-06-11 13_59_39_417][69][Script] [kingsbird] level 1 gold_temple ipoints=9
+[2026-06-11 13_59_39_417][69][Script] [kingsbird] === ready: A/D SPACE J | 1-5 switch level ===
+[2026-06-11 13_59_39_417][69] INFO: UrhoXRuntime: Game started successfully
+[2026-06-11 13_59_39_973][104][Script] [kb] respawn at lv1 (was 120,1006)
+[2026-06-11 13_59_40_558][139][Script] [kb] respawn at lv1 (was 120,1006)
+[2026-06-11 13_59_40_558][139][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 13_59_41_143][174][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 13_59_41_725][209][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 13_59_41_725][209][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 13_59_42_309][244][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 13_59_42_892][279][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 13_59_42_892][279][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 13_59_43_476][314][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 13_59_44_060][349][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 13_59_44_060][349][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 13_59_44_645][384][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 13_59_45_228][419][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 13_59_45_228][419][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 13_59_45_812][454][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 13_59_46_395][489][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 13_59_46_396][489][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 13_59_46_979][524]WARNINGNext log has been output too many times and will not be output again.
+[2026-06-11 13_59_46_979][524][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 13_59_47_563][559][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 13_59_48_731][629][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 13_59_49_899][699][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 13_59_51_066][769][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 13_59_52_234][839]WARNINGNext log has been output too many times and will not be output again.
+[2026-06-11 13_59_52_234][839][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_01_06_317][5230][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_01_06_907][5265][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_01_06_907][5265][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_01_07_481][5299][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_01_08_073][5334][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_01_08_073][5334][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_01_08_645][5368][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_01_09_235][5403][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_01_09_235][5403][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_01_09_809][5437][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_01_10_401][5472][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_01_10_401][5472][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_01_10_992][5507][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_01_11_567][5541][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_01_11_567][5541][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_01_12_156][5576]WARNINGNext log has been output too many times and will not be output again.
+[2026-06-11 14_01_12_156][5576][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_01_12_731][5610][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_01_13_894][5679][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_01_15_059][5748][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_01_16_239][5818][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_01_17_403][5887][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_01_18_565][5956]WARNINGNext log has been output too many times and will not be output again.
+[2026-06-11 14_01_18_565][5956][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_02_36_741][10588][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_02_36_741][10588][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_02_37_314][10622][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_02_37_904][10657][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_02_37_904][10657][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_02_38_493][10692][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_02_39_069][10726][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_02_39_069][10726][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_02_39_661][10761][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_02_40_234][10795][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_02_40_234][10795][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_02_40_819][10829][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_02_41_396][10863][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_02_41_396][10863][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_02_41_987][10898][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_02_42_574][10933]WARNINGNext log has been output too many times and will not be output again.
+[2026-06-11 14_02_42_574][10933][Script] [kb] respawn at lv1 (was 120,1018)
+[2026-06-11 14_02_42_574][10933][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_02_43_738][11002][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_02_44_904][11071][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_02_46_066][11140][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_02_47_231][11209][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_02_48_395][11278]WARNINGNext log has been output too many times and will not be output again.
+[2026-06-11 14_02_48_395][11278][Script] [kb] bad checkpoint, fall back to level spawn
+[2026-06-11 14_03_00_657][12004][Script] [kb] respawn at lv1 (was 241,1018)
+[2026-06-11 14_03_09_832][12554][Script] [kb] respawn at lv1 (was 1005,1016)
+[2026-06-11 14_03_10_415][12589][Script] [kb] respawn at lv1 (was 121,1018)
+[2026-06-11 14_03_32_251][13898][Script] [kb] respawn at lv1 (was 4229,1010)
+[2026-06-11 14_03_38_991][14302][Script] [kingsbird] level 2 gold_forest ipoints=5
+[2026-06-11 

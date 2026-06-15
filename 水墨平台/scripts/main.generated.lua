@@ -513,6 +513,36 @@ local LEVELS = {
         bloom = C(250, 252, 255), water = C(92, 222, 232),
         radius = 10, gravity = 0.52, jumpForce = -15.5, dashSpeed = 19, friction = 0.86,
     },
+    {
+        id = "trace_bamboo_scroll", trace = true, traceKey = "bamboo",
+        name = "墨竹行", title = "水墨平台跳跃 - 墨竹长卷", seal = "竹",
+        note = "踏节而上,触苞补笔。浓墨可踏,中墨为景;走过之处,竹叶次第展开。",
+        wmul = 3.4, hmul = 1.3,
+        paper = C(243, 239, 229), paper2 = C(229, 225, 214),
+        ink = C(25, 23, 21), wash = C(131, 129, 122), accent = C(186, 48, 40),
+        bloom = C(197, 38, 64), water = C(243, 239, 229),
+        radius = 10, gravity = 0.52, jumpForce = -15.5, dashSpeed = 19, friction = 0.86,
+    },
+    {
+        id = "trace_bamboo_scroll_v2", trace = true, traceKey = "bamboo_v2",
+        name = "墨竹行", title = "水墨平台跳跃 - 墨竹长卷·大格局", seal = "竹",
+        note = "七幕大格局竹卷:竖梯、链苞、垂梢、雾渡仙鹤、弹梢与长卷桥依次展开。",
+        wmul = 6.56, hmul = 3.61,
+        paper = C(243, 239, 229), paper2 = C(229, 225, 214),
+        ink = C(25, 23, 21), wash = C(131, 129, 122), accent = C(186, 48, 40),
+        bloom = C(197, 38, 64), water = C(243, 239, 229),
+        radius = 10, gravity = 0.52, jumpForce = -15.5, dashSpeed = 19, friction = 0.86,
+    },
+    {
+        id = "trace_video4", trace = true, traceKey = "video4",
+        name = "参考视频4复刻", title = "逐帧描摹 - 参考视频4", seal = "映",
+        note = "由参考视频4.mp4抽帧、分层、拼接生成的画面同源复刻关卡。",
+        wmul = 3.8, hmul = 1.0,
+        paper = C(221, 226, 220), paper2 = C(209, 212, 208),
+        ink = C(33, 37, 39), wash = C(126, 132, 129), accent = C(78, 90, 83),
+        bloom = C(197, 38, 64), water = C(188, 192, 188),
+        radius = 10, gravity = 0.52, jumpForce = -15.5, dashSpeed = 19, friction = 0.86,
+    },
 
 }
 
@@ -3013,7 +3043,12 @@ local function updateSpecialBeforeMovement()
         return
     end
 
-    if currentLevel.id == "bamboo" then
+    if currentLevel.trace and TRACE_RT and TRACE_RT.bamboo then
+        if updateBambooScrollSpecial then
+            updateBambooScrollSpecial()
+            if player.swingRope or player.ridingCrane then return end
+        end
+    elseif currentLevel.id == "bamboo" then
         local x1, x2 = W(0.32), W(0.80)
         if player.x > x1 and player.x < x2 and player.y > H(0.03) then
             local center = W(0.56)
@@ -3188,13 +3223,15 @@ local function fixedStep()
         ch.swayAngle = math.sin(ch.pulse) * 0.08
     end
     for _, c in ipairs(cranes) do
-        c.x = c.x + c.speed
-        c.theta = c.theta + 0.03
-        c.y = c.startY + math.sin(c.theta) * c.amplitude
-        c.wingAngle = math.sin(c.theta * 3.5) * (math.pi / 4)
-        if c.x > worldW + 100 then
-            c.x = -100
-            c.startY = H(0.2 + hash01(elapsed + c.speed) * 0.4)
+        if not c.path then
+            c.x = c.x + c.speed
+            c.theta = c.theta + 0.03
+            c.y = c.startY + math.sin(c.theta) * c.amplitude
+            c.wingAngle = math.sin(c.theta * 3.5) * (math.pi / 4)
+            if c.x > worldW + 100 then
+                c.x = -100
+                c.startY = H(0.2 + hash01(elapsed + c.speed) * 0.4)
+            end
         end
     end
     for _, leaf in ipairs(glidingLeaves) do
@@ -7508,11 +7545,13 @@ end
 -- ============================================================================
 -- BEGIN scripts/src/85_trace_levels.lua
 -- ============================================================================
+TRACE_DEBUG_FIT = false
 -- 描摹关运行时(第 18+ 关):多边形碰撞 + 分层视差 + 触碰开花 + 画卷终幕
 -- 注意:本文件不得新增 chunk 顶级 local(bundle 已 199/200),全部用全局。
 
 TRACE_RT = { polys = {}, ipoints = {}, petals = {}, vista = 0, def = nil,
-    goalDone = false, cpReached = {}, spawnX = 0, spawnY = 0, gx = 0, gy = 0 }
+    goalDone = false, cpReached = {}, spawnX = 0, spawnY = 0, gx = 0, gy = 0,
+    chars = {}, pools = {}, ripples = {}, ghostGrps = {}, plumDone = 0, plumTotal = 0 }
 
 function traceInsidePoly(poly, x, y)
     local n = #poly
@@ -7532,7 +7571,7 @@ function traceSnapDown(x, y)
     local bestY = nil
     for _, poly in ipairs(TRACE_RT.polys) do
         local bb = poly.bb
-        if (not bb) or (x >= bb[1] - 4 and x <= bb[3] + 4) then
+        if (not poly.ghostGrp) and ((not bb) or (x >= bb[1] - 4 and x <= bb[3] + 4)) then
             local n = #poly
             for i = 1, n do
                 local ax, ay = poly[i][1], poly[i][2]
@@ -7554,9 +7593,15 @@ function traceSnapDown(x, y)
 end
 
 function generateTraceLevel()
+    if currentLevel.traceKey == "bamboo" or currentLevel.traceKey == "bamboo_v2" then
+        generateBambooScroll()
+        return
+    end
     local def = TRACE_DEFS[currentLevel.traceKey]
     TRACE_RT = { polys = {}, ipoints = {}, petals = {}, vista = 0, def = def,
-        goalDone = false, cpReached = {}, spawnX = 0, spawnY = 0, gx = 0, gy = 0 }
+        goalDone = false, cpReached = {}, spawnX = 0, spawnY = 0, gx = 0, gy = 0,
+        chars = {}, pools = {}, ripples = {}, ghostGrps = {}, plumDone = 0, plumTotal = 0 }
+    TRACE_RT.design = TRACE_IPTS and TRACE_IPTS[currentLevel.traceKey] or nil
     worldW = def.spanx2 + def.frw
     worldH = def.spany2 + def.frh
     -- 层包围盒 + 碰撞多边形
@@ -7582,6 +7627,21 @@ function generateTraceLevel()
                 poly.bb = lay.bb[pi]
                 TRACE_RT.polys[#TRACE_RT.polys + 1] = poly
             end
+        end
+    end
+    -- 鬼阶:设计区内完整包含的碰撞体转虚影组(激活后限时实体)
+    if TRACE_RT.design and TRACE_RT.design.ghosts then
+        for _, gz in ipairs(TRACE_RT.design.ghosts) do
+            local grp = { timer = 0, polys = {} }
+            for _, poly in ipairs(TRACE_RT.polys) do
+                local bb = poly.bb
+                if bb and bb[1] >= gz.zone[1] and bb[2] >= gz.zone[2]
+                    and bb[3] <= gz.zone[3] and bb[4] <= gz.zone[4] then
+                    poly.ghostGrp = grp
+                    grp.polys[#grp.polys + 1] = poly
+                end
+            end
+            TRACE_RT.ghostGrps[#TRACE_RT.ghostGrps + 1] = grp
         end
     end
     -- 出生/存档吸附
@@ -7630,7 +7690,35 @@ function generateTraceLevel()
     end
     clusterize(plumPts, 360, "plum")
     clusterize(orchidPts, 300, "orchid")
-    -- 自动补点(顶面)
+    for _, ip in ipairs(TRACE_RT.ipoints) do
+        if ip.kind == "plum" then TRACE_RT.plumTotal = TRACE_RT.plumTotal + 1 end
+    end
+    -- 设计锚点(87_trace_ipoints):风袂/蓄墨苞/墨池/拾字
+    if TRACE_RT.design then
+        for _, d in ipairs(TRACE_RT.design.ipts) do
+            if d.kind == "gust" then
+                TRACE_RT.ipoints[#TRACE_RT.ipoints + 1] =
+                    { x = d.x, y = d.y, kind = "gust", arm = 0, burst = 999, members = {} }
+            elseif d.kind == "key" then
+                TRACE_RT.ipoints[#TRACE_RT.ipoints + 1] =
+                    { x = d.x, y = d.y, kind = "key", grp = TRACE_RT.ghostGrps[d.grp],
+                        bloomT = 0, members = {} }
+            elseif d.kind == "deco" then
+                -- 石上兰:吸附到岩面再生成(沿用 sprout 触碰开兰逻辑)
+                local sy2 = traceSnapDown(d.x, d.y - 120)
+                TRACE_RT.ipoints[#TRACE_RT.ipoints + 1] =
+                    { x = d.x, y = sy2 - 14, kind = "sprout", trig = false,
+                        members = { { x = d.x, y = sy2, r = 1, t = 0, delay = 0 } } }
+            elseif d.kind == "char" then
+                TRACE_RT.chars[#TRACE_RT.chars + 1] =
+                    { x = d.x, y = d.y, ch = d.ch, got = false, fade = 0 }
+            elseif d.kind == "pool" then
+                local my2 = traceSnapDown((d.x1 + d.x2) * 0.5, d.y - 200)
+                TRACE_RT.pools[#TRACE_RT.pools + 1] = { x1 = d.x1, x2 = d.x2, y = my2 }
+            end
+        end
+    end
+    -- 自动补点(顶面;有设计数据的关停用,避免黑地长花)
     local cands = {}
     for _, poly in ipairs(TRACE_RT.polys) do
         local n = #poly
@@ -7647,6 +7735,7 @@ function generateTraceLevel()
     end
     table.sort(cands, function(a, b) return a.x < b.x end)
     local lastX = -1e9
+    if TRACE_RT.design then cands = {} end
     for ci, cd in ipairs(cands) do
         if cd.x - lastX > 520 then
             local clash = false
@@ -7674,7 +7763,7 @@ function generateTraceLevel()
         end
     end
     -- 描摹关专属镜头(沿用 kingsbird 设计:广角+慢跟随)
-    TRACE_RT.zoom = ({ zhumei = 0.75, forest = 0.92, water = 0.92 })[currentLevel.traceKey] or 1.0
+    TRACE_RT.zoom = TRACE_DEBUG_FIT and math.min(DESIGN_W / (worldW + 80), DESIGN_H / (worldH + 80)) or (({ zhumei = 0.75, forest = 0.92, water = 0.92 })[currentLevel.traceKey] or 1.0)
     TRACE_RT.camCx = TRACE_RT.spawnX
     TRACE_RT.camCy = TRACE_RT.spawnY - 50
     print(string.format("[trace] %s polys=%d ipoints=%d world=%dx%d",
@@ -7690,13 +7779,23 @@ function traceUpdateCamera()
     local tx = player.x
     local ty = player.y - 50
     RT.camCx = (RT.camCx or tx) + (tx - (RT.camCx or tx)) * 0.07
-    RT.camCy = (RT.camCy or ty) + (ty - (RT.camCy or ty)) * 0.06
+    local yFollow = 0.06
+    if RT.bamboo and RT.bambooData == BAMBOO_DATA_22 and player.x > 4400 and player.x < 5050 then yFollow = 0.12 end
+    RT.camCy = (RT.camCy or ty) + (ty - (RT.camCy or ty)) * yFollow
     if worldW <= halfW * 2 then RT.camCx = worldW / 2
     else RT.camCx = clamp(RT.camCx, halfW, worldW - halfW) end
     if worldH <= halfH * 2 then RT.camCy = worldH / 2
     else RT.camCy = clamp(RT.camCy, halfH, worldH - halfH) end
     cameraX = RT.camCx - DESIGN_W / 2
     cameraY = RT.camCy - DESIGN_H / 2
+    -- 镜头随笔锋:触苞瞬间朝生长方向轻推
+    if RT.nudge and RT.nudge.t > 0 then
+        local f = RT.nudge.t / 22
+        f = f * f
+        cameraX = cameraX + RT.nudge.x * f
+        cameraY = cameraY + RT.nudge.y * f
+        RT.nudge.t = RT.nudge.t - 1
+    end
 end
 
 function traceCollideOnce()
@@ -7705,7 +7804,9 @@ function traceCollideOnce()
     local hitG, wallSide = false, 0
     for _, poly in ipairs(TRACE_RT.polys) do
         local bb = poly.bb
-        if not (bb and (px + pr < bb[1] or px - pr > bb[3] or py + pr < bb[2] or py - pr > bb[4])) then
+        if (poly.ghostGrp and poly.ghostGrp.timer <= 0) then
+            -- 鬼阶未实体化:无碰撞
+        elseif not (bb and (px + pr < bb[1] or px - pr > bb[3] or py + pr < bb[2] or py - pr > bb[4])) then
             local n = #poly
             local inside = false
             local bestD2, bestX, bestY = 1e18, 0, 0
@@ -7763,6 +7864,17 @@ end
 function traceCollision(prevX, prevY)
     local RT = TRACE_RT
     if not RT.def then return end
+    -- 顿笔:触苞瞬间冻结数帧(有收笔点则锁在收笔点,否则回卷上一帧)
+    if RT.hitstop and RT.hitstop > 0 then
+        RT.hitstop = RT.hitstop - 1
+        if RT.hitstopX then
+            player.x, player.y = RT.hitstopX, RT.hitstopY
+            if RT.hitstop <= 0 then RT.hitstopX = nil end
+        else
+            player.x, player.y = prevX, prevY
+        end
+        return
+    end
     -- 终幕:冻结
     if RT.goalDone then
         RT.vista = RT.vista + 1
@@ -7795,11 +7907,21 @@ function traceCollision(prevX, prevY)
     else
         player.isWallClinging = false
     end
-    -- 跌落回档
-    if player.y > RT.def.conf.kill then
+    -- 跌落/雾渊回档
+    local dead = player.y > RT.def.conf.kill
+    if (not dead) and RT.bamboo and RT.bambooData and RT.bambooData.killZones then
+        for _, z in ipairs(RT.bambooData.killZones) do
+            if player.x >= z[1] and player.x <= z[3] and player.y >= z[2] and player.y <= z[4] then
+                dead = true
+                break
+            end
+        end
+    end
+    if dead then
         player.x, player.y = RT.spawnX, RT.spawnY - 24
         player.vx, player.vy = 0, 0
         player.isDashing = false
+        player.swingRope, player.ridingCrane = nil, nil
         player.canDash = true
     end
     -- 存档点
@@ -7812,17 +7934,128 @@ function traceCollision(prevX, prevY)
             end
         end
     end
-    -- 终点
+    -- 终点(梅苞集满才开卷)
     local g = RT.def.conf.goal
     local dgx, dgy = player.x - g[1], player.y - g[2]
-    if dgx * dgx + dgy * dgy < 95 * 95 then
+    if dgx * dgx + dgy * dgy < 95 * 95 and RT.plumDone >= RT.plumTotal then
         RT.goalDone = true
         RT.vista = 0
         RT.gx, RT.gy = player.x, player.y
     end
-    -- 交互点:触碰开花
+    -- 鬼阶计时
+    for _, grp in ipairs(RT.ghostGrps) do
+        if grp.timer > 0 then grp.timer = grp.timer - 1 end
+    end
+    -- 拾字
+    for _, ch in ipairs(RT.chars) do
+        if not ch.got then
+            local dx, dy = player.x - ch.x, player.y - ch.y
+            if dx * dx + dy * dy < 58 * 58 then
+                ch.got = true
+                for k = 1, 10 do
+                    RT.petals[#RT.petals + 1] = { x = ch.x, y = ch.y,
+                        vx = (hash01(ch.x + k * 7) - 0.5) * 2.6, vy = -0.8 - hash01(k * 3.1) * 1.4,
+                        rot = hash01(k * 5.7) * 6.28, vr = (hash01(k * 9.1) - 0.5) * 0.15,
+                        life = 80 + k * 4, age = 0, ph = k, col = { 176, 142, 56 } }
+                end
+            end
+        elseif ch.fade < 1 then
+            ch.fade = math.min(1, ch.fade + 0.03)
+        end
+    end
+    -- 墨池:落入溅墨晕 + 轻滑步
+    if RT.bamboo and RT.bambooData and RT.bambooData.inkPools then
+        for _, pl in ipairs(RT.bambooData.inkPools) do
+            if player.isGrounded and player.x > pl.x1 and player.x < pl.x2
+                and math.abs(player.y - pl.y) < 130 then
+                if my > 5.5 then
+                    RT.ripples[#RT.ripples + 1] = { x = player.x, y = player.y + player.radius,
+                        t = 0, big = math.min(my / 14, 1.4) }
+                    RT.fallPenalty = math.max(RT.fallPenalty or 0, 30)
+                elseif math.abs(player.vx) > 5 and hash01(elapsed * 53 + player.x) < 0.10 then
+                    RT.ripples[#RT.ripples + 1] = { x = player.x, y = player.y + player.radius,
+                        t = 0, big = 0.45 }
+                end
+                if math.abs(player.vx) > 1 and math.abs(player.vx) < 13 then
+                    player.vx = player.vx * 1.05
+                end
+            end
+        end
+    end
+    for _, pl in ipairs(RT.pools) do
+        if player.isGrounded and player.x > pl.x1 and player.x < pl.x2
+            and math.abs(player.y - pl.y) < 130 then
+            if my > 5.5 then
+                RT.ripples[#RT.ripples + 1] = { x = player.x, y = player.y + player.radius,
+                    t = 0, big = math.min(my / 14, 1.4) }
+            elseif math.abs(player.vx) > 5 and hash01(elapsed * 53 + player.x) < 0.10 then
+                RT.ripples[#RT.ripples + 1] = { x = player.x, y = player.y + player.radius,
+                    t = 0, big = 0.45 }
+            end
+            if math.abs(player.vx) > 1 and math.abs(player.vx) < 13 then
+                player.vx = player.vx * 1.05
+            end
+        end
+    end
+    for i = #RT.ripples, 1, -1 do
+        local rp = RT.ripples[i]
+        rp.t = rp.t + 1
+        if rp.t > 55 then table.remove(RT.ripples, i) end
+    end
+    -- 交互点
+    if RT.bamboo then
+        bambooBudUpdate()
+        for i = #RT.petals, 1, -1 do
+            local pt = RT.petals[i]
+            pt.age = pt.age + 1
+            pt.x = pt.x + pt.vx + math.sin(pt.age * 0.08 + pt.ph) * 0.5
+            pt.y = pt.y + pt.vy
+            pt.vy = math.min(pt.vy + 0.022, 1.0)
+            pt.rot = pt.rot + pt.vr
+            if pt.age > pt.life then table.remove(RT.petals, i) end
+        end
+        return
+    end
+    RT.plumDone = 0
     for _, ip in ipairs(RT.ipoints) do
-        if not ip.trig then
+        if ip.kind == "plum" and ip.trig then RT.plumDone = RT.plumDone + 1 end
+        if ip.kind == "gust" then
+            -- 风袂:可重复触发,刷新冲刺+上推
+            if ip.arm > 0 then ip.arm = ip.arm - 1 end
+            ip.burst = ip.burst + 1
+            local dx, dy = player.x - ip.x, player.y - ip.y
+            -- 站定不触发:需在空中或有明确移动意图,避免落竿后被反复弹起
+            local moving = (not player.isGrounded) or math.abs(player.vx) > 1.5 or player.vy < -1
+            if ip.arm <= 0 and moving and dx * dx + dy * dy < 80 * 80 then
+                ip.arm = 160
+                ip.burst = 0
+                player.canDash = true
+                if player.vy > -13 then player.vy = -13 end
+                for k = 1, 14 do
+                    RT.petals[#RT.petals + 1] = { x = ip.x + (hash01(k * 3.3) - 0.5) * 46,
+                        y = ip.y + (hash01(k * 7.1) - 0.5) * 30,
+                        vx = (hash01(k * 5.9) - 0.5) * 3.4, vy = -1.2 - hash01(k * 2.7) * 2.2,
+                        rot = hash01(k * 4.3) * 6.28, vr = (hash01(k * 8.3) - 0.5) * 0.2,
+                        life = 60 + k * 3, age = 0, ph = k * 1.7, col = { 56, 78, 50 } }
+                end
+            end
+        elseif ip.kind == "key" then
+            -- 蓄墨苞:触碰实体化鬼阶组(可在余时 <240 帧时续墨)
+            local dx, dy = player.x - ip.x, player.y - ip.y
+            if ip.grp and dx * dx + dy * dy < 72 * 72 and ip.grp.timer < 240 then
+                ip.grp.timer = 300
+                ip.ring = 0
+                ip.bloomT = 0.01
+                for k = 1, 12 do
+                    RT.petals[#RT.petals + 1] = { x = ip.x, y = ip.y,
+                        vx = (hash01(k * 6.1) - 0.5) * 3.0, vy = -0.6 - hash01(k * 3.7) * 1.6,
+                        rot = hash01(k * 2.9) * 6.28, vr = (hash01(k * 7.7) - 0.5) * 0.18,
+                        life = 70 + k * 3, age = 0, ph = k * 2.1, col = { 40, 38, 34 } }
+                end
+            end
+            if ip.ring then ip.ring = ip.ring + 1 end
+            if ip.bloomT > 0 and ip.bloomT < 1 then ip.bloomT = math.min(1, ip.bloomT + 0.05) end
+        elseif not ip.trig then
             local dx, dy = player.x - ip.x, player.y - ip.y
             if dx * dx + dy * dy < 64 * 64 then
                 ip.trig = true
@@ -7865,6 +8098,121 @@ function traceCollision(prevX, prevY)
         pt.vy = math.min(pt.vy + 0.022, 1.0)
         pt.rot = pt.rot + pt.vr
         if pt.age > pt.life then table.remove(RT.petals, i) end
+    end
+end
+
+TRACE_PETAL_RED = { 198, 46, 66 }
+
+function traceDrawGust(ip)
+    local ready = ip.arm <= 0
+    local grow = ready and 1 or clamp((160 - ip.arm) / 160, 0.25, 1)
+    local sway = math.sin(elapsed * 1.8 + ip.x * 0.02) * 0.12
+    -- 竹梢叶簇(触发后凋落重生)
+    for k = 0, 4 do
+        local a = -1.5708 + (k - 2) * 0.42 + sway + (ready and 0 or 0.3)
+        local ln = (34 + hash01(ip.x + k * 13) * 20) * grow
+        nvgSave(vg)
+        nvgTranslate(vg, ip.x, ip.y)
+        nvgRotate(vg, a)
+        nvgBeginPath(vg)
+        nvgEllipse(vg, 0, -ln * 0.5, 4.6, ln * 0.5)
+        nvgFillColor(vg, rgba(48, 66, 44, ready and 235 or 150))
+        nvgFill(vg)
+        nvgRestore(vg)
+    end
+    -- 就绪时的上升风纹
+    if ready then
+        for k = 0, 2 do
+            local t = (elapsed * 0.7 + k * 0.33) % 1
+            nvgStrokeColor(vg, rgba(96, 104, 92, 120 * (1 - t)))
+            nvgStrokeWidth(vg, 2.2)
+            nvgBeginPath(vg)
+            nvgArc(vg, ip.x, ip.y - 14 - t * 64, 16 + t * 10, math.pi * 1.15, math.pi * 1.85, NVG_CW)
+            nvgStroke(vg)
+        end
+    end
+    if ip.burst < 26 then
+        local t = ip.burst / 26
+        nvgStrokeColor(vg, rgba(70, 90, 64, 200 * (1 - t)))
+        nvgStrokeWidth(vg, 3 * (1 - t) + 0.6)
+        nvgBeginPath(vg)
+        nvgCircle(vg, ip.x, ip.y, 14 + t * 64)
+        nvgStroke(vg)
+    end
+    -- 触发后的上升气流柱:让"被托起"读得见
+    if ip.burst < 44 then
+        local t = ip.burst / 44
+        for k = 0, 3 do
+            local xx = ip.x + (hash01(ip.x + k * 17.3) - 0.5) * 44
+            local len = 36 + hash01(k * 7.9) * 28
+            local yy = ip.y - 16 - t * 175 - k * 22
+            nvgStrokeColor(vg, rgba(110, 120, 104, 155 * (1 - t)))
+            nvgStrokeWidth(vg, 2.6 - k * 0.4)
+            nvgBeginPath(vg)
+            nvgMoveTo(vg, xx, yy)
+            nvgBezierTo(vg, xx + 5, yy - len * 0.4, xx - 5, yy - len * 0.7, xx + 2, yy - len)
+            nvgStroke(vg)
+        end
+    end
+end
+
+function traceDrawKeyBud(ip)
+    local grp = ip.grp
+    local act = grp and grp.timer > 0
+    local ph = elapsed * 2.4 + ip.x * 0.01
+    -- 触发后的墨瓣绽开
+    if ip.bloomT > 0 then
+        local sc = 1 - (1 - ip.bloomT) ^ 3
+        for k = 0, 4 do
+            local a = k * 1.2566 + 0.4
+            nvgBeginPath(vg)
+            nvgCircle(vg, ip.x + math.cos(a) * 11 * sc, ip.y + math.sin(a) * 11 * sc, 6.5 * sc)
+            nvgFillColor(vg, rgba(44, 42, 38, 200))
+            nvgFill(vg)
+        end
+    end
+    nvgBeginPath(vg)
+    nvgCircle(vg, ip.x, ip.y, act and 10.5 or (9 + math.sin(ph) * 1.5))
+    nvgFillColor(vg, rgba(34, 32, 30, act and 245 or 215))
+    nvgFill(vg)
+    if not act then
+        nvgStrokeColor(vg, rgba(70, 66, 62, 56 + 26 * math.sin(ph)))
+        nvgStrokeWidth(vg, 2.4)
+        nvgBeginPath(vg)
+        nvgCircle(vg, ip.x, ip.y, 26 + math.sin(ph) * 4)
+        nvgStroke(vg)
+    else
+        -- 余墨计时弧
+        local f = grp.timer / 300
+        nvgStrokeColor(vg, rgba(40, 38, 34, 205))
+        nvgStrokeWidth(vg, 3)
+        nvgBeginPath(vg)
+        nvgArc(vg, ip.x, ip.y, 19, -1.5708, -1.5708 + f * 6.2832, NVG_CW)
+        nvgStroke(vg)
+        -- 墨脉:苞到各鬼阶的流动墨点,标出因果
+        for _, poly in ipairs(grp.polys) do
+            local bb = poly.bb
+            if bb then
+                local tx2, ty2 = (bb[1] + bb[3]) * 0.5, bb[2]
+                for k = 0, 2 do
+                    local t = (elapsed * 0.8 + k * 0.34 + bb[1] * 0.001) % 1
+                    local mx2 = ip.x + (tx2 - ip.x) * t
+                    local my3 = ip.y + (ty2 - ip.y) * t - math.sin(t * 3.14159) * 46
+                    nvgBeginPath(vg)
+                    nvgCircle(vg, mx2, my3, 3.2 * (1 - t * 0.5))
+                    nvgFillColor(vg, rgba(44, 42, 38, 165 * (1 - t * 0.6) * math.min(f * 4, 1)))
+                    nvgFill(vg)
+                end
+            end
+        end
+    end
+    if ip.ring and ip.ring < 50 then
+        local t = ip.ring / 50
+        nvgStrokeColor(vg, rgba(60, 56, 52, 200 * (1 - t)))
+        nvgStrokeWidth(vg, 3.5 * (1 - t) + 0.6)
+        nvgBeginPath(vg)
+        nvgCircle(vg, ip.x, ip.y, 16 + t * 70)
+        nvgStroke(vg)
     end
 end
 
@@ -7956,6 +8304,19 @@ function traceDrawMount(z)
             nvgFill(vg)
         end
     end
+    -- 拾得题字成行(漏拾的字留空框)
+    for i, ch in ipairs(RT.chars) do
+        local cy3 = (i - 1) * 58
+        if ch.got then
+            drawText(-86, cy3 - 4, 46, rgba(56, 50, 44, 235 * v), ch.ch)
+        else
+            nvgStrokeColor(vg, rgba(120, 112, 102, 90 * v))
+            nvgStrokeWidth(vg, 1.6)
+            nvgBeginPath(vg)
+            nvgRect(vg, -84, cy3, 40, 40)
+            nvgStroke(vg)
+        end
+    end
     local sv = clamp((RT.vista - 150) / 26, 0, 1)
     if sv > 0 then
         local pop = 1 + (1 - sv) * 0.7
@@ -8001,6 +8362,10 @@ end
 
 function drawTraceWorld()
     local RT = TRACE_RT
+    if RT.bamboo then
+        drawBambooScroll()
+        return
+    end
     local def = RT.def
     if not def then return end
     nvgSave(vg)
@@ -8054,9 +8419,87 @@ function drawTraceWorld()
             nvgRestore(vg)
         end
     end
+    -- 鬼阶虚影:未实体化时罩宣纸色淡化 + 呼吸墨边;余时将尽时闪烁警示
+    for _, grp in ipairs(RT.ghostGrps) do
+        local wash
+        if grp.timer <= 0 then
+            wash = 205
+        elseif grp.timer < 80 then
+            wash = (math.floor(grp.timer / 7) % 2 == 0) and 150 or 0
+        else
+            wash = 0
+        end
+        for _, poly in ipairs(grp.polys) do
+            nvgBeginPath(vg)
+            nvgMoveTo(vg, poly[1][1], poly[1][2])
+            for k = 2, #poly do nvgLineTo(vg, poly[k][1], poly[k][2]) end
+            nvgClosePath(vg)
+            if wash > 0 then
+                nvgFillColor(vg, rgba(def.base[1], def.base[2], def.base[3], wash))
+                nvgFill(vg)
+            end
+            if grp.timer <= 0 then
+                nvgStrokeColor(vg, rgba(64, 60, 56, 92 + 36 * math.sin(elapsed * 2.6 + poly[1][1] * 0.01)))
+                nvgStrokeWidth(vg, 2.2)
+                nvgStroke(vg)
+            else
+                -- 墨衣:实体期描边浓度=剩余时间,台上读秒
+                local f = grp.timer / 300
+                nvgStrokeColor(vg, rgba(22, 20, 18, 60 + 150 * f))
+                nvgStrokeWidth(vg, 2 + 4 * f)
+                nvgStroke(vg)
+            end
+        end
+    end
+    -- 墨池涟漪
+    for _, rp in ipairs(RT.ripples) do
+        local t = rp.t / 55
+        local a = (1 - t) * 150 * math.min(rp.big, 1)
+        for k = 0, 1 do
+            local rr = (10 + t * 56) * rp.big * (1 - k * 0.4)
+            nvgStrokeColor(vg, rgba(38, 36, 33, a * (1 - k * 0.35)))
+            nvgStrokeWidth(vg, 2.6 - k)
+            nvgBeginPath(vg)
+            nvgEllipse(vg, rp.x, rp.y, rr, rr * 0.32)
+            nvgStroke(vg)
+        end
+    end
+    -- 苔点(逃生路暗示:斜点上行,水墨皴法里的苔)
+    if RT.design and RT.design.hints then
+        for hi, hp in ipairs(RT.design.hints) do
+            local wob = math.sin(elapsed * 1.4 + hi * 2.1) * 1.5
+            nvgSave(vg)
+            nvgTranslate(vg, hp.x, hp.y + wob)
+            nvgRotate(vg, -0.5)
+            nvgBeginPath(vg)
+            nvgEllipse(vg, 0, 0, 7.5, 3)
+            nvgFillColor(vg, rgba(52, 60, 48, 170))
+            nvgFill(vg)
+            nvgRestore(vg)
+        end
+    end
+    -- 拾字
+    for _, ch in ipairs(RT.chars) do
+        if not ch.got then
+            local bob = math.sin(elapsed * 2 + ch.x * 0.013) * 5
+            nvgStrokeColor(vg, rgba(170, 138, 60, 70 + 30 * math.sin(elapsed * 2.4 + ch.x)))
+            nvgStrokeWidth(vg, 2)
+            nvgBeginPath(vg)
+            nvgCircle(vg, ch.x, ch.y + bob, 30)
+            nvgStroke(vg)
+            drawText(ch.x - 17, ch.y + bob - 19, 34, rgba(50, 46, 42, 230), ch.ch)
+        elseif ch.fade < 1 then
+            drawText(ch.x - 17, ch.y - 19 - ch.fade * 46, 34,
+                rgba(150, 120, 52, 220 * (1 - ch.fade)), ch.ch)
+        end
+    end
     -- 交互点 / 花
     for _, ip in ipairs(RT.ipoints) do
-        if not ip.trig then
+        if ip.kind == "gust" then
+            traceDrawGust(ip)
+        elseif ip.kind == "key" then
+            traceDrawKeyBud(ip)
+        elseif not ip.trig then
             local ph = elapsed * 2.2 + ip.x * 0.01
             nvgStrokeColor(vg, rgba(70, 66, 62, 56 + 26 * math.sin(ph)))
             nvgStrokeWidth(vg, 2.4)
@@ -8117,22 +8560,63 @@ function drawTraceWorld()
     -- 花瓣
     for _, pt in ipairs(RT.petals) do
         local a = 230 * (1 - pt.age / pt.life)
+        local pc = pt.col or TRACE_PETAL_RED
         nvgSave(vg)
         nvgTranslate(vg, pt.x, pt.y)
         nvgRotate(vg, pt.rot)
         nvgBeginPath(vg)
         nvgEllipse(vg, 0, 0, 5.2, 2.8)
-        nvgFillColor(vg, rgba(198, 46, 66, a))
+        nvgFillColor(vg, rgba(pc[1], pc[2], pc[3], a))
         nvgFill(vg)
         nvgRestore(vg)
     end
-    -- 终点门
+    -- 终点门(梅苞未集满时灰锁,苞计点亮进度)
     local g = def.conf.goal
-    nvgStrokeColor(vg, rgba(150, 60, 50, 190))
+    local locked = RT.plumTotal > 0 and RT.plumDone < RT.plumTotal
+    -- 玩家靠近锁定门:苞计脉动放大 + 灰涟漪,提示去寻梅
+    local nearLock = 0
+    if locked then
+        local ddx, ddy = player.x - g[1], player.y - g[2]
+        if ddx * ddx + ddy * ddy < 230 * 230 then
+            RT.gatePulse = (RT.gatePulse or 0) + 1
+            nearLock = 1
+            local t = (RT.gatePulse % 70) / 70
+            nvgStrokeColor(vg, rgba(110, 104, 96, 130 * (1 - t)))
+            nvgStrokeWidth(vg, 2.6 * (1 - t) + 0.5)
+            nvgBeginPath(vg)
+            nvgCircle(vg, g[1], g[2] - 40, 40 + t * 90)
+            nvgStroke(vg)
+        else
+            RT.gatePulse = 0
+        end
+    end
+    if locked then
+        nvgStrokeColor(vg, rgba(122, 116, 108, 165))
+    else
+        nvgStrokeColor(vg, rgba(150, 60, 50, 190 + 40 * math.sin(elapsed * 3)))
+    end
     nvgStrokeWidth(vg, 5)
     nvgBeginPath(vg)
     nvgArc(vg, g[1], g[2] - 50, 80, math.pi, 0, NVG_CW)
     nvgStroke(vg)
+    if RT.plumTotal > 0 then
+        for i = 1, RT.plumTotal do
+            local pulse = (nearLock == 1 and i > RT.plumDone)
+                and (1 + 0.45 * math.sin(elapsed * 5 + i * 1.4)) or 1
+            local bx = g[1] + (i - (RT.plumTotal + 1) * 0.5) * 30
+            local by = g[2] - 150
+            nvgBeginPath(vg)
+            nvgCircle(vg, bx, by, 7 * pulse)
+            if i <= RT.plumDone then
+                nvgFillColor(vg, rgba(197, 38, 64, 235))
+                nvgFill(vg)
+            else
+                nvgStrokeColor(vg, rgba(120, 112, 104, 200))
+                nvgStrokeWidth(vg, 2.2)
+                nvgStroke(vg)
+            end
+        end
+    end
     nvgStrokeColor(vg, rgba(90, 84, 78, 235))
     nvgStrokeWidth(vg, 4.5)
     nvgBeginPath(vg)
@@ -8938,11 +9422,1410 @@ TP[17] = {6100,280,6107,288,6107,741,6111,843,6126,861,6151,866,6159,877,6180,88
 TP[18] = {5543,280,5543,604,5552,601,5562,612,5585,617,5595,629,5612,634,5612,280}
 TP[19] = {823,0,822,153,791,170,766,174,760,184,735,198,712,200,703,214,668,231,649,232,644,243,594,263,594,268,583,277,590,326,615,347,633,398,633,464,627,478,625,531,621,534,626,562,626,727,620,748,626,755,628,774,748,778,783,775,798,766,799,740,794,719,749,718,736,725,707,726,683,717,688,645,682,637,681,609,687,606,687,535,678,505,678,487,684,473,708,456,768,448,788,451,809,461,832,457,840,462,866,460,887,452,981,455,992,461,1008,458,1050,463,1073,457,1108,464,1120,460,1159,462,1165,458,1181,463,1220,459,1257,462,1273,458,1292,466,1303,462,1308,468,1309,461,1322,461,1319,471,1325,473,1326,489,1331,490,1332,534,1328,545,1317,550,1200,551,1182,539,1173,542,1171,550,1158,554,1102,554,1090,550,1059,554,1045,550,1028,557,1020,553,975,555,959,549,927,555,870,550,838,554,825,549,804,555,806,574,799,585,806,609,1286,609,1343,615,1348,630,1345,722,1331,719,1329,690,1320,682,1318,697,1313,704,1306,704,1302,716,1288,718,1279,726,1264,726,1264,731,1256,732,1255,736,1244,735,1244,723,1239,718,1124,718,1118,726,1117,743,1108,744,1108,759,1115,759,1116,771,1125,776,1181,777,1184,905,1241,905,1238,857,1243,846,1242,829,1253,822,1250,795,1258,785,1285,776,1315,779,1336,798,1332,823,1334,828,1347,832,1347,905,1486,905,1491,866,1485,862,1471,875,1452,866,1447,844,1451,829,1420,783,1420,774,1429,758,1430,735,1467,738,1466,732,1448,727,1447,722,1466,724,1468,719,1440,706,1429,692,1416,694,1420,683,1418,648,1423,647,1424,629,1445,611,1447,591,1424,587,1424,598,1418,600,1418,580,1409,576,1402,554,1359,546,1344,548,1336,541,1335,519,1336,490,1342,489,1341,474,1348,470,1346,460,1429,460,1468,454,1471,0,1412,0,1413,82,1399,97,1399,152,1379,161,1375,167,1373,199,1363,205,1342,204,1334,198,1334,167,1311,151,1310,99,1307,90,1296,81,1297,0,1239,0,1237,115,1224,112,1213,100,1181,95,1150,71,1128,67,1108,53,1104,42,1096,36,1094,0,1026,0,1026,104,1022,111,1006,115,988,129,982,176,965,181,929,180,919,129,910,120,894,119,892,112,882,109,882,0}
 TRACE_DEFS["water"] = TD
+-- BEGIN video4 trace replica
+TD = { base={221,226,220}, spanx2=3869, spany2=109, frw=992, frh=432, refx=496, refy=216, layers={},
+  conf={ spawn={80,302}, cps={{80,302}, {1652,281}, {3208,270}}, goal={4374,259}, kill=801 } }
+TD.layers[1] = { color={221,226,220}, ocol={221,226,220}, par=0.12, coll=0, hidden=0, polys={} }
+TP = TD.layers[1].polys
+TP[1] = {182,508,181,526,195,527,200,522,200,508}
+TP[2] = {1230,503,1230,517,1258,516,1258,501}
+TP[3] = {1303,497,1275,504,1275,517,1303,518}
+TP[4] = {1372,487,1365,495,1365,517,1394,518,1394,488}
+TP[5] = {1348,487,1342,485,1330,495,1320,498,1320,517,1348,518}
+TP[6] = {1439,480,1431,480,1411,491,1411,517,1439,517}
+TP[7] = {1167,473,1143,474,1144,513,1148,516,1169,515,1171,480}
+TP[8] = {791,454,791,441,766,442,771,445,771,449}
+TP[9] = {1126,440,1120,443,1116,453,1118,459,1125,457}
+TP[10] = {1004,426,1004,512,1029,515,1032,504,1032,426}
+TP[11] = {1004,383,1004,411,1032,411,1032,402,1026,398,1026,385}
+TP[12] = {466,376,455,382,455,392,466,391}
+TP[13] = {1117,372,1117,388,1126,391,1126,377,1123,372}
+TP[14] = {975,368,972,368,971,379,967,383,948,381,942,388,922,389,922,441,927,441,931,449,939,450,946,446,949,428,961,429,975,425}
+TP[15] = {773,374,773,380,787,397,814,396,814,378,808,376,807,371,815,369,815,366,799,368,790,363,783,372}
+TP[16] = {437,362,428,362,427,374,424,376,413,375,413,367,421,365,421,361,412,362,413,380,395,380,395,387,400,387,407,394,411,394,413,389,424,391,437,382}
+TP[17] = {650,363,650,372,646,377,640,407,634,420,634,432,626,438,675,435,669,432,669,428,679,411,701,406,711,414,706,437,720,434,734,438,742,436,745,428,802,428,808,435,808,459,813,458,813,419,776,419,747,384,747,380,754,379,754,376,729,376,712,358,711,346,694,351,681,349,658,354}
+TP[18] = {453,323,454,358,459,358,460,368,466,370,466,358,462,357,461,327,466,322}
+TP[19] = {1411,300,1411,342,1424,337,1439,339,1439,306,1421,306}
+TP[20] = {1112,292,1117,304,1123,305,1126,290}
+TP[21] = {1365,272,1367,321,1372,329,1385,323,1394,323,1394,290,1378,288,1374,273}
+TP[22] = {1004,245,1004,270,1015,271,1031,267,1031,245}
+TP[23] = {675,250,668,249,664,243,644,244,640,260,595,261,595,265,599,266,599,278,595,280,595,304,612,310,612,325,623,323,625,328,631,327,631,320,638,314,640,305,651,300,644,287,638,285,636,265,651,254,671,254}
+TP[24] = {1411,235,1411,248,1421,255,1439,252,1439,245,1429,244,1423,238}
+TP[25] = {1320,233,1320,253,1327,266,1327,272,1324,273,1326,291,1337,310,1348,307,1348,268,1341,262,1340,248,1329,247,1326,237}
+TP[26] = {975,218,965,218,965,225,955,227,955,233,962,234,965,229,975,229}
+TP[27] = {1170,216,1155,224,1143,222,1146,256,1152,259,1159,253,1169,254,1168,263,1143,273,1143,300,1150,302,1147,312,1143,313,1143,433,1152,433,1171,425}
+TP[28] = {1369,214,1371,225,1384,237,1394,235,1394,223,1377,214}
+TP[29] = {1098,199,1098,225,1107,225,1112,201}
+TP[30] = {1275,192,1275,216,1289,224,1289,232,1294,236,1294,243,1291,244,1292,262,1295,271,1301,273,1303,216,1297,215,1294,205,1283,194}
+TP[31] = {616,179,616,216,639,216,644,222,643,230,697,230,700,219,679,221,676,217,677,200,689,198,686,190,680,194,666,194,664,183,672,182,675,187,675,179}
+TP[32] = {1320,176,1323,180,1331,180,1336,196,1348,201,1348,185,1334,182,1331,176}
+TP[33] = {1231,156,1230,182,1238,185,1247,183,1251,189,1258,187,1258,162,1245,154}
+TP[34] = {1171,147,1153,148,1150,155,1171,156}
+TP[35] = {265,100,264,103,344,103,357,105,358,108,389,108,390,112,399,114,405,124,413,123,412,131,419,135,422,150,409,160,412,161,412,166,422,169,422,174,409,176,410,191,420,196,419,221,408,230,402,246,409,250,411,256,420,255,421,247,431,248,443,266,442,278,428,301,436,307,433,339,416,349,438,351,438,312,454,307,455,287,466,270,466,250,459,242,459,237,466,229,462,169,466,167,467,141,461,109,369,106,363,104,362,99}
+TP[36] = {94,99,94,103,186,105,187,108,218,108,219,116,214,125,212,142,229,141,241,145,250,138,253,123,251,111,225,109,220,105,220,99,137,96}
+TP[37] = {1411,95,1411,179,1419,183,1428,198,1439,201,1439,97}
+TP[38] = {1365,95,1365,152,1378,154,1383,159,1385,168,1392,172,1394,95}
+TP[39] = {1320,95,1320,99,1328,106,1330,115,1348,117,1348,95}
+TP[40] = {417,96,477,98,478,103,538,105,545,109,594,108,595,129,589,132,592,133,591,142,599,146,595,187,599,226,595,244,625,244,626,228,607,228,604,221,604,174,620,169,636,171,636,159,624,155,625,143,639,140,644,146,645,169,681,170,690,179,712,180,693,175,693,168,697,164,683,163,680,159,680,154,687,149,685,140,669,140,666,133,661,131,662,122,645,117,644,109,611,109,611,103,742,103,744,98,787,98,788,103,1010,103,1011,108,1004,114,1004,151,1025,153,1030,158,1032,104,1041,103,1042,98,1047,98,1044,95,1027,98,990,98,989,95,635,95,634,98,580,98,579,95}
+TD.layers[2] = { color={209,212,208}, ocol={209,212,208}, par=0.217143, coll=0, hidden=0, polys={} }
+TP = TD.layers[2].polys
+TP[1] = {1815,510,1750,511,1750,516,1815,515}
+TP[2] = {1668,511,1668,516,1733,516,1733,511,1725,510}
+TP[3] = {1586,510,1586,516,1651,516,1651,511}
+TP[4] = {1504,511,1504,516,1569,516,1569,511,1561,510}
+TP[5] = {1422,512,1422,516,1487,515,1487,510}
+TP[6] = {1331,509,1304,510,1301,499,1300,509,1266,511,1266,517,1331,518}
+TP[7] = {647,484,636,486,613,499,609,527,605,531,610,531,611,528,651,526,652,517,647,510}
+TP[8] = {1014,482,1014,520,1051,524,1079,522,1079,510,1065,512,1039,509,1018,512,1017,504,1022,490,1020,484}
+TP[9] = {1249,452,1239,453,1229,461,1222,461,1209,469,1201,468,1190,474,1188,484,1192,486,1192,490,1187,494,1184,512,1247,516,1249,509,1239,509,1238,503,1242,495,1249,495}
+TP[10] = {308,448,312,464,323,467,325,454}
+TP[11] = {1634,437,1612,435,1605,441,1586,441,1586,500,1617,493,1644,478,1651,478,1650,467,1634,463}
+TP[12] = {1266,437,1266,474,1275,475,1276,469,1287,464,1292,465,1292,470,1298,470,1299,465,1331,467,1331,438,1273,445,1273,438,1295,427,1278,430}
+TP[13] = {1565,424,1562,424,1560,432,1539,428,1531,437,1517,434,1504,436,1504,502,1513,503,1514,500,1531,495,1546,495,1561,488,1569,488,1569,467,1561,459,1568,443}
+TP[14] = {1487,419,1475,419,1459,426,1422,428,1423,501,1439,502,1462,493,1487,491}
+TP[15] = {710,414,701,407,684,409,676,416,673,430,669,433,692,431,697,435,705,435,709,432,707,423}
+TP[16] = {1813,400,1805,401,1804,405,1793,411,1792,422,1780,437,1771,440,1770,446,1762,445,1750,451,1750,497,1770,493,1773,488,1780,488,1785,482,1815,470,1814,462,1800,461,1792,453,1794,437,1798,436,1799,428,1810,425,1813,418}
+TP[17] = {1731,395,1719,405,1719,411,1707,425,1706,432,1696,434,1695,441,1668,445,1668,495,1693,492,1711,479,1733,479,1732,459,1713,461,1713,440,1719,439,1718,429,1728,427,1729,413,1733,408}
+TP[18] = {465,408,440,408,433,400,432,387,425,391,413,390,411,395,395,388,383,417,375,424,377,441,370,473,378,473,394,485,408,487,414,484,416,470,424,461,424,454,428,450,461,448,464,440,457,423,463,421,466,424}
+TP[19] = {397,357,394,376,411,381,410,362}
+TP[20] = {595,307,596,331,599,335,596,379,600,385,600,394,596,395,596,423,600,425,600,433,609,431,625,436,633,432,633,420,649,369,644,362,630,361,627,357,625,346,620,341,624,333,623,324,612,324,611,310}
+TP[21] = {1232,286,1231,297,1216,290,1209,331,1190,334,1184,338,1184,376,1190,379,1203,371,1210,357,1213,341,1220,343,1220,357,1215,363,1233,350,1237,350,1242,357,1241,362,1229,368,1224,378,1211,382,1203,393,1224,414,1232,411,1242,397,1238,368,1240,364,1249,362,1248,301,1237,298,1237,291,1233,291}
+TP[22] = {1789,283,1789,291,1793,295,1815,297,1815,292,1796,293}
+TP[23] = {466,271,456,287,455,308,465,307}
+TP[24] = {1300,269,1282,277,1268,293,1266,335,1279,323,1282,313,1287,312,1294,301,1306,304,1309,300,1308,294,1288,292,1292,279,1300,275}
+TP[25] = {1017,265,1014,267,1014,400,1031,400,1032,415,1038,422,1079,421,1079,408,1047,406,1047,381,1050,378,1072,379,1072,392,1065,392,1064,385,1059,385,1061,394,1078,394,1079,265,1044,270}
+TP[26] = {1422,263,1422,288,1428,288,1436,277,1437,265}
+TP[27] = {1249,246,1242,249,1243,273,1249,273}
+TP[28] = {1286,238,1266,243,1266,271,1283,266,1292,252,1292,245}
+TP[29] = {1266,134,1267,185,1275,176,1276,170,1282,171,1279,191,1273,194,1266,212,1282,212,1290,206,1298,206,1303,214,1315,216,1331,208,1331,150,1311,150,1309,145,1299,149,1286,149}
+TP[30] = {348,137,348,140,363,144,362,151,355,149,354,159,365,159,366,164,380,163,382,169,385,163,393,164,389,197,399,195,406,199,404,224,412,225,418,221,420,197,412,196,406,185,399,189,395,176,400,167,410,163,410,154,420,153,418,135,411,131,412,123,402,122,407,129,406,148,391,156,376,156,375,148,371,147,371,140,367,139,367,135}
+TP[31] = {1014,100,1014,242,1022,239,1079,240,1079,229,1071,228,1072,214,1079,210,1079,155,1074,155,1071,149,1053,150,1043,147,1036,141,1038,119,1044,112,1049,112,1058,100}
+TP[32] = {230,100,231,108,252,111,254,123,250,141,247,142,249,144,256,140,258,130,263,125,265,109,261,108,261,100,246,100,245,109}
+TP[33] = {106,102,112,104,113,108,159,108,161,135,187,132,195,140,205,144,212,135,218,116,218,105,222,104,222,100,211,100,214,109,210,123,205,124,204,116,182,120,181,109,174,106,174,100,169,100,168,108,161,107,161,100,141,103,140,96,146,95,146,91,140,91,139,100}
+TP[34] = {272,99,316,99,316,91,274,89}
+TP[35] = {1249,92,1217,95,1208,87,1184,93,1184,125,1188,139,1192,141,1192,147,1184,149,1184,302,1195,299,1197,283,1193,272,1197,265,1210,263,1229,242,1227,224,1230,221,1238,224,1239,218,1244,217,1249,208}
+TD.layers[3] = { color={188,192,188}, ocol={188,192,188}, par=0.314286, coll=0, hidden=0, polys={} }
+TP = TD.layers[3].polys
+TP[1] = {1025,516,1025,526,1126,526,1126,519,1098,521,1049,515}
+TP[2] = {1389,509,1389,514,1489,514,1481,510}
+TP[3] = {1241,512,1235,509,1175,511,1172,514}
+TP[4] = {2191,507,2089,510,2191,510}
+TP[5] = {1852,508,1954,510,1945,507}
+TP[6] = {1734,508,1835,510,1826,507}
+TP[7] = {1646,508,1717,510,1717,507}
+TP[8] = {1272,512,1372,514,1367,509,1313,505,1277,508,1276,512}
+TP[9] = {596,515,596,522,601,522,602,528,610,528,612,537,671,533,663,524,646,529,609,528,611,500,603,502}
+TP[10] = {403,489,394,492,384,522,386,528,392,527,400,501,404,500}
+TP[11] = {374,423,355,423,347,431,325,430,320,427,318,432,314,432,308,447,323,451,326,454,326,465,323,468,308,468,313,473,312,483,333,477,337,471,347,467,369,471,377,433}
+TP[12] = {1490,417,1475,421,1455,421,1440,426,1428,434,1427,438,1490,429}
+TP[13] = {2191,410,2188,410,2187,418,2179,418,2171,431,2169,444,2179,451,2191,451}
+TP[14] = {2072,407,2069,407,2065,421,2057,420,2057,434,2053,435,2054,450,2045,456,2059,450,2072,449}
+TP[15] = {2191,371,2174,374,2156,397,2148,398,2147,389,2133,394,2128,407,2108,409,2105,417,2096,421,2095,425,2089,425,2089,450,2093,449,2094,444,2131,440,2138,435,2153,437,2152,429,2167,413,2168,402,2180,395,2181,391,2190,390}
+TP[16] = {1835,383,1798,380,1797,375,1801,370,1795,371,1794,379,1769,382,1760,391,1755,391,1749,402,1740,402,1734,408,1734,436,1768,424,1797,427,1805,418,1835,424}
+TP[17] = {2072,362,2065,362,2043,392,2036,391,2033,383,2022,384,2012,399,1993,402,1985,413,1971,419,1971,444,1989,438,1991,433,1996,436,2018,435,2032,431,2033,425,2042,423,2043,418,2053,410,2057,396,2067,385,2072,384}
+TP[18] = {1954,359,1950,358,1943,372,1934,378,1934,391,1913,389,1912,383,1918,375,1912,372,1903,389,1880,393,1874,400,1867,401,1865,410,1855,411,1852,416,1852,440,1861,440,1864,435,1872,434,1874,424,1891,431,1908,431,1915,425,1935,426,1940,430,1935,455,1954,457,1954,403,1951,402,1951,397,1954,396}
+TP[19] = {1713,353,1710,353,1709,367,1662,367,1647,375,1646,390,1631,390,1615,401,1615,427,1633,426,1649,417,1682,417,1703,409,1717,409}
+TP[20] = {1869,338,1858,341,1852,336,1852,360,1857,357,1857,347,1868,342}
+TP[21] = {688,335,674,339,674,349,689,347}
+TP[22] = {1758,317,1749,322,1734,317,1734,347,1740,343,1741,333,1745,332,1748,325,1756,327}
+TP[23] = {1648,296,1634,299,1625,292,1615,296,1616,335,1628,324,1630,310,1638,304,1645,307}
+TP[24] = {431,250,422,252,427,255,427,260,424,263,416,315,434,314,427,304,427,297,431,295,432,285,439,278,439,264}
+TP[25] = {2006,245,2002,245,2002,250,1994,261,1985,262,1987,268,1993,268,2005,276,2007,289,2011,294,2009,312,1996,337,1987,344,1992,349,1995,346,2013,347,2024,336,2027,321,2034,320,2037,326,2034,310,2046,313,2046,307,2038,298,2035,264,2015,258,2011,251,2006,250}
+TP[26] = {223,239,184,239,184,268,171,275,169,289,165,294,165,317,161,328,161,344,165,345,165,372,161,374,161,398,165,400,165,449,171,448,177,434,180,402,191,379,193,359,201,328,205,324,223,250}
+TP[27] = {1892,219,1894,226,1887,229,1884,239,1874,240,1871,235,1873,242,1878,242,1879,246,1893,254,1895,269,1899,273,1898,293,1883,321,1876,324,1874,331,1901,333,1917,315,1923,315,1915,312,1916,306,1924,306,1925,311,1929,311,1926,291,1931,290,1937,300,1940,290,1930,276,1931,260,1926,239,1904,233}
+TP[28] = {1809,201,1800,204,1790,197,1773,198,1773,206,1767,208,1770,218,1782,226,1783,241,1788,245,1789,256,1784,276,1770,301,1760,307,1759,315,1768,317,1769,312,1791,313,1794,306,1801,305,1808,294,1815,294,1816,289,1822,288,1825,280,1819,279,1821,267,1826,267,1828,276,1831,276,1834,262,1825,254,1821,243,1823,219,1817,208,1809,208}
+TP[29] = {1166,162,1165,315,1169,316,1165,331,1165,357,1170,342,1175,290,1175,166}
+TP[30] = {1668,159,1660,161,1664,165,1663,171,1654,176,1649,176,1648,173,1646,175,1653,183,1656,178,1660,178,1661,184,1675,195,1683,224,1680,242,1672,258,1681,255,1684,259,1684,287,1678,288,1676,282,1672,281,1674,270,1667,263,1664,273,1649,285,1649,289,1653,290,1654,284,1658,284,1659,289,1664,285,1671,285,1672,292,1683,291,1685,285,1701,276,1701,260,1704,256,1709,257,1710,269,1717,263,1714,244,1717,237,1717,177,1705,174,1704,167,1696,170,1684,165,1683,160,1675,162}
+TP[31] = {359,158,353,166,355,171,364,172,366,178,380,186,380,208,373,212,378,221,366,226,369,236,367,245,379,246,380,249,395,246,407,252,397,240,397,234,402,230,406,201,399,196,389,196,392,171,382,170,379,163,366,165,365,160}
+TP[32] = {2102,131,2089,135,2089,152,2109,150,2112,158,2089,158,2089,166,2097,166,2100,184,2126,186,2127,180,2133,180,2137,191,2135,202,2131,202,2126,193,2117,197,2103,191,2097,209,2089,215,2092,232,2104,231,2108,244,2113,236,2127,237,2126,244,2117,245,2112,251,2115,268,2111,273,2104,274,2100,269,2092,268,2100,273,2103,284,2110,285,2121,294,2121,304,2126,310,2125,322,2113,346,2104,355,2104,358,2117,355,2118,343,2124,342,2126,352,2124,356,2119,356,2121,358,2128,357,2135,351,2140,334,2149,336,2148,323,2153,323,2155,330,2158,330,2158,321,2149,305,2148,281,2140,275,2129,275,2121,263,2115,262,2114,254,2117,251,2136,250,2150,258,2156,271,2166,272,2172,283,2191,282,2191,269,2179,263,2179,259,2191,246,2191,238,2171,242,2159,231,2153,220,2139,213,2139,205,2144,204,2146,210,2158,211,2162,216,2175,219,2183,225,2191,225,2191,200,2187,187,2174,180,2168,166,2151,163,2150,151,2133,149,2128,140}
+TP[33] = {1173,109,1165,131,1175,136}
+TP[34] = {1971,109,1971,130,1983,122,1993,122,1998,126,1996,132,1980,133,1976,137,1977,150,1975,154,1971,154,1971,173,1984,176,1984,181,1976,192,1971,193,1975,213,1989,215,1993,229,1996,229,1994,220,1998,216,2012,217,2018,234,2031,235,2040,243,2043,253,2050,249,2062,267,2072,269,2072,222,2059,223,2040,198,2033,194,2034,189,2047,189,2050,195,2058,195,2072,202,2068,182,2072,159,2066,159,2061,154,2056,140,2041,138,2036,123,2019,123,2012,112,1991,105}
+TP[35] = {1734,122,1734,129,1743,135,1742,149,1752,147,1753,151,1760,150,1765,165,1769,165,1769,153,1774,153,1777,149,1790,150,1794,157,1806,159,1803,164,1805,173,1815,175,1832,196,1835,184,1827,174,1828,165,1835,164,1835,142,1829,131,1831,124,1821,127,1814,120,1798,124,1795,120,1783,120,1764,131,1764,118,1777,109,1758,114,1758,102,1743,121}
+TP[36] = {1885,104,1875,98,1866,98,1865,104,1859,104,1859,114,1852,119,1852,124,1866,117,1874,118,1875,109,1881,109}
+TP[37] = {234,96,234,101,246,98,246,108,265,109,264,125,258,131,262,135,278,129,276,118,291,127,304,129,311,116,320,116,321,128,328,128,332,132,349,131,358,150,362,150,363,144,355,141,356,134,368,135,368,139,372,140,372,147,376,148,376,155,391,155,405,145,407,129,402,126,399,116,386,120,385,112,388,109,365,109,364,102,347,102,346,96,273,96,272,102,257,102,256,96}
+TP[38] = {164,102,164,108,168,108,170,104,182,105,184,123,188,119,204,115,207,135,212,109,192,109,191,102,179,102,178,96,173,96,172,102}
+TP[39] = {1887,80,1891,95,1907,98,1909,110,1902,113,1887,111,1893,129,1898,132,1897,138,1882,140,1871,133,1872,139,1884,140,1890,146,1901,147,1908,156,1912,156,1908,148,1916,147,1918,159,1912,163,1894,161,1877,170,1878,155,1888,151,1867,149,1859,160,1855,160,1855,150,1852,147,1853,170,1859,174,1859,186,1868,183,1874,188,1874,194,1879,200,1896,198,1894,195,1881,197,1880,192,1885,187,1903,188,1904,193,1911,194,1911,199,1901,200,1901,209,1904,209,1905,202,1911,202,1914,207,1922,208,1935,222,1935,228,1941,221,1950,221,1954,228,1954,193,1938,182,1933,169,1923,162,1924,157,1937,157,1942,160,1942,164,1951,163,1949,136,1954,106,1933,101,1928,85,1909,84,1907,80}
+TP[40] = {1852,93,1859,91,1869,80,1852,80}
+TP[41] = {1777,99,1780,105,1790,106,1795,111,1800,110,1801,107,1810,107,1814,109,1815,116,1835,117,1834,111,1819,109,1820,103,1825,103,1835,95,1835,81,1814,80,1808,85,1798,83,1803,89,1800,107,1792,102,1793,95}
+TP[42] = {1616,83,1615,89,1623,89,1632,96,1631,109,1634,105,1645,109,1646,105,1652,104,1653,116,1656,118,1671,109,1684,111,1687,118,1696,115,1697,131,1715,139,1717,132,1708,129,1707,124,1717,123,1717,80,1670,80,1657,91,1652,90,1652,80}
+TP[43] = {451,80,491,82,492,95,578,95,578,92,569,89,568,83,550,85,525,83,524,80,520,83,505,83,504,80}
+TP[44] = {1432,81,1440,84,1440,95,1426,103,1425,123,1445,140,1458,140,1470,130,1490,127,1490,84,1504,81,1489,81,1482,85,1464,83,1463,78,1455,77}
+TD.layers[4] = { color={166,170,166}, ocol={166,170,166}, par=0.411429, coll=0, hidden=0, polys={} }
+TP = TD.layers[4].polys
+TP[1] = {626,537,679,539,675,534}
+TP[2] = {39,521,26,528,18,526,19,536,25,539,29,535,39,534}
+TP[3] = {251,476,225,476,226,503,222,507,202,507,202,523,199,528,226,532,243,527,248,520,247,492,250,490,243,487,243,481,252,480}
+TP[4] = {368,474,363,479,363,485,370,490,370,499,363,502,366,518,356,526,353,535,380,539,427,539,420,530,410,530,407,526,403,501,393,527,383,527,393,492,399,488,387,485,377,475}
+TP[5] = {39,451,31,452,28,460,18,460,18,507,24,508,22,516,39,515,40,472,36,471,35,457}
+TP[6] = {758,430,758,434,764,439,792,439,793,452,802,453,802,436,805,435,802,430}
+TP[7] = {974,428,971,431,952,431,953,444,946,452,931,451,927,444,921,444,923,532,940,532,941,539,964,539,965,533,975,530}
+TP[8] = {33,373,23,373,25,387,33,383}
+TP[9] = {970,355,948,355,945,370,922,372,922,386,943,385,945,379,967,381}
+TP[10] = {922,340,922,356,930,356,931,341}
+TP[11] = {2566,334,2555,336,2549,343,2531,342,2528,324,2526,332,2515,335,2514,344,2509,349,2501,349,2497,333,2493,346,2480,351,2482,358,2491,358,2492,363,2474,373,2466,384,2460,384,2457,377,2450,388,2441,391,2432,404,2433,411,2428,415,2428,427,2440,430,2443,426,2462,419,2475,407,2480,407,2483,398,2504,396,2507,385,2513,380,2522,380,2523,389,2526,385,2532,385,2549,364,2566,361}
+TP[12] = {2411,325,2403,331,2383,331,2380,320,2370,320,2369,313,2366,313,2364,334,2328,340,2328,346,2319,350,2339,348,2340,353,2319,366,2314,375,2306,376,2305,370,2300,370,2296,380,2285,385,2278,395,2282,403,2273,410,2273,424,2286,427,2289,422,2300,419,2314,406,2326,401,2332,392,2351,389,2351,385,2357,383,2361,374,2372,373,2375,379,2383,380,2396,360,2404,352,2411,351}
+TP[13] = {921,313,921,328,943,328,947,332,947,342,975,342,975,328,972,325,964,326,963,320,957,324,941,323,940,318,931,312}
+TP[14] = {701,313,694,320,694,327,687,332,692,337,690,347,713,343,714,358,730,374,754,374,752,384,777,417,814,417,816,456,824,456,821,429,825,419,825,363,819,363,816,371,808,372,817,379,815,399,787,399,771,380,769,366,763,370,751,371,752,362,732,364,723,353,725,328,717,320,719,312}
+TP[15] = {1230,307,1218,307,1218,332,1225,326}
+TP[16] = {2256,317,2240,316,2235,302,2223,306,2223,298,2219,296,2218,316,2212,325,2200,322,2201,306,2196,305,2193,318,2198,319,2197,325,2186,322,2178,325,2180,333,2172,330,2171,334,2165,335,2191,334,2192,339,2167,354,2160,365,2152,366,2151,359,2148,359,2143,365,2146,373,2141,374,2138,369,2130,374,2119,389,2123,397,2118,399,2118,420,2130,422,2137,414,2153,407,2157,401,2165,401,2168,392,2176,390,2181,382,2203,380,2214,363,2221,364,2215,379,2235,381,2235,369,2244,363,2248,352,2256,347}
+TP[17] = {2092,281,2079,285,2078,277,2074,274,2075,296,2066,307,2062,307,2060,303,2048,303,2049,296,2056,296,2053,278,2049,279,2044,302,2028,306,2031,309,2030,315,2022,313,2021,317,2013,319,2015,322,2045,315,2046,320,2036,325,2027,336,2019,336,2009,350,1999,352,2000,343,1997,343,1963,377,1967,382,1967,388,1963,389,1963,414,1976,419,1982,408,1990,407,1993,401,2003,397,2006,392,2015,392,2017,382,2027,380,2032,372,2057,369,2101,372,2099,359,2093,357,2094,351,2101,350,2101,299,2092,295}
+TP[18] = {1946,257,1939,260,1938,252,1932,256,1934,274,1928,278,1924,287,1920,287,1918,280,1921,274,1916,281,1909,280,1909,274,1913,273,1910,264,1912,250,1900,252,1904,265,1899,277,1894,278,1894,285,1889,286,1887,277,1883,276,1884,284,1880,287,1884,288,1884,293,1877,294,1876,297,1867,296,1866,299,1878,299,1892,294,1900,294,1901,299,1880,316,1871,317,1865,328,1857,334,1848,336,1849,327,1841,327,1841,332,1815,354,1808,364,1808,368,1813,371,1813,375,1808,377,1808,405,1816,412,1822,411,1833,397,1839,397,1845,390,1853,387,1857,380,1873,377,1875,366,1887,358,1905,355,1938,357,1938,350,1946,349,1946,296,1937,295,1937,290,1946,286}
+TP[19] = {2470,223,2460,239,2466,240,2467,257,2476,258,2482,269,2489,258,2486,240,2482,236,2479,222}
+TP[20] = {968,213,960,216,922,217,921,265,926,265,931,248,936,243,947,242,949,229,954,224,963,223,963,216}
+TP[21] = {2317,205,2312,208,2313,215,2305,216,2303,220,2312,222,2316,241,2323,242,2329,254,2333,251,2333,243,2340,240,2335,233,2337,223,2355,224,2355,221,2347,220,2345,216,2330,220,2328,208}
+TP[22] = {167,204,165,219,161,222,162,258,167,258,168,250}
+TP[23] = {19,201,19,244,23,239,32,241,32,251,35,251,35,224,39,223,39,216,35,215,35,202}
+TP[24] = {2165,176,2159,179,2160,186,2153,187,2152,191,2160,193,2161,211,2164,215,2173,217,2176,229,2186,229,2187,220,2193,216,2186,207,2187,196,2198,194,2209,197,2211,193,2203,194,2197,190,2181,192,2176,179}
+TP[25] = {940,176,940,182,944,183,944,199,960,201,960,193,956,193,955,186,949,184,950,176}
+TP[26] = {364,173,357,173,362,182,360,205,352,207,337,227,326,226,326,235,321,236,320,241,305,239,301,231,298,231,298,236,303,239,303,247,294,253,283,252,271,241,271,237,277,235,280,225,272,224,271,234,255,234,255,255,251,258,234,258,229,255,230,247,235,247,236,251,245,251,245,239,226,239,206,316,206,327,202,328,190,387,186,389,185,398,181,402,178,434,171,449,161,450,161,465,166,467,166,479,161,482,162,493,183,491,183,499,187,499,186,479,179,478,176,470,187,462,187,450,190,447,210,447,211,436,203,435,203,429,215,429,218,432,218,452,215,455,198,455,198,493,211,493,212,470,217,465,228,465,230,437,235,438,235,457,242,458,243,465,254,464,250,410,254,408,255,385,301,384,307,390,306,403,316,431,320,428,351,429,355,422,378,419,380,400,390,395,387,387,392,384,393,356,399,354,399,342,412,332,416,332,422,340,423,333,431,329,433,316,416,316,414,311,426,258,417,256,406,259,401,255,401,250,394,246,379,250,377,246,367,245,366,226,379,220,379,217,374,216,379,204,377,197,373,195,373,190,378,185,366,179}
+TP[27] = {2486,144,2479,142,2456,146,2456,151,2450,153,2449,159,2430,171,2430,174,2441,175,2450,169,2471,168,2471,157,2463,156,2461,149,2482,150,2487,148}
+TP[28] = {686,137,690,150,684,153,683,160,697,162,698,173,716,175,720,179,718,190,712,190,710,184,691,181,693,198,712,201,712,231,721,231,726,239,715,243,710,252,699,252,694,248,693,251,679,251,677,255,669,257,651,256,640,265,638,271,641,284,652,292,652,296,660,300,668,292,670,275,695,275,699,271,714,275,741,275,745,270,793,270,794,274,799,275,799,270,808,261,816,261,817,266,824,266,822,175,771,175,767,170,767,138,717,140}
+TP[29] = {2024,135,2023,141,2012,139,2006,142,2007,149,1999,151,1994,160,2006,160,2010,169,2009,181,2021,184,2029,204,2036,205,2034,198,2038,197,2038,189,2051,188,2051,184,2044,182,2038,173,2039,163,2043,160,2057,160,2061,165,2070,159,2054,156,2047,151,2035,157,2029,156,2028,135}
+TP[30] = {186,134,161,138,163,190,189,188,185,184,183,169,187,168,187,160,193,158,191,150,203,149,203,145,191,141}
+TP[31] = {931,132,922,135,922,201,934,200,934,188,927,187,923,176,931,172,929,157,933,155,933,151,928,148,927,136,932,135}
+TP[32] = {2253,130,2251,135,2241,135,2241,140,2245,141,2245,145,2253,145,2256,155,2256,130}
+TP[33] = {1229,127,1230,149,1237,156,1237,129}
+TP[34] = {2175,115,2161,119,2161,126,2178,136,2178,140,2166,149,2165,155,2153,155,2162,162,2169,161,2179,140,2188,141,2190,137,2173,130,2172,120,2176,118}
+TP[35] = {2339,119,2333,118,2332,114,2319,115,2315,121,2295,130,2290,142,2275,145,2273,152,2293,148,2299,144,2300,139,2307,139,2308,144,2313,144,2315,127,2319,123,2335,125}
+TP[36] = {815,109,807,109,806,120,795,120,791,128,785,129,785,160,825,159,824,143,814,136}
+TP[37] = {1865,95,1862,102,1856,103,1856,109,1839,121,1854,123,1854,127,1860,130,1860,144,1875,149,1878,165,1889,172,1885,164,1892,159,1890,152,1894,149,1907,151,1907,148,1899,146,1892,133,1892,125,1904,122,1917,127,1925,121,1922,118,1909,118,1902,111,1895,117,1886,118,1881,100,1890,94,1879,95,1874,101,1869,101}
+TP[38] = {1644,85,1630,87,1630,96,1635,97,1634,105,1627,105,1626,97,1620,97,1619,109,1609,109,1612,128,1620,127,1633,114,1634,109,1642,106}
+TP[39] = {862,92,862,100,890,100,891,108,937,108,938,116,942,115,942,107,953,107,954,101,965,104,968,98,1002,100,999,92,908,92,906,83,901,92}
+TP[40] = {528,75,529,91,543,91,544,75}
+TP[41] = {2208,90,2191,86,2190,75,2175,73,2164,77,2161,83,2153,87,2146,87,2139,102,2118,108,2118,116,2131,117,2143,111,2144,108,2157,109,2160,95,2167,94,2168,88,2177,88,2187,93,2187,98,2179,105,2183,116,2191,114,2188,110,2189,102,2204,104,2210,102}
+TP[42] = {2008,77,2008,87,2023,90,2023,105,2040,101,2041,91,2023,88,2019,81,2020,76,2035,71,2020,71}
+TP[43] = {1598,68,1601,73,1616,72,1617,75,1651,76,1652,72,1683,73,1684,122,1687,122,1687,73,1683,73,1682,69,1641,68,1640,73,1622,73,1621,68}
+TD.layers[5] = { color={126,132,129}, ocol={126,132,129}, par=0.508571, coll=0, hidden=0, polys={} }
+TP = TD.layers[5].polys
+TP[1] = {919,530,919,539,940,537,940,533,923,533}
+TP[2] = {188,532,191,539,212,539,216,535,213,530,210,533,200,529}
+TP[3] = {1482,489,1470,486,1467,491,1446,490,1443,492,1443,499,1459,495,1469,499,1482,494}
+TP[4] = {39,460,36,463,40,464,41,472,40,534,32,534,27,539,39,539,41,534,47,533,49,525,60,524,60,521,46,513,48,465,40,464}
+TP[5] = {825,460,818,457,801,462,799,454,784,457,773,453,772,462,765,466,764,473,712,473,710,477,699,477,697,473,670,473,659,476,657,482,652,483,654,490,649,494,649,508,656,515,656,522,663,522,668,527,676,525,677,531,690,535,700,533,704,537,715,536,720,526,737,528,738,523,747,524,744,529,746,532,750,529,772,532,774,525,782,517,786,517,788,523,800,522,802,526,808,527,819,516,820,499,824,498}
+TP[6] = {437,454,434,461,421,465,416,484,411,487,415,495,407,501,408,521,415,521,418,529,426,535,429,531,434,531,446,537,461,539,460,530,466,523,466,506,463,501,466,451}
+TP[7] = {39,436,28,443,23,453,18,453,18,458,28,459,31,451,39,449}
+TP[8] = {243,437,230,438,229,465,217,466,213,470,211,494,196,492,192,465,196,463,198,454,217,452,215,430,203,430,203,440,210,440,211,447,190,448,188,462,177,472,179,477,187,479,185,494,162,494,161,482,165,479,165,467,155,466,155,485,161,490,161,495,158,496,156,511,145,512,139,519,144,519,153,529,173,525,175,507,222,506,225,503,225,475,243,475,244,487,251,487,247,476,254,475,254,465,247,466,246,460,234,457,234,447,244,445}
+TP[9] = {2620,390,2611,393,2598,406,2598,411,2610,409,2611,401,2620,396}
+TP[10] = {2425,384,2410,391,2402,400,2402,406,2416,402,2416,394,2425,388}
+TP[11] = {2232,373,2215,381,2206,391,2205,399,2219,395,2223,382,2233,378}
+TP[12] = {1563,372,1563,376,1578,389,1583,401,1590,400,1588,390,1569,373}
+TP[13] = {2040,360,2029,363,2012,379,2010,388,2026,386,2031,369,2041,366}
+TP[14] = {2868,349,2847,353,2834,376,2843,373,2850,363,2867,354}
+TP[15] = {2681,339,2657,345,2656,351,2635,375,2654,365,2659,356,2668,353}
+TP[16] = {919,329,919,386,921,372,945,369,948,354,970,354,975,359,975,343,947,343,943,329}
+TP[17] = {2495,325,2483,327,2480,320,2479,327,2466,333,2464,342,2444,365,2463,355,2470,344,2493,331}
+TP[18] = {718,316,723,325,721,335,725,347,732,347,735,352,744,352,743,361,752,362,751,370,766,366,783,369,787,361,793,361,796,365,824,361,803,326,756,326,725,311}
+TP[19] = {452,310,451,315,440,320,439,353,411,353,409,347,418,346,417,336,404,337,400,351,408,360,423,360,421,374,426,371,427,359,438,359,445,369,445,380,439,381,440,403,443,406,466,406,465,393,453,392,452,367,458,366,458,363,452,362,451,335,452,322,466,320,466,310}
+TP[20] = {1521,309,1530,321,1541,316,1529,313,1528,307}
+TP[21] = {2942,308,2926,305,2911,310,2906,315,2906,331,2925,333,2931,326,2942,324}
+TP[22] = {2311,308,2297,309,2296,301,2293,301,2291,313,2278,316,2279,323,2252,353,2275,340,2285,326,2293,326}
+TP[23] = {2751,291,2742,292,2726,301,2717,297,2721,301,2723,321,2743,321,2751,315}
+TP[24] = {2131,286,2114,288,2110,279,2107,293,2100,295,2097,291,2092,297,2093,304,2086,309,2075,327,2062,334,2062,340,2065,341,2069,334,2090,322,2100,307,2109,306,2116,298,2126,294}
+TP[25] = {2559,276,2547,279,2539,287,2543,306,2559,306}
+TP[26] = {800,270,800,276,824,276,824,267,804,266}
+TP[27] = {2365,260,2360,264,2359,286,2367,288}
+TP[28] = {1028,237,1023,244,1023,305,1028,305}
+TP[29] = {976,233,973,238,943,235,937,238,936,245,928,255,927,276,919,280,919,309,922,312,931,311,944,322,956,324,963,321,964,325,975,325}
+TP[30] = {1006,229,1000,235,992,235,992,322,1000,322,1000,345,992,346,992,354,1006,353}
+TP[31] = {40,224,36,224,35,240,23,240,19,252,18,342,22,344,27,358,18,363,18,384,22,384,23,372,32,372,39,367}
+TP[32] = {670,172,670,177,678,179,678,188,666,188,666,191,680,191,681,173}
+TP[33] = {24,168,27,185,21,187,20,200,39,200,39,173,37,170}
+TP[34] = {711,203,707,199,679,202,682,219,692,219,694,205,702,208,700,233,649,236,648,232,642,231,642,222,638,218,615,218,614,204,610,202,610,184,613,179,639,175,650,177,650,173,641,172,638,156,637,174,611,173,607,179,608,224,628,228,628,245,596,246,595,259,637,258,641,254,642,242,665,241,669,247,692,251,692,241,709,238,713,224}
+TP[35] = {346,132,343,138,331,141,331,132,315,136,312,129,307,127,306,130,291,132,290,135,262,138,257,145,236,147,226,144,217,148,208,145,207,150,193,149,192,158,187,160,188,168,184,169,184,183,189,185,189,189,164,191,172,228,169,229,168,258,161,259,161,273,177,272,182,268,184,237,245,238,245,252,239,251,239,245,230,248,229,253,234,257,254,255,255,234,271,233,272,241,277,241,281,250,289,252,301,247,304,238,319,240,321,235,325,235,326,225,337,226,346,212,361,200,361,182,352,173,352,145,344,139}
+TP[36] = {1023,113,1025,177,1028,171,1028,119}
+TP[37] = {816,109,815,136,820,141,825,141,828,117,832,116,831,109}
+TP[38] = {47,109,37,109,36,136,29,140,19,140,18,156,21,145,40,145,41,154,44,153,47,147}
+TP[39] = {1006,98,989,98,971,93,973,100,968,101,952,95,956,98,955,103,940,106,943,115,934,118,927,127,930,131,929,148,934,151,929,164,933,183,927,186,935,188,935,200,929,206,920,206,920,216,960,215,972,210,972,195,975,191,976,108,992,109,992,193,997,197,1006,195}
+TP[40] = {625,88,627,97,642,98,637,108,647,108,653,118,666,120,666,128,670,129,672,137,767,137,768,170,771,174,806,175,825,172,825,161,784,160,784,129,791,127,795,119,806,119,806,109,799,107,799,98,790,97,790,88}
+TP[41] = {99,88,102,97,120,91,120,88}
+TD.layers[6] = { color={78,90,83}, ocol={78,90,83}, par=0.605714, coll=0, hidden=0, polys={} }
+TP = TD.layers[6].polys
+TP[1] = {738,529,728,527,714,539,738,539}
+TP[2] = {147,527,151,539,187,539,186,534,175,529}
+TP[3] = {595,510,604,499,647,479,657,478,659,473,639,473,633,477,619,473,596,473}
+TP[4] = {41,539,131,539,131,533,138,528,138,516,145,511,153,514,159,511,159,490,154,487,154,468,142,468,141,465,96,465,95,468,85,468,79,464,49,465,48,505,50,515,58,519,59,524,49,526,48,533,42,535}
+TP[5] = {1532,429,1529,452,1542,452,1545,444,1534,440}
+TP[6] = {1893,373,1884,374,1876,380,1865,414,1872,413,1881,388}
+TP[7] = {1838,356,1856,382,1861,383,1860,372,1842,355}
+TP[8] = {825,358,825,310,821,315,811,315,809,311,750,311,739,315,756,325,803,325,818,353}
+TP[9] = {1727,324,1709,335,1704,335,1701,331,1693,344,1677,351,1658,328,1657,319,1643,302,1624,301,1623,306,1635,309,1636,315,1640,316,1640,326,1628,329,1628,332,1641,343,1646,354,1644,369,1672,376,1683,389,1683,395,1676,398,1668,389,1662,388,1653,397,1663,418,1654,427,1650,427,1629,452,1598,456,1597,450,1601,449,1598,446,1594,449,1595,457,1589,458,1575,444,1561,446,1555,455,1552,471,1542,479,1531,478,1529,491,1559,491,1569,481,1582,481,1591,477,1605,480,1611,488,1640,487,1654,470,1658,470,1665,478,1672,475,1675,465,1670,461,1670,449,1685,435,1706,431,1724,413,1732,392,1741,388,1740,360,1725,381,1711,394,1706,394,1700,381,1685,368,1685,364,1698,351,1714,343}
+TP[10] = {1802,298,1804,308,1807,309,1821,303,1810,295}
+TP[11] = {1535,266,1549,278,1557,280,1557,285,1554,286,1556,291,1568,289,1583,299,1598,304,1610,317,1615,314,1616,307,1599,295,1588,267,1584,267,1588,291,1583,292,1568,286,1568,277,1554,277}
+TP[12] = {1740,185,1726,201,1726,206,1716,221,1701,235,1690,238,1689,267,1686,276,1681,279,1681,285,1653,299,1653,304,1666,305,1684,299,1697,299,1700,293,1699,274,1706,256,1720,254,1733,246,1741,247,1741,244,1725,244,1717,240,1718,233,1739,199}
+TP[13] = {587,109,570,109,573,123,569,128,574,134,577,134,575,123,587,123}
+TP[14] = {31,109,18,109,18,121,26,119}
+TP[15] = {1072,83,1055,83,1055,160,1058,162,1055,174,1058,181,1055,229,1060,197,1061,155,1066,142}
+TP[16] = {801,83,800,95,806,96,808,108,831,108,833,115,838,115,842,106,853,104,854,99,861,96,869,96,876,105,897,100,897,96,881,96,880,83}
+TP[17] = {429,83,429,95,446,95,448,108,470,110,469,121,474,115,484,113,486,108,500,108,503,104,511,104,514,108,549,108,550,116,553,111,557,111,562,118,565,117,565,96,546,96,545,83}
+TP[18] = {48,109,47,143,51,146,64,139,74,142,75,138,90,136,95,142,117,141,123,150,141,150,149,157,149,161,144,162,151,166,154,156,159,154,152,109,130,109,129,96,110,96,109,87,105,83,81,83,80,96,57,98,55,108}
+TP[19] = {2578,49,2620,51,2612,45}
+TP[20] = {879,52,910,52,910,45,880,45}
+TP[21] = {2843,48,2822,43,2811,49,2802,47,2800,51,2841,51}
+TD.layers[7] = { color={33,37,39}, ocol={33,37,39}, par=1, coll=1, hidden=0, polys={} }
+TP = TD.layers[7].polys
+TP[1] = {1498,459,1544,460,1564,456,1583,458,1590,453,1604,457,1645,457,1647,453,1662,456,1751,456,1752,459,1758,459,1760,453,1783,455,1787,445,1782,440,1766,441,1765,448,1662,447,1661,443,1656,447,1638,445,1591,448,1567,447,1566,440,1574,439,1571,437,1564,439,1563,448,1543,448,1542,457}
+TP[2] = {1157,446,1159,452,1168,452,1170,456,1178,457,1179,464,1186,463,1187,460,1192,463,1207,461,1207,453,1222,449,1222,444,1218,441,1203,453,1186,457,1186,417,1181,422,1178,445,1173,446,1166,438,1162,438,1161,445}
+TP[3] = {2356,398,2255,397,2255,405,2279,405,2286,409,2303,405,2355,405}
+TP[4] = {256,387,256,475,253,487,256,489,257,522,239,531,219,535,219,539,313,539,320,531,326,532,324,539,336,533,330,530,332,524,344,523,345,528,354,525,346,523,347,518,355,515,352,503,355,490,352,482,344,488,323,493,319,501,310,501,304,507,295,506,296,500,307,499,295,498,292,493,295,475,294,461,291,459,294,450,292,432,295,420,301,419,292,415,292,409,302,408,302,404,294,403,292,394,300,386}
+TP[5] = {2482,394,2475,393,2469,399,2461,400,2457,391,2461,381,2459,379,2437,405,2399,411,2391,402,2377,399,2369,405,2364,423,2354,431,2347,428,2349,435,2330,453,2330,460,2346,460,2350,447,2363,434,2405,429,2417,431,2418,435,2434,437,2428,420,2429,414,2442,413,2451,423,2451,429,2458,423,2472,428,2476,417,2471,415,2471,408,2476,397}
+TP[6] = {4154,376,4152,372,4148,372,4148,378,4144,379,4136,392,4127,389,4118,377,4107,375,4107,380,4111,380,4119,390,4132,394,4133,403,4137,403,4142,389,4152,384}
+TP[7] = {4492,365,4499,382,4526,397,4528,406,4532,405,4534,395,4548,386,4547,383,4539,382,4532,394,4523,395,4516,383,4505,379,4506,368,4501,368,4498,363}
+TP[8] = {1878,299,2019,298,2027,295,2051,297,2057,287,2006,286,2005,283,2002,286,1931,287,1911,284,1901,286,1896,283,1894,286,1878,286}
+TP[9] = {2255,282,2255,292,2272,294,2343,293,2348,297,2349,291,2368,292,2370,289,2369,281,2328,282,2310,279,2308,282}
+TP[10] = {2111,286,2113,297,2118,294,2126,297,2138,295,2137,286,2128,277,2116,279}
+TP[11] = {2447,272,2452,287,2439,299,2445,303,2451,315,2448,329,2456,333,2471,334,2485,348,2486,353,2494,351,2499,358,2506,358,2507,368,2513,379,2514,367,2522,349,2533,341,2551,336,2546,320,2537,318,2513,353,2502,351,2486,330,2486,324,2501,309,2511,307,2534,277,2510,296,2500,295,2498,302,2485,312,2487,320,2484,324,2473,327,2468,315,2475,314,2475,310,2466,306,2467,299,2462,287}
+TP[12] = {2503,226,2493,234,2495,252,2490,256,2489,262,2479,264,2479,254,2465,260,2461,267,2476,269,2495,265}
+TP[13] = {2388,207,2397,258,2388,258,2373,248,2368,250,2417,278,2420,272,2405,260,2396,235,2400,224,2393,223}
+TP[14] = {59,144,58,149,63,150,63,155,53,159,51,167,45,168,44,164,40,167,41,204,37,205,41,209,42,236,41,372,38,373,41,396,31,405,18,405,18,424,29,421,31,427,41,426,41,461,44,463,79,463,85,467,95,467,96,464,142,464,143,467,152,467,153,464,159,464,159,370,163,368,163,364,159,363,159,328,162,316,157,271,160,270,161,213,157,212,160,167,156,164,156,173,146,172,139,166,139,158,132,156,129,162,123,162,121,155,124,152,110,145,110,149,114,150,114,154,109,155,108,150,101,148,101,143,95,143,95,149,89,153,81,150,67,152,64,146,71,143}
+TP[15] = {2558,122,2552,130,2547,130,2547,140,2525,178,2532,178}
+TP[16] = {485,112,489,116,488,129,481,134,480,143,468,152,470,174,465,240,468,247,470,355,468,482,464,494,467,504,467,539,601,539,603,533,593,535,588,529,588,523,593,522,596,472,619,472,633,476,639,472,698,471,703,476,712,471,763,471,754,468,756,457,751,445,740,448,728,445,723,448,706,445,699,448,671,446,666,449,655,446,636,449,632,445,619,446,618,449,607,446,599,449,590,447,590,440,599,442,594,439,593,355,596,344,593,336,591,278,593,234,596,226,592,203,593,152,592,149,577,144,567,130,557,125,557,111,554,117,548,117,539,109,533,109,531,104,527,104,527,109,522,109,521,103,503,103,506,106,504,112}
+TP[17] = {920,96,902,97,905,100,904,106,887,103,886,106,871,107,870,102,883,97,873,96,865,101,870,104,869,109,859,110,853,117,847,117,846,110,839,114,839,118,846,119,846,124,840,129,833,128,833,132,839,133,839,139,834,144,827,140,826,175,823,182,826,192,825,277,797,278,791,272,756,272,750,277,716,277,704,273,696,277,671,277,670,292,659,307,623,337,648,361,687,321,691,321,702,310,729,310,738,314,745,314,750,310,809,310,811,314,825,314,827,420,823,432,826,440,826,539,918,539,918,145,914,143,910,123,914,118,911,101,920,101}
+TD.layers[8] = { color={2,2,3}, ocol={2,2,3}, par=1, coll=1, hidden=0, polys={} }
+TP = TD.layers[8].polys
+TP[1] = {1171,457,1173,479,1177,488,1185,494,1187,488,1198,479,1204,462,1179,465,1178,458}
+TP[2] = {2287,458,2302,460,2316,457,2319,460,2329,459,2329,455,2317,455,2305,445,2298,444,2290,450}
+TP[3] = {2511,356,2499,359,2494,352,2486,354,2484,361,2477,365,2467,380,2462,381,2458,389,2461,400,2509,381,2510,372,2506,363}
+TP[4] = {2418,277,2424,290,2434,292,2437,296,2442,296,2453,287,2446,279,2445,270,2439,267}
+TP[5] = {1203,236,1205,256,1209,264,1217,268,1225,260,1231,244,1212,241}
+TP[6] = {2511,206,2495,207,2489,219,2494,230,2519,218,2519,215,2510,214}
+TP[7] = {977,109,977,539,991,539,991,109}
+TP[8] = {0,109,0,539,17,539,17,109}
+TP[9] = {1038,87,1038,517,1052,517,1052,87}
+TP[10] = {1459,67,1459,497,1473,497,1473,67}
+TP[11] = {1082,67,1082,497,1096,497,1096,67}
+TP[12] = {2617,30,2617,460,2631,460,2631,30}
+TP[13] = {2240,30,2240,460,2254,460,2254,30}
+TP[14] = {1863,30,1862,456,1863,460,1877,460,1877,30}
+TP[15] = {1528,26,1528,442,1522,450,1522,456,1542,456,1543,447,1560,445,1542,442,1542,26}
+TP[16] = {2917,25,2917,455,2931,455,2931,25}
+TP[17] = {2660,22,2660,452,2674,452,2674,22}
+TP[18] = {1262,24,1240,25,1236,21,1232,26,1240,54,1245,55,1252,50}
+TP[19] = {2885,20,2885,450,2899,450,2899,20}
+TP[20] = {2754,19,2754,449,2768,449,2768,19}
+TP[21] = {2707,19,2707,449,2721,449,2721,19}
+TP[22] = {4846,16,4846,446,4860,446,4860,16}
+TP[23] = {4469,16,4469,446,4483,446,4483,439,4494,438,4500,429,4508,432,4507,419,4525,412,4528,397,4517,394,4513,399,4506,400,4507,407,4497,414,4496,421,4491,424,4483,423,4483,365,4499,362,4499,358,4494,351,4483,349,4483,16}
+TP[24] = {4092,16,4092,446,4106,446,4106,434,4113,431,4113,428,4107,427,4108,420,4121,411,4129,411,4133,406,4133,394,4127,394,4124,390,4118,395,4106,394,4106,376,4121,374,4132,361,4127,361,4119,369,4106,364,4106,16}
+TP[25] = {3715,16,3715,446,3729,446,3729,16}
+TP[26] = {3338,16,3338,446,3352,446,3352,16}
+TP[27] = {2961,16,2960,20,2944,20,2944,450,2960,450,2961,455,2975,455,2975,16}
+TP[28] = {1751,16,1751,438,1741,446,1765,447,1765,16}
+TP[29] = {1710,16,1710,442,1706,446,1724,446,1724,16}
+TP[30] = {1628,16,1614,16,1614,442,1577,442,1566,446,1632,446,1628,442}
+TP[31] = {2800,11,2800,441,2814,441,2814,11}
+TP[32] = {2845,8,2845,438,2859,438,2859,8}
+TP[33] = {1796,3,1796,433,1810,433,1810,3}
+TP[34] = {4811,0,4821,3,4821,15,4835,15,4835,3}
+TP[35] = {3834,0,3834,15,3861,15,3861,3}
+TRACE_DEFS["video4"] = TD
+-- END video4 trace replica
 TD = nil
 TP = nil
 
 -- ============================================================================
 -- END scripts/src/86_trace_data.lua
+-- ============================================================================
+
+-- ============================================================================
+-- BEGIN scripts/src/87_trace_ipoints.lua
+-- ============================================================================
+-- 描摹关设计锚点(手调数据;有该数据的关停用自动撒点)
+-- 坐标系 = 86_trace_data 世界坐标(竹梅:×2 + 平移,世界约 4332x880)
+-- kind: gust=竹梢风袂(刷新冲刺+上升) key=蓄墨苞(激活鬼阶组) pool=墨池 char=拾字
+-- 梅花点苞不在此列:仍由红色隐藏层原位聚类生成(视频原生花位)
+TRACE_IPTS = {}
+TRACE_IPTS.zhumei = {
+    ipts = {
+        -- 起|左段
+        { kind = "pool", x1 = 60,   x2 = 540,  y = 760 },
+        { kind = "deco", x = 350,  y = 600 },
+        { kind = "gust", x = 716,  y = 520 },
+        { kind = "deco", x = 1245, y = 520 },
+        -- 转|中段竖塔
+        { kind = "gust", x = 1748, y = 64 },
+        { kind = "char", x = 1810, y = 16,  ch = "疏" },
+        -- 承|大断口(2100→2950):蓄墨苞实体化三根浮墨条(两岸各一苞,可回程)
+        { kind = "key",  x = 2148, y = 392, grp = 1 },
+        { kind = "key",  x = 2962, y = 596, grp = 1 },
+        { kind = "char", x = 2600, y = 452, ch = "影" },
+        { kind = "pool", x1 = 2480, x2 = 2900, y = 760 },
+        -- 合|梅树区
+        { kind = "gust", x = 3032, y = 330 },
+        { kind = "char", x = 3520, y = 792, ch = "横" },
+        { kind = "deco", x = 3900, y = 600 },
+        { kind = "char", x = 4290, y = 262, ch = "斜" },
+    },
+    -- 苔点:断口底右壁的逃生暗示(纯视觉,非交互)
+    hints = {
+        { x = 2912, y = 792 }, { x = 2926, y = 748 }, { x = 2940, y = 704 },
+    },
+    -- 区内完整包含的碰撞体转为鬼阶(虚影,激活后 300 帧实体)
+    ghosts = {
+        { zone = { 2200, 380, 2880, 620 } },
+    },
+}
+
+TRACE_IPTS.bamboo_v2 = {
+    ipts = {
+        { kind = "char", x = 1100, y = 2080, ch = "咬" },
+        { kind = "char", x = 1550, y = 2100, ch = "定" },
+        { kind = "char", x = 1840, y = 2200, ch = "青" },
+        { kind = "char", x = 2010, y = 1530, ch = "山" },
+        { kind = "char", x = 2500, y = 1180, ch = "不" },
+        { kind = "char", x = 2760, y = 1150, ch = "放" },
+        { kind = "char", x = 3200, y = 1050, ch = "松" },
+        { kind = "char", x = 4010, y = 1080, ch = "千" },
+        { kind = "char", x = 4400, y = 840, ch = "磨" },
+        { kind = "char", x = 4560, y = 1460, ch = "万" },
+        { kind = "char", x = 4860, y = 1860, ch = "击" },
+        { kind = "char", x = 6000, y = 1800, ch = "还" },
+        { kind = "char", x = 6500, y = 1800, ch = "坚" },
+        { kind = "char", x = 7000, y = 1600, ch = "劲" },
+        { kind = "char", x = 7600, y = 1600, ch = "任" },
+        { kind = "char", x = 8000, y = 1600, ch = "尔" },
+        { kind = "char", x = 8250, y = 1550, ch = "东" },
+        { kind = "char", x = 8350, y = 1580, ch = "西" },
+    },
+    hints = {
+        { x = 3700, y = 1500 }, { x = 3750, y = 1550 },
+        { x = 5200, y = 2280 }, { x = 5250, y = 2290 },
+    },
+}
+
+-- ============================================================================
+-- END scripts/src/87_trace_ipoints.lua
+-- ============================================================================
+
+-- ============================================================================
+-- BEGIN scripts/src/88_bamboo_scroll.lua
+-- ============================================================================
+-- 墨竹长卷(第18关重制):手绘前景地形 = 画题本身(本阶段只做前景)
+-- 间距依据 docs/movement_spec.md(standard 组):
+--   苞→苞 ≥780(> 跳+冲787×0.95=748 不可逾越) → 不触苞铺路,物理上过不去
+--   叶台跳段 ≤460(纯跳必经上限);末台→下一苞 ≈390~440(跳或跳+冲)
+--   台阶 ≤175;杈梯间距 ≤155
+-- 叶台 = 画出的横枝(枝即碰撞体,完全贴合笔画),叶生枝上
+-- 本文件不得新增 chunk 顶级 local(bundle 199/200),全部用全局。
+
+BAMBOO_DATA = {
+    worldW = 4750, worldH = 900, kill = 1060, zoom = 0.70,
+    paper = { 243, 239, 229 },
+    spawn = { 140, 780 },
+    cps = { { 140, 780 }, { 2430, 608 }, { 3110, 308 } },
+    goal = { 4560, 740 },
+    grounds = {
+        { 0, 812, 240, 798, 520, 806, 700, 818, 700, 900, 0, 900 },
+        { 2340, 620, 2540, 614, 2548, 900, 2332, 900 },
+        { 4380, 796, 4580, 788, 4750, 792, 4750, 900, 4380, 900 },
+    },
+    -- 竿(墨绿,可攀可踏):bud=true → 梢为未完之笔,触苞铺墨梁
+    stalks = {
+        -- 起|卷首丛:边竹 + 主攀竹(杈梯) + 笋
+        { x1 = 80,  y1 = 815, x2 = 112, y2 = 520, bow = 10, w = 32 },
+        { x1 = 320, y1 = 815, x2 = 350, y2 = 470, bow = -22, w = 64,
+            stubs = { { 660, -1 }, { 530, 1 } }, bud = true,
+            pads = { { 560, 425 }, { 755, 395 } } },
+        { x1 = 555, y1 = 815, x2 = 565, y2 = 645, bow = -8, w = 40 },  -- 笋
+        -- 承|涧上双丛:苞②③,墨梁是唯一的路(苞间 800,超不可逾越线)
+        { x1 = 1136, y1 = 1050, x2 = 1158, y2 = 520, bow = 10, w = 32 },
+        { x1 = 1200, y1 = 1050, x2 = 1190, y2 = 355, bow = 16, w = 50, bud = true,
+            pads = { { 1400, 325 }, { 1600, 355 } } },
+        { x1 = 2000, y1 = 1050, x2 = 1990, y2 = 325, bow = -14, w = 50, bud = true,
+            pads = { { 2170, 415 }, { 2300, 530 } } },
+        { x1 = 2062, y1 = 1050, x2 = 2046, y2 = 470, bow = -12, w = 30 },
+        -- 转|风压斜竹长坡(踏竿喘息段,cp2→cp3)
+        { x1 = 2520, y1 = 624, x2 = 3110, y2 = 330, bow = -30, w = 56 },
+        -- 合|末苞垂梢长下行(cp3→卷尾涧宽1270,滑翔+跳冲也不可逾越)
+        { x1 = 3510, y1 = 1050, x2 = 3500, y2 = 295, bow = 12, w = 48, bud = true,
+            pads = { { 3680, 400 }, { 3810, 540 }, { 3940, 680 }, { 4140, 760 } } },
+        { x1 = 4480, y1 = 790, x2 = 4460, y2 = 520, bow = -12, w = 46 },  -- 卷尾丛
+        { x1 = 4580, y1 = 790, x2 = 4596, y2 = 560, bow = 10, w = 34 },
+    },
+    -- 中景:淡竹剪影(视差 0.6,纯景无碰撞;hero 一根粗竹立在主笔斜竹身后)
+    midBamboo = {
+        { x1 = 230, y1 = 1050, x2 = 260, y2 = 150, bow = 20, w = 54 },
+        { x1 = 640, y1 = 1050, x2 = 600, y2 = 60, bow = -26, w = 72 },
+        { x1 = 1010, y1 = 1050, x2 = 1040, y2 = 230, bow = 16, w = 44 },
+        { x1 = 1480, y1 = 1050, x2 = 1430, y2 = 90, bow = -30, w = 64 },
+        { x1 = 1860, y1 = 1050, x2 = 1900, y2 = 180, bow = 22, w = 50 },
+        { x1 = 2330, y1 = 1050, x2 = 2290, y2 = 40, bow = -20, w = 80 },
+        { x1 = 2720, y1 = 1050, x2 = 2760, y2 = 20, bow = 24, w = 110 },  -- hero
+        { x1 = 3160, y1 = 1050, x2 = 3120, y2 = 160, bow = -18, w = 56 },
+        { x1 = 3640, y1 = 1050, x2 = 3680, y2 = 90, bow = 20, w = 66 },
+        { x1 = 4100, y1 = 1050, x2 = 4070, y2 = 200, bow = -14, w = 48 },
+        { x1 = 4480, y1 = 1050, x2 = 4510, y2 = 60, bow = 16, w = 76 },
+    },
+    -- 远景:雾山(视差 0.3)
+    mountains = {
+        { 0, 760, 380, 600, 760, 700, 1180, 560, 1620, 690, 2080, 590, 2520, 700, 3000, 580, 3480, 680, 3980, 600, 4400, 690, 4750, 620, 4750, 900, 0, 900 },
+        { 0, 820, 520, 720, 1080, 790, 1700, 700, 2380, 800, 3060, 710, 3760, 790, 4380, 720, 4750, 780, 4750, 900, 0, 900 },
+    },
+}
+
+BAMBOO_DATA_22 = {
+    worldW = 8400, worldH = 2600, kill = 2720, zoom = 0.70,
+    paper = { 243, 239, 229 },
+    spawn = { 140, 2280 },
+    cps = { { 140, 2280 }, { 2050, 1700 }, { 2560, 1180 }, { 4340, 1100 }, { 4950, 2380 }, { 7030, 1600 }, { 8260, 1780 } },
+    goal = { 8260, 1780 },
+    killZones = {
+        { 3550, 1700, 3900, 2700 },
+        { 5040, 2280, 5660, 2700 },
+    },
+    inkPools = {
+        { x1 = 4700, x2 = 5120, y = 2440 },
+    },
+    grounds = {
+        { 0, 2320, 260, 2265, 620, 2285, 900, 2310, 900, 2600, 0, 2600 },
+        { 1500, 2235, 1720, 2175, 1880, 2250, 1880, 2600, 1500, 2600 },
+        { 4780, 2440, 5050, 2420, 5120, 2600, 4780, 2600 },
+        { 5660, 2360, 5920, 2320, 6000, 2600, 5660, 2600 },
+        { 6900, 1650, 7160, 1620, 7220, 2600, 6900, 2600 },
+        { 8140, 1830, 8400, 1780, 8400, 2600, 8140, 2600 },
+    },
+    staticBeams = {
+        { x = 1030, y = 2135, hw = 70 }, { x = 1300, y = 2090, hw = 80 }, { x = 1660, y = 2160, hw = 130 },
+        { x = 1900, y = 2020, hw = 72 }, { x = 2050, y = 1700, hw = 130 }, { x = 2460, y = 1200, hw = 135 },
+        { x = 2760, y = 1185, hw = 110 }, { x = 3480, y = 1120, hw = 110 }, { x = 4340, y = 1100, hw = 130 },
+        { x = 2880, y = 1700, hw = 95 }, { x = 3320, y = 1710, hw = 95 }, { x = 4120, y = 1685, hw = 105 },
+        { x = 4720, y = 1500, hw = 80 }, { x = 4950, y = 2380, hw = 130 }, { x = 5010, y = 2330, hw = 70 }, { x = 5660, y = 2320, hw = 135 },
+        { x = 6990, y = 1620, hw = 125, spring = true }, { x = 8260, y = 1780, hw = 150 },
+    },
+    stalks = {
+        { x1 = 80, y1 = 2325, x2 = 112, y2 = 2070, bow = 10, w = 32 },
+        { x1 = 390, y1 = 2315, x2 = 430, y2 = 1960, bow = -24, w = 64,
+            stubs = { { 2180, -1 }, { 2060, 1 } }, bud = true, mode = "bridge",
+            pads = { { 820, 2040 }, { 1210, 2080 }, { 1600, 2160 } } },
+        { x1 = 565, y1 = 2320, x2 = 590, y2 = 2140, bow = -8, w = 42 },
+        { x1 = 1760, y1 = 2260, x2 = 1760, y2 = 1700, bow = 18, w = 60,
+            stubs = { { 2140, 1 }, { 1985, -1 }, { 1830, 1 } } },
+        { x1 = 2000, y1 = 2260, x2 = 2000, y2 = 1690, bow = -18, w = 60,
+            stubs = { { 2090, -1 }, { 1935, 1 }, { 1780, -1 } } },
+        { x1 = 2080, y1 = 1700, x2 = 2080, y2 = 1560, bow = 10, w = 48, bud = true, mode = "ladder",
+            pads = { { 2200, 1500, 50 }, { 1990, 1360, 50 }, { 2210, 1220, 50 }, { 2460, 1200, 60 } } },
+        { x1 = 2360, y1 = 1620, x2 = 2360, y2 = 1190, bow = 12, w = 52,
+            stubs = { { 1510, 1 }, { 1380, -1 }, { 1260, 1 } } },
+        { x1 = 2560, y1 = 1600, x2 = 2560, y2 = 1180, bow = -12, w = 52,
+            stubs = { { 1480, -1 }, { 1340, 1 }, { 1220, -1 } } },
+        { x1 = 2790, y1 = 1710, x2 = 2800, y2 = 1080, bow = 18, w = 46 },
+        { x1 = 2940, y1 = 1320, x2 = 2940, y2 = 1060, bow = -10, w = 34, bud = true, mode = "chain", launchVX = 15, launchVY = -13 },
+        { x1 = 3110, y1 = 1310, x2 = 3110, y2 = 1045, bow = 12, w = 34, bud = true, mode = "chain", launchVX = 15, launchVY = -12 },
+        { x1 = 3280, y1 = 1320, x2 = 3280, y2 = 1060, bow = -12, w = 34, bud = true, mode = "chain", launchVX = 15, launchVY = -9 },
+        { x1 = 3560, y1 = 1510, x2 = 3560, y2 = 1030, bow = 16, w = 48, bud = true, mode = "bridge",
+            pads = { { 3440, 1160 }, { 3340, 1220 } } },
+        { x1 = 4220, y1 = 1500, x2 = 4220, y2 = 1045, bow = -12, w = 44, bud = true, mode = "bridge",
+            pads = { { 4380, 1190 }, { 4540, 1340 }, { 4700, 1500 } } },
+        { x1 = 4400, y1 = 1220, x2 = 4400, y2 = 860, bow = 8, w = 34, bud = true, mode = "chain", launchVX = 15, launchVY = -11 },
+        { x1 = 4560, y1 = 1660, x2 = 4560, y2 = 1500, bow = -6, w = 32, bud = true, mode = "chain", launchVX = 12, launchVY = -9 },
+        { x1 = 4860, y1 = 2070, x2 = 4860, y2 = 1900, bow = 6, w = 32, bud = true, mode = "chain", launchVX = 10, launchVY = -9 },
+        { x1 = 5800, y1 = 2360, x2 = 6850, y2 = 1700, bow = -60, w = 64 },
+        { x1 = 6350, y1 = 2380, x2 = 6200, y2 = 1840, bow = 35, w = 38 },
+        { x1 = 6650, y1 = 2360, x2 = 6460, y2 = 1900, bow = -30, w = 34 },
+        { x1 = 6860, y1 = 1820, x2 = 6860, y2 = 1680, bow = 8, w = 42, bud = true, mode = "spring",
+            pads = { { 6990, 1620, 58 } } },
+        { x1 = 7180, y1 = 1700, x2 = 7200, y2 = 1550, bow = 8, w = 42, bud = true, mode = "long_bridge", growSpeed = 0.035, padDelayStep = 20,
+            pads = { { 7360, 1600, 55 }, { 7680, 1625, 55 }, { 8000, 1700, 55 }, { 8250, 1780, 60 } } },
+        { x1 = 8220, y1 = 1840, x2 = 8260, y2 = 1560, bow = -10, w = 48 },
+        { x1 = 8340, y1 = 1840, x2 = 8360, y2 = 1600, bow = 12, w = 36 },
+    },
+    midBamboo = {
+        { x1 = 260, y1 = 2700, x2 = 300, y2 = 820, bow = 22, w = 70 },
+        { x1 = 980, y1 = 2700, x2 = 940, y2 = 500, bow = -26, w = 82 },
+        { x1 = 1880, y1 = 2700, x2 = 1940, y2 = 420, bow = 18, w = 74 },
+        { x1 = 3060, y1 = 2700, x2 = 3000, y2 = 300, bow = -34, w = 90 },
+        { x1 = 4520, y1 = 2700, x2 = 4620, y2 = 540, bow = 32, w = 70 },
+        { x1 = 6100, y1 = 2700, x2 = 5900, y2 = 760, bow = -36, w = 86 },
+        { x1 = 7400, y1 = 2700, x2 = 7520, y2 = 640, bow = 28, w = 76 },
+        { x1 = 8200, y1 = 2700, x2 = 8140, y2 = 980, bow = -20, w = 64 },
+    },
+    mountains = {
+        { 0, 2380, 720, 2100, 1420, 2260, 2300, 1980, 3120, 2220, 4200, 1920, 5200, 2240, 6100, 2040, 7100, 2280, 8400, 2050, 8400, 2600, 0, 2600 },
+        { 0, 2500, 900, 2360, 1800, 2460, 2920, 2300, 4200, 2480, 5480, 2260, 6800, 2460, 8400, 2320, 8400, 2600, 0, 2600 },
+    },
+    ropes = {
+        { anchorX = 3560, anchorY = 950, length = 220, angle = -0.34, angularVelocity = 0, oscTime = 0 },
+        { anchorX = 3880, anchorY = 920, length = 220, angle = 0.36, angularVelocity = 0, oscTime = 1.7 },
+    },
+    cranes = {
+        { path = { { 5010, 2330 }, { 5350, 2230 }, { 5660, 2320 } }, duration = 240, t = 0, dir = 1, theta = 0, wingAngle = 0 },
+    },
+}
+
+function bambooCurrentData()
+    return (TRACE_RT and TRACE_RT.bambooData) or BAMBOO_DATA
+end
+
+BAMBOO_INK = { 30, 28, 26, 250 }
+BAMBOO_PAD_HW = 52   -- 墨梁半宽(碰撞=梁本体)
+-- 竿调色:主竿压灰墨绿 / 中景淡竹剪影
+BAMBOO_PAL_MAIN = { dark = { 24, 32, 22 }, light = { 64, 80, 52 }, node = { 12, 16, 10 }, a = 250, fb = 70 }
+BAMBOO_PAL_MID  = { dark = { 152, 160, 144 }, light = { 184, 190, 172 }, node = { 142, 150, 134 }, a = 215, fb = 0 }
+BAMBOO_CUR_PAL = nil
+
+function bambooAxis(s)
+    local dx, dy = s.x2 - s.x1, s.y2 - s.y1
+    local len = math.sqrt(dx * dx + dy * dy)
+    local nx, ny = -dy / len, dx / len
+    local mx2 = (s.x1 + s.x2) / 2 + nx * (s.bow or 0)
+    local my2 = (s.y1 + s.y2) / 2 + ny * (s.bow or 0)
+    local nseg = clamp(math.floor(len / 95 + 0.5), 4, 9)
+    local rel, tot = {}, 0
+    for i = 1, nseg do
+        rel[i] = 0.72 + 0.55 * math.sin(3.14159 * (i - 0.5) / nseg)
+        tot = tot + rel[i]
+    end
+    local pts = { { s.x1, s.y1, 0, 0 } }
+    local acc = 0
+    for i = 1, nseg do
+        acc = acc + rel[i] / tot
+        local t = math.min(acc, 1)
+        local a, b = (1 - t) * (1 - t), 2 * (1 - t) * t
+        -- 第4位:节点横向抖动(仅绘制用,碰撞不受影响)
+        pts[#pts + 1] = { a * s.x1 + b * mx2 + t * t * s.x2,
+            a * s.y1 + b * my2 + t * t * s.y2, t,
+            (hash01(s.x1 * 7.1 + i * 13.3) - 0.5) * 5 }
+    end
+    return pts
+end
+
+function bambooWidthAt(s, t)
+    return s.w * (1 - 0.34 * t)
+end
+
+function bambooSegCount(s)
+    return #s.pts - 1 - (s.bud and 1 or 0)
+end
+
+function bambooAddPoly(flat)
+    local poly = {}
+    local x1, y1, x2, y2 = 1e9, 1e9, -1e9, -1e9
+    for k = 1, #flat - 1, 2 do
+        local x, y = flat[k], flat[k + 1]
+        poly[#poly + 1] = { x, y }
+        if x < x1 then x1 = x end
+        if x > x2 then x2 = x end
+        if y < y1 then y1 = y end
+        if y > y2 then y2 = y end
+    end
+    poly.bb = { x1, y1, x2, y2 }
+    TRACE_RT.polys[#TRACE_RT.polys + 1] = poly
+    return poly
+end
+
+function bambooAxisCollision(s)
+    for i = 1, bambooSegCount(s) do
+        local p, q = s.pts[i], s.pts[i + 1]
+        local dx, dy = q[1] - p[1], q[2] - p[2]
+        local L = math.sqrt(dx * dx + dy * dy)
+        if L > 1 then
+            local ux, uy = dx / L, dy / L
+            local nx, ny = -uy, ux
+            local w1 = bambooWidthAt(s, p[3]) / 2
+            local w2 = bambooWidthAt(s, q[3]) / 2
+            local ax, ay = p[1] - ux * 6, p[2] - uy * 6
+            local bx, by = q[1] + ux * 6, q[2] + uy * 6
+            bambooAddPoly({ ax + nx * w1, ay + ny * w1, bx + nx * w2, by + ny * w2,
+                bx - nx * w2, by - ny * w2, ax - nx * w1, ay - ny * w1 })
+        end
+    end
+end
+
+function bambooStubPoint(s, yq)
+    for i = 1, #s.pts - 1 do
+        local p, q = s.pts[i], s.pts[i + 1]
+        if (p[2] >= yq) ~= (q[2] >= yq) and math.abs(q[2] - p[2]) > 1 then
+            local f = (yq - p[2]) / (q[2] - p[2])
+            return p[1] + (q[1] - p[1]) * f
+        end
+    end
+    return s.pts[#s.pts][1]
+end
+
+-- 叶台植叶:两组"个字"叶簇长在横枝上(左节/右节各3叶 + 中央2叶)
+function bambooPadLeaves(tab, cx, cy, hw)
+    local nodes = { { cx - hw * 0.5, 3 }, { cx + hw * 0.5, 3 }, { cx, 2 } }
+    local di = 0
+    for ni, nd in ipairs(nodes) do
+        local nx2 = nd[1]
+        local sgn = (nx2 < cx) and -1 or 1
+        if ni == 3 then sgn = 1 end
+        for k = 1, nd[2] do
+            -- 一上挑、一平出、一下垂
+            local a
+            if k == 1 then a = -1.05 + sgn * 0.35
+            elseif k == 2 then a = (sgn < 0) and (3.14159 - 0.18) or 0.18
+            else a = (sgn < 0) and (3.14159 - 0.55) or 0.55 end
+            a = a + (hash01(nx2 + k * 7.7) - 0.5) * 0.14
+            tab[#tab + 1] = { bx = nx2, by = cy + 1, a = a,
+                ln = 34 + hash01(cy + k * 3.1 + ni * 11) * 22,
+                w = 7.5 + hash01(k * 5.3) * 3, t = 0, delay = di * 2 }
+            di = di + 1
+        end
+    end
+end
+
+function generateBambooScroll()
+    local D = (currentLevel and currentLevel.traceKey == "bamboo_v2") and BAMBOO_DATA_22 or BAMBOO_DATA
+    TRACE_RT = { polys = {}, ipoints = {}, petals = {}, vista = 0,
+        def = { conf = { kill = D.kill, goal = D.goal } },
+        goalDone = false, cpReached = {}, spawnX = 0, spawnY = 0, gx = 0, gy = 0,
+        chars = {}, pools = {}, ripples = {}, ghostGrps = {}, plumDone = 0, plumTotal = 0,
+        bamboo = true, bambooData = D, budDone = 0, budTotal = 0, hitstop = 0, fallPenalty = 0 }
+    worldW, worldH = D.worldW, D.worldH
+    willowRopes = D.ropes or {}
+    cranes = D.cranes or {}
+    for _, c in ipairs(cranes) do
+        if c.path and c.path[1] then
+            c.x, c.y = c.path[1][1], c.path[1][2]
+        end
+        c.theta = c.theta or 0
+        c.wingAngle = c.wingAngle or 0
+    end
+    for _, g in ipairs(D.grounds) do bambooAddPoly(g) end
+    for _, b in ipairs(D.staticBeams or {}) do
+        local hw = b.hw or BAMBOO_PAD_HW
+        local y = b.y or 0
+        bambooAddPoly({ b.x - hw, y - 5, b.x + hw, y - 5, b.x + hw, y + 9, b.x - hw, y + 9 }).leafPlat = true
+    end
+    for _, s in ipairs(D.stalks) do
+        s.pts = bambooAxis(s)
+        bambooAxisCollision(s)
+        if s.stubs then
+            for _, st in ipairs(s.stubs) do
+                local sx = bambooStubPoint(s, st[1])
+                local ex = sx + st[2] * (58 + s.w * 0.5)
+                bambooAddPoly({ sx, st[1] - 4, ex, st[1] - 12, ex, st[1] - 2, sx, st[1] + 5 })
+            end
+        end
+    end
+    if D == BAMBOO_DATA then
+        -- 斜竹梢端杈台(cp3 落点)
+        bambooAddPoly({ 3058, 322, 3162, 312, 3166, 328, 3062, 340 })
+    end
+    -- 苞:未完之笔 + 铺路链(碰撞 = 横枝本体,完全在笔画内)
+    for _, s in ipairs(D.stalks) do
+        if s.bud then
+            local tx, ty = s.x2, s.y2
+            local stEnd = s.pts[#s.pts - 1]
+            local mode = s.mode or "bridge"
+            local budRad = s.rad or 80
+
+            -- 新版设计：部分点采用梅花绽放（沿用聚类原位花苞）与拾字模式
+            -- 先兼容纯桥/梯模式
+            local ip = { x = tx, y = ty - 10, kind = "bud", rad = budRad,
+                trig = false, members = {}, stalk = s, mode = mode,
+                launchVX = s.launchVX, launchVY = s.launchVY, growSpeed = s.growSpeed,
+                sx = stEnd[1], sy = stEnd[2], grow = 0 }
+            ip.plat = { tx - BAMBOO_PAD_HW - 4, ty + 2, tx + BAMBOO_PAD_HW + 4, ty + 2,
+                tx + BAMBOO_PAD_HW + 4, ty + 12, tx - BAMBOO_PAD_HW - 4, ty + 12 }
+            ip.pads = {}
+            local px, py = tx, ty
+            for pi, pd in ipairs(s.pads or {}) do
+                local hw = pd[3] or BAMBOO_PAD_HW
+                local pip = { x = pd[1], y = pd[2], px = px, py = py, hw = hw,
+                    members = {}, delay = 6 + pi * (s.padDelayStep or 10), grow = 0,
+                    growSpeed = s.growSpeed,
+                    accDir = (pd[1] >= px) and 1 or -1 }
+                pip.plat = { pd[1] - hw, pd[2] - 1, pd[1] + hw, pd[2] - 1,
+                    pd[1] + hw, pd[2] + 9, pd[1] - hw, pd[2] + 9 }
+                ip.pads[#ip.pads + 1] = pip
+                px, py = pd[1], pd[2]
+            end
+            ip.accDir = (ip.pads[1] and ip.pads[1].x >= tx) and 1 or -1
+            if ip.mode == "ladder" then
+                ip.accDir = 1
+                for _, pip in ipairs(ip.pads) do pip.accDir = 1 end
+            end
+            TRACE_RT.ipoints[#TRACE_RT.ipoints + 1] = ip
+            TRACE_RT.budTotal = TRACE_RT.budTotal + 1
+        end
+    end
+    TRACE_RT.spawnX = D.spawn[1]
+    TRACE_RT.spawnY = traceSnapDown(D.spawn[1], D.spawn[2] - 100) - 12
+    TRACE_RT.cps = {}
+    for i, cp in ipairs(D.cps) do
+        TRACE_RT.cps[i] = { cp[1], traceSnapDown(cp[1], cp[2] - 100) - 12 }
+        TRACE_RT.cpReached[i] = (i == 1)
+    end
+    TRACE_RT.zoom = TRACE_DEBUG_FIT and math.min(DESIGN_W / (worldW + 80), DESIGN_H / (worldH + 80)) or D.zoom
+    TRACE_RT.camCx = TRACE_RT.spawnX
+    TRACE_RT.camCy = TRACE_RT.spawnY - 50
+    print(string.format("[bamboo] %s polys=%d buds=%d world=%dx%d",
+        currentLevel.traceKey, #TRACE_RT.polys, TRACE_RT.budTotal, worldW, worldH))
+end
+
+function bambooCranePoint(c)
+    if not c.path then return c.x or 0, c.y or 0 end
+    local p = c.path
+    local dur = c.duration or 240
+    local tt = (c.t or 0) / dur
+    tt = clamp(tt, 0, 1)
+    if tt < 0.5 then
+        local u = tt * 2
+        local x = p[1][1] + (p[2][1] - p[1][1]) * u
+        local y = p[1][2] + (p[2][2] - p[1][2]) * u
+        return x, y
+    end
+    local u = (tt - 0.5) * 2
+    local x = p[2][1] + (p[3][1] - p[2][1]) * u
+    local y = p[2][2] + (p[3][2] - p[2][2]) * u
+    return x, y
+end
+
+function updateBambooScrollSpecial()
+    local RT = TRACE_RT
+    if not RT or not RT.bamboo then return end
+    updatePeachRopes()
+    if RT.fallPenalty and RT.fallPenalty > 0 then
+        RT.fallPenalty = RT.fallPenalty - 1
+        player.vx = player.vx * 0.6
+    end
+    if player.swingRope then
+        local rope = player.swingRope
+        local tx, ty = ropeTip(rope)
+        player.x, player.y = tx, ty
+        local push = (keys.d and 1 or 0) - (keys.a and 1 or 0)
+        rope.angularVelocity = rope.angularVelocity + push * 0.002
+        if keys.space or dashJustPressed then
+            player.swingRope = nil
+            player.vx = math.cos(rope.angle) * rope.angularVelocity * rope.length * 0.9 + push * 6
+            player.vy = currentLevel.jumpForce * 0.85
+            player.canDash = true
+            keys.space = false
+            dashJustPressed = false
+        end
+        return
+    elseif not player.isDashing then
+        for _, rope in ipairs(willowRopes) do
+            local tx, ty = ropeTip(rope)
+            if dist2(player.x - tx, player.y - ty) < player.radius + 36 then
+                player.swingRope = rope
+                player.canDash = true
+                break
+            end
+        end
+    end
+    for _, c in ipairs(cranes) do
+        if c.path then
+            c.t = (c.t or 0) + (c.dir or 1)
+            if c.t >= (c.duration or 240) then c.t = c.duration or 240; c.dir = -1 end
+            if c.t <= 0 then c.t = 0; c.dir = 1 end
+            c.x, c.y = bambooCranePoint(c)
+            c.theta = (c.theta or 0) + 0.035
+            c.wingAngle = math.sin(c.theta * 3.5) * (math.pi / 4)
+        end
+    end
+    if player.craneCooldown > 0 then player.craneCooldown = player.craneCooldown - 1 end
+    if player.ridingCrane then
+        local c = player.ridingCrane
+        player.x = c.x
+        player.y = c.y - 18
+        player.vx, player.vy = 0, 0
+        player.canDash = true
+        if dashJustPressed or keys.space then
+            local dx = (keys.d and 1 or 0) - (keys.a and 1 or 0)
+            local dy = (keys.s and 1 or 0) - (keys.w and 1 or 0)
+            if dx == 0 and dy == 0 then dx = player.facingRight and 1 or -1 end
+            local d = dist2(dx, dy)
+            player.ridingCrane = nil
+            boostFluidTrail(26)
+            player.isDashing = true
+            player.canDash = false
+            player.dashTime = 12
+            player.dashDirX, player.dashDirY = dx / d, dy / d
+            player.craneCooldown = 40
+            keys.space = false
+            dashJustPressed = false
+        end
+    elseif player.craneCooldown == 0 and not player.isDashing then
+        for _, c in ipairs(cranes) do
+            if dist2(player.x - c.x, player.y - c.y) < player.radius + 36 then
+                player.ridingCrane = c
+                break
+            end
+        end
+    end
+end
+
+function bambooBudUpdate()
+    local RT = TRACE_RT
+    RT.budDone = 0
+    for _, ip in ipairs(RT.ipoints) do
+        if ip.trig then RT.budDone = RT.budDone + 1 end
+        if ip.shake and ip.shake > 0 then ip.shake = ip.shake - 1 end
+        if not ip.trig then
+            local dx, dy = player.x - ip.x, player.y - ip.y
+            if dx * dx + dy * dy < (ip.rad or 64) ^ 2 then
+                if player.isDashing then
+                    ip.trig = true
+                    ip.ring = 0
+                    player.isDashing = false
+                    player.dashTime = 0
+                    player.canDash = true
+                    local chain = ip.mode == "chain"
+                    if chain then
+                        -- 链苞:不停顿,命中后弹送并刷新冲刺。
+                        player.vx = ip.launchVX or ((player.facingRight and 1 or -1) * 14)
+                        player.vy = ip.launchVY or -12
+                        player.isGrounded = false
+                    else
+                        -- 冲刺命中:笔在苞处收势——结束冲刺,稳落新生叶台。
+                        player.x = ip.x
+                        player.y = ip.y + 12 - player.radius - 1
+                        player.vx = clamp(player.vx, -2.5, 2.5)
+                        player.vy = 0
+                        player.isGrounded = true
+                        RT.hitstop = 3
+                        RT.hitstopX, RT.hitstopY = player.x, player.y
+                    end
+                    local nx2, ny2 = 0, -26
+                    if ip.pads[1] then
+                        local ddx, ddy = ip.pads[1].x - ip.x, ip.pads[1].y - ip.y
+                        local dl = math.sqrt(ddx * ddx + ddy * ddy)
+                        if dl > 1 then nx2, ny2 = ddx / dl * 38, ddy / dl * 24 end
+                    end
+                    RT.nudge = { x = nx2, y = ny2, t = 22 }
+                    if not chain then bambooAddPoly(ip.plat).leafPlat = true end
+                    for _, pip in ipairs(ip.pads) do bambooAddPoly(pip.plat).leafPlat = true end
+                    for k = 1, 16 do
+                        RT.petals[#RT.petals + 1] = { x = ip.x, y = ip.y,
+                            vx = (hash01(ip.x + k * 6.1) - 0.5) * 3.6, vy = -0.8 - hash01(k * 3.7) * 2.4,
+                            rot = hash01(k * 2.9) * 6.28, vr = (hash01(k * 7.7) - 0.5) * 0.2,
+                            life = 56 + k * 3, age = 0, ph = k * 2.1, col = { 40, 48, 36 } }
+                    end
+                elseif not ip.shake or ip.shake <= 0 then
+                    -- 非冲刺触碰:苞轻颤拒绝(提示要用 J 点墨)
+                    ip.shake = 16
+                end
+            end
+        else
+            if ip.mode == "spring" and player.isGrounded and keys.space
+                and math.abs(player.x - ip.x) < 150 and math.abs((player.y + player.radius) - (ip.y + 10)) < 48 then
+                player.vy = -24
+                player.isGrounded = false
+                player.canDash = true
+                keys.space = false
+                RT.nudge = { x = 18, y = -45, t = 22 }
+                for k = 1, 12 do
+                    RT.petals[#RT.petals + 1] = { x = ip.x, y = ip.y + 8,
+                        vx = (hash01(ip.x + k * 4.1) - 0.5) * 2.8, vy = -1.4 - hash01(k * 2.9) * 2.2,
+                        rot = hash01(k * 4.9) * 6.28, vr = (hash01(k * 6.7) - 0.5) * 0.2,
+                        life = 46 + k * 2, age = 0, ph = k * 1.9, col = { 38, 48, 32 } }
+                end
+            end
+            if ip.ring then ip.ring = ip.ring + 1 end
+            if ip.grow < 1 then ip.grow = math.min(1, ip.grow + (ip.growSpeed or 0.09)) end
+            for _, m in ipairs(ip.members) do
+                if m.delay > 0 then m.delay = m.delay - 1
+                elseif m.t < 1 then m.t = math.min(1, m.t + 0.07) end
+            end
+            for _, pip in ipairs(ip.pads) do
+                if pip.delay > 0 then pip.delay = pip.delay - 1
+                else
+                    if pip.grow < 1 then pip.grow = math.min(1, pip.grow + (pip.growSpeed or 0.08)) end
+                    for _, m in ipairs(pip.members) do
+                        if m.delay > 0 then m.delay = m.delay - 1
+                        elseif m.t < 1 then m.t = math.min(1, m.t + 0.07) end
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- ============ 绘制 ============
+function drawInkLeaf(bx, by, a, ln, w, grow, col, alpha)
+    if grow <= 0.02 then return end
+    local g = grow
+    if g < 1 then g = 1 + 1.9 * (g - 1) ^ 3 + 0.9 * (g - 1) ^ 2 end
+    local L = ln * g
+    local ca, sa = math.cos(a), math.sin(a)
+    -- 叶脊垂弧:撇出后自然向下坠
+    local droop = L * 0.13
+    local tx, ty = bx + ca * L, by + sa * L + droop
+    local mxs, mys = bx + ca * L * 0.5, by + sa * L * 0.5 + droop * 0.42
+    local pa = a + 1.5708
+    local pcx, pcy = math.cos(pa), math.sin(pa)
+    local gw = math.min(grow * 1.6, 1)
+    local wUp = w * 0.6 * gw   -- 上缘瘦
+    local wDn = w * 1.3 * gw   -- 下缘肥(笔肚)
+    local al = alpha or 240
+    nvgBeginPath(vg)
+    nvgMoveTo(vg, bx, by)
+    nvgBezierTo(vg,
+        bx + ca * L * 0.30 + pcx * wUp, by + sa * L * 0.30 + pcy * wUp + droop * 0.16,
+        mxs + pcx * wUp * 0.66, mys + pcy * wUp * 0.66, tx, ty)
+    nvgBezierTo(vg,
+        mxs - pcx * wDn, mys - pcy * wDn,
+        bx + ca * L * 0.24 - pcx * wDn * 0.82, by + sa * L * 0.24 - pcy * wDn * 0.82,
+        bx, by)
+    nvgClosePath(vg)
+    nvgFillColor(vg, rgba(col[1], col[2], col[3], al))
+    nvgFill(vg)
+    -- 锋尖补浓:末段一道更深的窄笔
+    if L > 26 then
+        local hx, hy = bx + ca * L * 0.55, by + sa * L * 0.55 + droop * 0.6
+        nvgBeginPath(vg)
+        nvgMoveTo(vg, hx, hy)
+        nvgBezierTo(vg,
+            hx + ca * L * 0.2 + pcx * wUp * 0.5, hy + sa * L * 0.2 + pcy * wUp * 0.5 + droop * 0.2,
+            tx - ca * L * 0.1, ty - sa * L * 0.1, tx, ty)
+        nvgBezierTo(vg,
+            hx + ca * L * 0.22 - pcx * wDn * 0.4, hy + sa * L * 0.22 - pcy * wDn * 0.4 + droop * 0.2,
+            hx, hy, hx, hy)
+        nvgClosePath(vg)
+        nvgFillColor(vg, rgba(math.floor(col[1] * 0.55), math.floor(col[2] * 0.55),
+            math.floor(col[3] * 0.55), al * 0.7))
+        nvgFill(vg)
+    end
+end
+
+function drawInkBranch(ax, ay, bx, by, w, grow, alpha)
+    if grow <= 0.02 then return end
+    local t = grow
+    local mx2 = (ax + bx) / 2
+    local my2 = (ay + by) / 2 + 18
+    local a1, b1 = (1 - t) * (1 - t), 2 * (1 - t) * t
+    local ex = a1 * ax + b1 * mx2 + t * t * bx
+    local ey = a1 * ay + b1 * my2 + t * t * by
+    nvgStrokeColor(vg, rgba(30, 28, 26, alpha or 240))
+    nvgStrokeWidth(vg, w * (1 - 0.4 * t) + 2)
+    nvgBeginPath(vg)
+    nvgMoveTo(vg, ax, ay)
+    nvgBezierTo(vg, ax + (mx2 - ax) * t, ay + (my2 - ay) * t,
+        ex - (bx - ax) * 0.1 * t, ey - (by - ay) * 0.1 * t, ex, ey)
+    nvgStroke(vg)
+end
+
+-- 叶台:横枝(碰撞本体)+ 枝上叶簇
+function drawBambooPad(anchorX, anchorY, spine, members, grow)
+    if grow > 0.02 then
+        local sx1, sy1, sx2, sy2 = spine[1], spine[2], spine[3], spine[4]
+        local g = math.min(grow * 1.15, 1)
+        -- 横枝从锚点向两端长出
+        local mxm = (sx1 + sx2) / 2
+        local mym = (sy1 + sy2) / 2
+        nvgStrokeColor(vg, rgba(28, 26, 24, 248))
+        nvgStrokeWidth(vg, 6.5)
+        nvgBeginPath(vg)
+        nvgMoveTo(vg, mxm - (mxm - sx1) * g, mym - (mym - sy1) * g)
+        nvgLineTo(vg, mxm + (sx2 - mxm) * g, mym + (sy2 - mym) * g)
+        nvgStroke(vg)
+        -- 枝端小节痕
+        if g > 0.9 then
+            for _, ex in ipairs({ { sx1, sy1 }, { sx2, sy2 } }) do
+                nvgBeginPath(vg)
+                nvgCircle(vg, ex[1], ex[2], 2.6)
+                nvgFillColor(vg, rgba(16, 15, 13, 250))
+                nvgFill(vg)
+            end
+        end
+    end
+    for _, m in ipairs(members) do
+        drawInkLeaf(m.bx, m.by, m.a, m.ln, m.w, m.t, { 30, 36, 27 }, 246)
+    end
+end
+
+function drawBambooStalk(s)
+    local pal = BAMBOO_CUR_PAL or BAMBOO_PAL_MAIN
+    for i = 1, bambooSegCount(s) do
+        local p, q = s.pts[i], s.pts[i + 1]
+        local dx, dy = q[1] - p[1], q[2] - p[2]
+        local L = math.sqrt(dx * dx + dy * dy)
+        if L > 1 then
+            local ux, uy = dx / L, dy / L
+            local nx, ny = -uy, ux
+            local j1, j2 = (p[4] or 0), (q[4] or 0)
+            local ax, ay = p[1] + ux * 3 + nx * j1, p[2] + uy * 3 + ny * j1
+            local bx, by = q[1] - ux * 3 + nx * j2, q[2] - uy * 3 + ny * j2
+            local w1 = bambooWidthAt(s, p[3]) / 2
+            local w2 = bambooWidthAt(s, q[3]) / 2
+            local tone_j = (hash01(s.x1 + i * 13.7) - 0.5) * 12
+            -- 侧锋:一侧蘸墨深、一侧行笔淡(段内横向渐变)
+            local grad = nvgLinearGradient(vg,
+                ax + nx * w1, ay + ny * w1, ax - nx * w1, ay - ny * w1,
+                rgba(clamp(pal.dark[1] + tone_j, 0, 255), clamp(pal.dark[2] + tone_j, 0, 255),
+                    clamp(pal.dark[3] + tone_j, 0, 255), pal.a),
+                rgba(clamp(pal.light[1] + tone_j, 0, 255), clamp(pal.light[2] + tone_j, 0, 255),
+                    clamp(pal.light[3] + tone_j, 0, 255), pal.a - 14))
+            nvgBeginPath(vg)
+            nvgMoveTo(vg, ax + nx * w1, ay + ny * w1)
+            nvgLineTo(vg, bx + nx * w2, by + ny * w2)
+            nvgLineTo(vg, bx - nx * w2, by - ny * w2)
+            nvgLineTo(vg, ax - nx * w1, ay - ny * w1)
+            nvgClosePath(vg)
+            nvgFillPaint(vg, grad)
+            nvgFill(vg)
+            -- 飞白:段内顺笔势的枯丝(纸色细线;中景剪影不画)
+            if pal.fb > 0 then
+                for k = 1, 2 + (i % 2) do
+                    local sd = s.x1 * 3.7 + i * 17.9 + k * 7.7
+                    local lat = (hash01(sd) - 0.5) * 1.5 * w1 * 0.8
+                    local f1 = 0.12 + hash01(sd + 1) * 0.3
+                    local f2 = f1 + 0.25 + hash01(sd + 2) * 0.35
+                    strokeLine(
+                        ax + ux * L * f1 + nx * lat, ay + uy * L * f1 + ny * lat,
+                        ax + ux * L * math.min(f2, 0.94) + nx * lat * 0.92,
+                        ay + uy * L * math.min(f2, 0.94) + ny * lat * 0.92,
+                        1.1 + hash01(sd + 3) * 1.3,
+                        rgba(bambooCurrentData().paper[1], bambooCurrentData().paper[2], bambooCurrentData().paper[3],
+                            (pal.fb - 28) + hash01(sd + 4) * 46))
+                end
+            end
+            -- 节:一笔浅弧(中间略粗两端收),不出箍
+            if i > 1 then
+                nvgStrokeColor(vg, rgba(pal.node[1], pal.node[2], pal.node[3], pal.a - 15))
+                nvgStrokeWidth(vg, 2.6)
+                nvgBeginPath(vg)
+                nvgMoveTo(vg, ax - nx * (w1 + 1.5), ay - ny * (w1 + 1.5))
+                nvgBezierTo(vg, ax - ux * 3, ay - uy * 3, ax - ux * 3, ay - uy * 3,
+                    ax + nx * (w1 + 1.5), ay + ny * (w1 + 1.5))
+                nvgStroke(vg)
+                -- 节下淡墨小晕(墨在节处积一点)
+                drawEllipse(ax, ay + 3, w1 * 0.8, 2.2,
+                    rgba(pal.node[1], pal.node[2], pal.node[3], 58))
+            end
+        end
+    end
+    if s.stubs then
+        for _, st in ipairs(s.stubs) do
+            local sx = bambooStubPoint(s, st[1])
+            local ex = sx + st[2] * (58 + s.w * 0.5)
+            nvgStrokeColor(vg, rgba(20, 28, 18, 245))
+            nvgStrokeWidth(vg, 5)
+            nvgBeginPath(vg)
+            nvgMoveTo(vg, sx, st[1] + 2)
+            nvgBezierTo(vg, sx + (ex - sx) * 0.5, st[1] - 2, ex - (ex - sx) * 0.15, st[1] - 6, ex, st[1] - 8)
+            nvgStroke(vg)
+            drawInkLeaf(ex, st[1] - 8, 0.55 + st[2] * 0.45, 36, 5, 1, { 44, 58, 38 }, 225)
+            drawInkLeaf(ex, st[1] - 8, 1.15 + st[2] * 0.3, 28, 4, 1, { 44, 58, 38 }, 195)
+        end
+    end
+end
+
+-- 墨梁:统一的可踏平台语言(深墨横梁 + 节凸 + 端头收点 + 梁端竹叶点缀)
+function drawInkBeam(cx2, cy2, hw, grow, accDir)
+    if grow <= 0.02 then return end
+    local g = math.min(grow * 1.15, 1)
+    local x1, x2 = cx2 - hw * g, cx2 + hw * g
+    -- 梁身(横向渐变:行笔由深到淡)
+    local grad = nvgLinearGradient(vg, x1, cy2, x2, cy2,
+        rgba(20, 19, 17, 250), rgba(44, 42, 38, 244))
+    nvgBeginPath(vg)
+    nvgRect(vg, x1, cy2 - 4.5, x2 - x1, 9)
+    nvgFillPaint(vg, grad)
+    nvgFill(vg)
+    -- 端头收笔点(略粗)
+    drawCircle(x1 + 1, cy2, 6, rgba(16, 15, 13, 250))
+    drawCircle(x2 - 1, cy2, 6, rgba(16, 15, 13, 250))
+    -- 节凸(梁上三点)
+    for k = -1, 1 do
+        drawEllipse(cx2 + k * hw * 0.55 * g, cy2 - 4.2, 4.2, 2.2, rgba(14, 13, 12, 235))
+    end
+    -- 飞白一丝
+    strokeLine(x1 + hw * 0.35, cy2 - 1, x2 - hw * 0.3, cy2 - 1.6, 1.2,
+        rgba(bambooCurrentData().paper[1], bambooCurrentData().paper[2], bambooCurrentData().paper[3], 52))
+    -- 梁端竹叶点缀(朝行进方向)
+    if g > 0.85 and accDir then
+        local exx = (accDir > 0) and x2 or x1
+        drawInkLeaf(exx, cy2 - 2, (accDir > 0) and 0.5 or 2.64, 34, 4.5, 1, { 44, 58, 38 }, 220)
+        drawInkLeaf(exx, cy2 - 2, (accDir > 0) and 1.05 or 2.1, 26, 4, 1, { 44, 58, 38 }, 185)
+    end
+end
+
+function drawBambooScroll()
+    local RT = TRACE_RT
+    local D = bambooCurrentData()
+    nvgSave(vg)
+    nvgTranslate(vg, cameraX, cameraY)
+    local z = RT.zoom or 1
+    local cx = RT.camCx or (cameraX + DESIGN_W / 2)
+    local cy = RT.camCy or (cameraY + DESIGN_H / 2)
+    if RT.goalDone then
+        local fitz = math.min(DESIGN_W / (worldW + 80), DESIGN_H / (worldH + 80)) * 0.96
+        local tt = math.min(RT.vista / 170, 1)
+        tt = 1 - (1 - tt) ^ 3
+        z = z + (fitz - z) * tt
+        cx = cx + (worldW / 2 - cx) * tt
+        cy = cy + (worldH / 2 - cy) * tt
+    end
+    nvgTranslate(vg, DESIGN_W / 2, DESIGN_H / 2)
+    nvgScale(vg, z, z)
+    nvgTranslate(vg, -cx, -cy)
+    local halfW = DESIGN_W / (2 * z) + 80
+    local halfH = DESIGN_H / (2 * z) + 80
+    nvgBeginPath(vg)
+    nvgRect(vg, cx - halfW, cy - halfH, halfW * 2, halfH * 2)
+    nvgFillColor(vg, rgba(D.paper[1], D.paper[2], D.paper[3], 255))
+    nvgFill(vg)
+    -- 宣纸纹理:分格确定性的纤维丝 + 云状淡斑(只画可视格)
+    local cs = 512
+    for ix = math.floor((cx - halfW) / cs), math.floor((cx + halfW) / cs) do
+        for iy = math.floor((cy - halfH) / cs), math.floor((cy + halfH) / cs) do
+            local sd = ix * 131.7 + iy * 57.3
+            drawEllipse(ix * cs + hash01(sd + 1) * cs, iy * cs + hash01(sd + 2) * cs,
+                170 + hash01(sd + 3) * 210, 90 + hash01(sd + 4) * 130,
+                rgba(216, 211, 197, 8))
+            for k = 1, 9 do
+                local fx = ix * cs + hash01(sd + k * 7.7) * cs
+                local fy = iy * cs + hash01(sd + k * 11.3) * cs
+                local fa2 = hash01(sd + k * 3.1) * 3.14159
+                local fl = 3 + hash01(sd + k * 5.9) * 6
+                strokeLine(fx, fy, fx + math.cos(fa2) * fl, fy + math.sin(fa2) * fl,
+                    0.9, rgba(188, 182, 167, 15))
+            end
+            for k = 1, 4 do
+                drawCircle(ix * cs + hash01(sd + k * 13.7) * cs,
+                    iy * cs + hash01(sd + k * 17.9) * cs,
+                    0.8 + hash01(sd + k * 19.3) * 0.8, rgba(178, 172, 156, 14))
+            end
+        end
+    end
+    -- 远景:雾山(视差 0.3,两叠)
+    nvgSave(vg)
+    nvgTranslate(vg, (cx - worldW / 2) * (1 - 0.3), (cy - worldH / 2) * (1 - 0.3) * 0.4)
+    for mi, mt in ipairs(D.mountains) do
+        nvgBeginPath(vg)
+        nvgMoveTo(vg, mt[1], mt[2])
+        for k = 3, #mt - 1, 2 do nvgLineTo(vg, mt[k], mt[k + 1]) end
+        nvgClosePath(vg)
+        nvgFillColor(vg, (mi == 1) and rgba(214, 211, 200, 150) or rgba(202, 199, 188, 120))
+        nvgFill(vg)
+    end
+    nvgRestore(vg)
+    -- 中景:淡竹剪影(视差 0.6,纯景)
+    nvgSave(vg)
+    nvgTranslate(vg, (cx - worldW / 2) * (1 - 0.6), (cy - worldH / 2) * (1 - 0.6) * 0.5)
+    BAMBOO_CUR_PAL = BAMBOO_PAL_MID
+    for _, s in ipairs(D.midBamboo) do
+        if not s.pts then s.pts = bambooAxis(s) end
+        drawBambooStalk(s)
+        -- 剪影叶冠
+        for k = 1, 5 do
+            local a2 = -0.5 + (k - 3) * 0.4 + hash01(s.x1 + k * 3.3) * 0.12
+            drawInkLeaf(s.x2, s.y2 + 4, a2 + 0.4, 52 + hash01(s.x1 * k) * 38, 6.5, 1,
+                { 150, 158, 142 }, 195)
+        end
+    end
+    BAMBOO_CUR_PAL = nil
+    nvgRestore(vg)
+    -- 坡石:深底 + 受光淡斑 + 顶面浓墨踏带 + 皴笔 + 苔点 + 湿晕边
+    for gi, g in ipairs(D.grounds) do
+        local gx1, gx2 = g[1], g[#g - 3]
+        local gw2 = gx2 - gx1
+        -- 石身(略提的深墨,给皴留层次)
+        nvgBeginPath(vg)
+        nvgMoveTo(vg, g[1], g[2])
+        for k = 3, #g - 1, 2 do nvgLineTo(vg, g[k], g[k + 1]) end
+        nvgClosePath(vg)
+        nvgFillColor(vg, rgba(52, 49, 44, 248))
+        nvgFill(vg)
+        nvgStrokeColor(vg, rgba(40, 38, 34, 42))
+        nvgStrokeWidth(vg, 10)
+        nvgStroke(vg)
+        -- 受光淡斑:多枚错叠的小斑,破掉椭圆程序感
+        for k = 1, 5 do
+            local sx2 = gx1 + (0.08 + k * 0.17 + (hash01(gi * 7 + k) - 0.5) * 0.1) * gw2
+            local sy2 = g[2] + 18 + hash01(gi + k * 3) * 30
+            drawEllipse(sx2, sy2,
+                22 + hash01(gi * 11 + k) * 38, 7 + hash01(gi * 5 + k) * 8,
+                rgba(126, 120, 108, 18 + hash01(gi * 3 + k * 5) * 14))
+        end
+        -- 顶面浓墨踏带(可踏面的视觉锚)
+        nvgStrokeColor(vg, rgba(18, 17, 15, 250))
+        nvgStrokeWidth(vg, 6.5)
+        nvgBeginPath(vg)
+        nvgMoveTo(vg, g[1], g[2])
+        for k = 3, #g - 5, 2 do nvgLineTo(vg, g[k], g[k + 1]) end
+        nvgStroke(vg)
+        -- 皴笔:顶缘向下扫的弧笔
+        for k = 1, 4 do
+            local fx = gx1 + (0.12 + k * 0.2 + (hash01(gi * 13 + k) - 0.5) * 0.08) * gw2
+            local fy = g[2] + 6
+            local fl = 26 + hash01(gi * 17 + k) * 34
+            nvgStrokeColor(vg, rgba(24, 23, 21, 95 + hash01(gi + k * 7) * 50))
+            nvgStrokeWidth(vg, 2.2 + hash01(k * 3.3) * 1.6)
+            nvgBeginPath(vg)
+            nvgMoveTo(vg, fx, fy)
+            nvgBezierTo(vg, fx + fl * 0.3, fy + fl * 0.4, fx + fl * 0.5, fy + fl * 0.75,
+                fx + fl * 0.42, fy + fl)
+            nvgStroke(vg)
+        end
+        -- 苔点
+        for k = 1, 5 do
+            local hx = gx1 + hash01(gi * 31 + k * 17) * gw2
+            local hy = g[2] - 4 - hash01(gi * 13 + k * 7) * 6
+            nvgSave(vg)
+            nvgTranslate(vg, hx, hy)
+            nvgRotate(vg, -0.5 + hash01(k * 3.7) * 0.4)
+            nvgBeginPath(vg)
+            nvgEllipse(vg, 0, 0, 6.5, 2.6)
+            nvgFillColor(vg, rgba(52, 60, 48, 185))
+            nvgFill(vg)
+            nvgRestore(vg)
+        end
+    end
+    -- 预置墨梁/杈台
+    for _, b in ipairs(D.staticBeams or {}) do
+        drawInkBeam(b.x, b.y, b.hw or BAMBOO_PAD_HW, 1, 1)
+        if b.spring then
+            nvgStrokeColor(vg, rgba(30, 28, 26, 220))
+            nvgStrokeWidth(vg, 4)
+            nvgBeginPath(vg)
+            nvgMoveTo(vg, b.x - 60, b.y + 8)
+            nvgBezierTo(vg, b.x - 20, b.y - 28, b.x + 28, b.y - 22, b.x + 66, b.y + 5)
+            nvgStroke(vg)
+        end
+    end
+    -- 雾渊死区:宣纸上的翻涌淡雾,没有苔点和浓墨落脚。
+    for _, z2 in ipairs(D.killZones or {}) do
+        for k = 1, 5 do
+            local yy = z2[2] + 26 + k * 36 + math.sin(elapsed * 0.8 + k) * 6
+            drawEllipse((z2[1] + z2[3]) * 0.5, yy, (z2[3] - z2[1]) * (0.32 + k * 0.025), 18 + k * 3,
+                rgba(190, 187, 176, 38 - k * 3))
+        end
+        nvgStrokeColor(vg, rgba(126, 120, 108, 70))
+        nvgStrokeWidth(vg, 1.5)
+        nvgBeginPath(vg)
+        nvgMoveTo(vg, z2[1], z2[2])
+        for k = 1, 8 do
+            local x = z2[1] + (z2[3] - z2[1]) * k / 8
+            nvgLineTo(vg, x, z2[2] + math.sin(k * 1.7 + elapsed) * 10)
+        end
+        nvgStroke(vg)
+    end
+    -- 垂梢荡枝 / 墨鹤雾渡
+    drawRopes()
+    drawCloudsAndCranes()
+    -- 竿
+    for _, s in ipairs(D.stalks) do drawBambooStalk(s) end
+    if D == BAMBOO_DATA then
+        -- 斜竹梢延伸笔 + cp3 杈台
+        nvgStrokeColor(vg, rgba(30, 28, 26, 235))
+        nvgStrokeWidth(vg, 6)
+        nvgBeginPath(vg)
+        nvgMoveTo(vg, 3110, 330)
+        nvgBezierTo(vg, 3200, 306, 3270, 298, 3324, 304)
+        nvgStroke(vg)
+        drawInkLeaf(3324, 304, 0.5, 48, 6, 1, { 30, 28, 26 }, 220)
+        drawInkLeaf(3324, 304, 1.0, 38, 5, 1, { 30, 28, 26 }, 190)
+        nvgStrokeColor(vg, rgba(30, 28, 25, 250))
+        nvgStrokeWidth(vg, 7)
+        nvgBeginPath(vg)
+        nvgMoveTo(vg, 3058, 334)
+        nvgLineTo(vg, 3164, 322)
+        nvgStroke(vg)
+    end
+    -- 苞 / 补笔生长
+    for _, ip in ipairs(RT.ipoints) do
+        if not ip.trig then
+            -- 未完之笔:枯笔断点(越往笔锋越细越淡)
+            for k = 0, 3 do
+                local t1 = k * 0.25 + 0.04
+                local t2 = t1 + 0.15 - k * 0.012
+                strokeLine(
+                    ip.sx + (ip.x - ip.sx) * t1, ip.sy + (ip.y + 8 - ip.sy) * t1,
+                    ip.sx + (ip.x - ip.sx) * t2, ip.sy + (ip.y + 8 - ip.sy) * t2,
+                    3.2 - k * 0.6, rgba(96, 92, 84, 120 - k * 22))
+            end
+            local ph = elapsed * 2.2 + ip.x * 0.013
+            -- 非冲刺触碰的拒绝轻颤
+            local jit = 0
+            if ip.shake and ip.shake > 0 then
+                jit = math.sin(ip.shake * 1.9) * (ip.shake / 16) * 4
+            end
+            nvgBeginPath(vg)
+            nvgCircle(vg, ip.x + jit, ip.y, 7.5 + math.sin(ph) * 1.2)
+            nvgFillColor(vg, rgba(24, 22, 20, 235))
+            nvgFill(vg)
+            nvgStrokeColor(vg, rgba(24, 22, 20, 215))
+            nvgStrokeWidth(vg, 2.6)
+            nvgBeginPath(vg)
+            nvgMoveTo(vg, ip.x + 2, ip.y - 7)
+            nvgBezierTo(vg, ip.x + 7, ip.y - 14, ip.x + 9, ip.y - 17, ip.x + 12, ip.y - 22)
+            nvgStroke(vg)
+            nvgStrokeColor(vg, rgba(70, 66, 62, 56 + 26 * math.sin(ph)))
+            nvgStrokeWidth(vg, 2.4)
+            nvgBeginPath(vg)
+            nvgCircle(vg, ip.x, ip.y, 26 + math.sin(ph) * 4)
+            nvgStroke(vg)
+        else
+            drawInkBranch(ip.sx, ip.sy, ip.x, ip.y + 4, 9, ip.grow, 250)
+            if ip.ring and ip.ring < 40 then
+                local t = ip.ring / 40
+                nvgStrokeColor(vg, rgba(40, 46, 36, 210 * (1 - t)))
+                nvgStrokeWidth(vg, 4 * (1 - t) + 0.6)
+                nvgBeginPath(vg)
+                nvgCircle(vg, ip.x, ip.y, 12 + t * 64)
+                nvgStroke(vg)
+            end
+            -- 梢台墨梁(苞处)
+            drawInkBeam(ip.x, ip.y + 7, BAMBOO_PAD_HW + 4, ip.grow, ip.accDir)
+            -- 铺路墨梁链(悬浮,不连线,参考视频4语言)
+            for _, pip in ipairs(ip.pads) do
+                drawInkBeam(pip.x, pip.y + 4, pip.hw or BAMBOO_PAD_HW, pip.grow, pip.accDir)
+            end
+        end
+    end
+    -- 终点卷口
+    local g = D.goal
+    nvgStrokeColor(vg, rgba(150, 60, 50, 190 + 40 * math.sin(elapsed * 3)))
+    nvgStrokeWidth(vg, 5)
+    nvgBeginPath(vg)
+    nvgArc(vg, g[1], g[2] - 50, 80, math.pi, 0, NVG_CW)
+    nvgStroke(vg)
+    nvgStrokeColor(vg, rgba(90, 84, 78, 235))
+    nvgStrokeWidth(vg, 4.5)
+    nvgBeginPath(vg)
+    nvgCircle(vg, g[1], g[2] - 24, 33)
+    nvgStroke(vg)
+    -- 存档灯
+    for i, cp in ipairs(RT.cps) do
+        nvgStrokeColor(vg, rgba(40, 36, 33, 235))
+        nvgStrokeWidth(vg, 5)
+        nvgBeginPath(vg)
+        nvgMoveTo(vg, cp[1], cp[2] + 12)
+        nvgLineTo(vg, cp[1], cp[2] - 52)
+        nvgStroke(vg)
+        nvgBeginPath(vg)
+        nvgCircle(vg, cp[1] + 16, cp[2] - 46, RT.cpReached[i] and 7 or 5)
+        nvgFillColor(vg, RT.cpReached[i] and rgba(235, 180, 90, 230) or rgba(160, 152, 140, 180))
+        nvgFill(vg)
+    end
+    -- 墨池涟漪
+    for _, rp in ipairs(RT.ripples or {}) do
+        local t = rp.t / 55
+        local a = (1 - t) * 150 * math.min(rp.big or 1, 1)
+        for k = 0, 1 do
+            local rr = (10 + t * 56) * (rp.big or 1) * (1 - k * 0.4)
+            nvgStrokeColor(vg, rgba(38, 36, 33, a * (1 - k * 0.35)))
+            nvgStrokeWidth(vg, 2.6 - k)
+            nvgBeginPath(vg)
+            nvgEllipse(vg, rp.x, rp.y, rr, rr * 0.32)
+            nvgStroke(vg)
+        end
+    end
+    -- 墨屑
+    for _, pt in ipairs(RT.petals) do
+        local a = 230 * (1 - pt.age / pt.life)
+        local pc = pt.col or TRACE_PETAL_RED
+        nvgSave(vg)
+        nvgTranslate(vg, pt.x, pt.y)
+        nvgRotate(vg, pt.rot)
+        nvgBeginPath(vg)
+        nvgEllipse(vg, 0, 0, 5.2, 2.8)
+        nvgFillColor(vg, rgba(pc[1], pc[2], pc[3], a))
+        nvgFill(vg)
+        nvgRestore(vg)
+    end
+    drawParticles()
+    drawPlayer()
+    if RT.goalDone then traceDrawMount(z) end
+    nvgRestore(vg)
+end
+
+-- ============================================================================
+-- END scripts/src/88_bamboo_scroll.lua
 -- ============================================================================
 
 -- ============================================================================
@@ -9124,7 +11007,20 @@ local function drawHud()
     drawStrokeRect(18, 18, 720, h, 4, colorRGBA(currentLevel.accent, 170), 2)
     drawText(40, 34, 25, rgba(250, 250, 246, 240), string.format("%d/%d  %s", currentLevelIdx, #LEVELS, currentLevel.name))
     drawText(40, 66, 14, rgba(220, 226, 218, 225), currentLevel.title)
-    drawText(40, 92, 13, rgba(210, 220, 210, 220), string.format("state %s  dash %s  blooms %d/%d", state, player.canDash and "ready" or "used", collectedCount, #targets))
+    if currentLevel.trace and TRACE_RT.bamboo then
+        drawText(40, 92, 13, rgba(210, 220, 210, 220), string.format("state %s  dash %s  补笔 %d/%d",
+            state, player.canDash and "ready" or "used", TRACE_RT.budDone or 0, TRACE_RT.budTotal or 0))
+    elseif currentLevel.trace then
+        local gotChars = 0
+        for _, ch in ipairs(TRACE_RT.chars or {}) do
+            if ch.got then gotChars = gotChars + 1 end
+        end
+        drawText(40, 92, 13, rgba(210, 220, 210, 220), string.format("state %s  dash %s  梅苞 %d/%d  拾字 %d/%d",
+            state, player.canDash and "ready" or "used",
+            TRACE_RT.plumDone or 0, TRACE_RT.plumTotal or 0, gotChars, #(TRACE_RT.chars or {})))
+    else
+        drawText(40, 92, 13, rgba(210, 220, 210, 220), string.format("state %s  dash %s  blooms %d/%d", state, player.canDash and "ready" or "used", collectedCount, #targets))
+    end
     if showHelp then
         drawText(40, 120, 13, rgba(205, 216, 204, 220), "A/D or Arrows: move    Space/W/Up: jump    J: 8-way dash    S/Down: dash downward")
         drawText(40, 142, 13, rgba(205, 216, 204, 220), "Q/E or 1-9/0: switch scroll    C: debug nodes    F: seal    R: reload")
@@ -9153,7 +11049,7 @@ function Start()
         return
     end
     loadDefaultFont()
-    loadLevel(1)
+    loadLevel(23)
     SubscribeToEvent("Update", "HandleUpdate")
     SubscribeToEvent(vg, "NanoVGRender", "HandleNanoVGRender")
     SubscribeToEvent("KeyDown", "HandleKeyDown")

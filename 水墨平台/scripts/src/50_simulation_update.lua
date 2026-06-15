@@ -9,13 +9,15 @@ local function fixedStep()
         ch.swayAngle = math.sin(ch.pulse) * 0.08
     end
     for _, c in ipairs(cranes) do
-        c.x = c.x + c.speed
-        c.theta = c.theta + 0.03
-        c.y = c.startY + math.sin(c.theta) * c.amplitude
-        c.wingAngle = math.sin(c.theta * 3.5) * (math.pi / 4)
-        if c.x > worldW + 100 then
-            c.x = -100
-            c.startY = H(0.2 + hash01(elapsed + c.speed) * 0.4)
+        if not c.path then
+            c.x = c.x + c.speed
+            c.theta = c.theta + 0.03
+            c.y = c.startY + math.sin(c.theta) * c.amplitude
+            c.wingAngle = math.sin(c.theta * 3.5) * (math.pi / 4)
+            if c.x > worldW + 100 then
+                c.x = -100
+                c.startY = H(0.2 + hash01(elapsed + c.speed) * 0.4)
+            end
         end
     end
     for _, leaf in ipairs(glidingLeaves) do

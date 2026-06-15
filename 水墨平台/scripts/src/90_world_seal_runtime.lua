@@ -174,7 +174,20 @@ local function drawHud()
     drawStrokeRect(18, 18, 720, h, 4, colorRGBA(currentLevel.accent, 170), 2)
     drawText(40, 34, 25, rgba(250, 250, 246, 240), string.format("%d/%d  %s", currentLevelIdx, #LEVELS, currentLevel.name))
     drawText(40, 66, 14, rgba(220, 226, 218, 225), currentLevel.title)
-    drawText(40, 92, 13, rgba(210, 220, 210, 220), string.format("state %s  dash %s  blooms %d/%d", state, player.canDash and "ready" or "used", collectedCount, #targets))
+    if currentLevel.trace and TRACE_RT.bamboo then
+        drawText(40, 92, 13, rgba(210, 220, 210, 220), string.format("state %s  dash %s  补笔 %d/%d",
+            state, player.canDash and "ready" or "used", TRACE_RT.budDone or 0, TRACE_RT.budTotal or 0))
+    elseif currentLevel.trace then
+        local gotChars = 0
+        for _, ch in ipairs(TRACE_RT.chars or {}) do
+            if ch.got then gotChars = gotChars + 1 end
+        end
+        drawText(40, 92, 13, rgba(210, 220, 210, 220), string.format("state %s  dash %s  梅苞 %d/%d  拾字 %d/%d",
+            state, player.canDash and "ready" or "used",
+            TRACE_RT.plumDone or 0, TRACE_RT.plumTotal or 0, gotChars, #(TRACE_RT.chars or {})))
+    else
+        drawText(40, 92, 13, rgba(210, 220, 210, 220), string.format("state %s  dash %s  blooms %d/%d", state, player.canDash and "ready" or "used", collectedCount, #targets))
+    end
     if showHelp then
         drawText(40, 120, 13, rgba(205, 216, 204, 220), "A/D or Arrows: move    Space/W/Up: jump    J: 8-way dash    S/Down: dash downward")
         drawText(40, 142, 13, rgba(205, 216, 204, 220), "Q/E or 1-9/0: switch scroll    C: debug nodes    F: seal    R: reload")
@@ -203,7 +216,7 @@ function Start()
         return
     end
     loadDefaultFont()
-    loadLevel(1)
+    loadLevel(23)
     SubscribeToEvent("Update", "HandleUpdate")
     SubscribeToEvent(vg, "NanoVGRender", "HandleNanoVGRender")
     SubscribeToEvent("KeyDown", "HandleKeyDown")

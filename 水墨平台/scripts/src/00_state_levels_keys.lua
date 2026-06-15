@@ -507,6 +507,36 @@ local LEVELS = {
         bloom = C(250, 252, 255), water = C(92, 222, 232),
         radius = 10, gravity = 0.52, jumpForce = -15.5, dashSpeed = 19, friction = 0.86,
     },
+    {
+        id = "trace_bamboo_scroll", trace = true, traceKey = "bamboo",
+        name = "墨竹行", title = "水墨平台跳跃 - 墨竹长卷", seal = "竹",
+        note = "踏节而上,触苞补笔。浓墨可踏,中墨为景;走过之处,竹叶次第展开。",
+        wmul = 3.4, hmul = 1.3,
+        paper = C(243, 239, 229), paper2 = C(229, 225, 214),
+        ink = C(25, 23, 21), wash = C(131, 129, 122), accent = C(186, 48, 40),
+        bloom = C(197, 38, 64), water = C(243, 239, 229),
+        radius = 10, gravity = 0.52, jumpForce = -15.5, dashSpeed = 19, friction = 0.86,
+    },
+    {
+        id = "trace_bamboo_scroll_v2", trace = true, traceKey = "bamboo_v2",
+        name = "墨竹行", title = "水墨平台跳跃 - 墨竹长卷·大格局", seal = "竹",
+        note = "七幕大格局竹卷:竖梯、链苞、垂梢、雾渡仙鹤、弹梢与长卷桥依次展开。",
+        wmul = 6.56, hmul = 3.61,
+        paper = C(243, 239, 229), paper2 = C(229, 225, 214),
+        ink = C(25, 23, 21), wash = C(131, 129, 122), accent = C(186, 48, 40),
+        bloom = C(197, 38, 64), water = C(243, 239, 229),
+        radius = 10, gravity = 0.52, jumpForce = -15.5, dashSpeed = 19, friction = 0.86,
+    },
+    {
+        id = "trace_video4", trace = true, traceKey = "video4",
+        name = "参考视频4复刻", title = "逐帧描摹 - 参考视频4", seal = "映",
+        note = "由参考视频4.mp4抽帧、分层、拼接生成的画面同源复刻关卡。",
+        wmul = 3.8, hmul = 1.0,
+        paper = C(221, 226, 220), paper2 = C(209, 212, 208),
+        ink = C(33, 37, 39), wash = C(126, 132, 129), accent = C(78, 90, 83),
+        bloom = C(197, 38, 64), water = C(188, 192, 188),
+        radius = 10, gravity = 0.52, jumpForce = -15.5, dashSpeed = 19, friction = 0.86,
+    },
 
 }
 

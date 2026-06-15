@@ -572,7 +572,12 @@ local function updateSpecialBeforeMovement()
         return
     end
 
-    if currentLevel.id == "bamboo" then
+    if currentLevel.trace and TRACE_RT and TRACE_RT.bamboo then
+        if updateBambooScrollSpecial then
+            updateBambooScrollSpecial()
+            if player.swingRope or player.ridingCrane then return end
+        end
+    elseif currentLevel.id == "bamboo" then
         local x1, x2 = W(0.32), W(0.80)
         if player.x > x1 and player.x < x2 and player.y > H(0.03) then
             local center = W(0.56)

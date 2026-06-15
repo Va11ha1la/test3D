@@ -1,0 +1,138 @@
+[2026-06-11 11_05_12_447][0] ERROR: Could not open file C:/Program Files/TapTap/UrhoXRuntime/logs/game/urhox_runtime-2026-06-11 11_05_12_447.log
+[2026-06-11 11_05_12_447][0] ERROR: Failed to create log file C:/Program Files/TapTap/UrhoXRuntime/logs/game/urhox_runtime-2026-06-11 11_05_12_447.log
+[2026-06-11 11_05_12_407][0] INFO: DownloadManager initialized
+[2026-06-11 11_05_12_444][0] INFO: a couple of Subsystems registered finish.
+[2026-06-11 11_05_12_445][0] INFO: Engine construct finish.
+[2026-06-11 11_05_12_447][0] INFO: =======Git Info=======
+[2026-06-11 11_05_12_447][0] INFO: Client: unknown; Urho: unknown; Script: unknown; SVN: unknown; BuildTime: unknown
+[2026-06-11 11_05_12_447][0] INFO: ======================
+[2026-06-11 11_05_12_447][0] INFO: Engine initialize begin.
+[2026-06-11 11_05_12_447][0] INFO: enable MSAA
+[2026-06-11 11_05_12_451][0] INFO: Created 7 worker threads
+[2026-06-11 11_05_12_451][0] INFO: Engine resourcePrefixPath: C:/Program Files/TapTap/UrhoXRuntime/, resource: ResCache
+[2026-06-11 11_05_12_451][0] INFO: Added resource path C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 11_05_12_451][0] INFO: Now resource dir: 
+[2026-06-11 11_05_12_451][0] INFO: 0 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 11_05_12_451][0] INFO: Engine resourcePrefixPath: C:/Program Files/TapTap/UrhoXRuntime/, resource: Res
+[2026-06-11 11_05_12_451][0] INFO: Added resource path C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 11_05_12_451][0] INFO: Now resource dir: 
+[2026-06-11 11_05_12_451][0] INFO: 0 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 11_05_12_451][0] INFO: 1 - C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 11_05_12_451][0] INFO: Engine resourcePrefixPath: C:/Program Files/TapTap/UrhoXRuntime/, resource: Data
+[2026-06-11 11_05_12_451][0] INFO: Added resource path C:/Program Files/TapTap/UrhoXRuntime/Data/
+[2026-06-11 11_05_12_451][0] INFO: Now resource dir: 
+[2026-06-11 11_05_12_451][0] INFO: 0 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 11_05_12_451][0] INFO: 1 - C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 11_05_12_451][0] INFO: 2 - C:/Program Files/TapTap/UrhoXRuntime/Data/
+[2026-06-11 11_05_12_451][0] INFO: Engine resourcePrefixPath: C:/Program Files/TapTap/UrhoXRuntime/, resource: CoreData
+[2026-06-11 11_05_12_451][0] INFO: Added resource path C:/Program Files/TapTap/UrhoXRuntime/CoreData/
+[2026-06-11 11_05_12_451][0] INFO: Now resource dir: 
+[2026-06-11 11_05_12_451][0] INFO: 0 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 11_05_12_451][0] INFO: 1 - C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 11_05_12_451][0] INFO: 2 - C:/Program Files/TapTap/UrhoXRuntime/Data/
+[2026-06-11 11_05_12_451][0] INFO: 3 - C:/Program Files/TapTap/UrhoXRuntime/CoreData/
+[2026-06-11 11_05_12_451][0] INFO: Engine resourcePrefixPath: C:/Program Files/TapTap/UrhoXRuntime/, resource: Data/LuaScripts
+[2026-06-11 11_05_12_451][0] INFO: Added resource path C:/Program Files/TapTap/UrhoXRuntime/Data/LuaScripts/
+[2026-06-11 11_05_12_451][0] INFO: Now resource dir: 
+[2026-06-11 11_05_12_451][0] INFO: 0 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 11_05_12_451][0] INFO: 1 - C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 11_05_12_451][0] INFO: 2 - C:/Program Files/TapTap/UrhoXRuntime/Data/
+[2026-06-11 11_05_12_451][0] INFO: 3 - C:/Program Files/TapTap/UrhoXRuntime/CoreData/
+[2026-06-11 11_05_12_451][0] INFO: 4 - C:/Program Files/TapTap/UrhoXRuntime/Data/LuaScripts/
+[2026-06-11 11_05_13_102][0] INFO: computeShaderSupport 1,caps->supported:4,aps->supported & BGFX_CAPS_INDEX32:4096
+[2026-06-11 11_05_13_102][0] INFO: Detected 4 GPUs
+[2026-06-11 11_05_13_102][0] INFO: GPU 0 Name: NVIDIA GeForce RTX 3070
+[2026-06-11 11_05_13_102][0] INFO: GPU 1 Name: Intel(R) UHD Graphics 630
+[2026-06-11 11_05_13_102][0] INFO: GPU 2 Name: NVIDIA GeForce RTX 3070
+[2026-06-11 11_05_13_102][0] INFO: GPU 3 Name: Microsoft Basic Render Driver
+[2026-06-11 11_05_13_102][0] INFO: Selected GPU name: NVIDIA GeForce RTX 3070
+[2026-06-11 11_05_13_102][0] INFO: Renderer Type: Direct3D 11
+[2026-06-11 11_05_13_102][0] INFO: CheckFeatureSupport => CpuInstance=1, _R32I=1, _R32U=1, _R32F=1, _RGBA16F=1, _RGBA32F=1, MaxTextureSizeLimit=16384
+[2026-06-11 11_05_13_118][0] INFO: Graphics mode: 1280x720 (logic=1280x720, dpr=1) windowed resizable high[2026-06-11 11_05_13_121][0] ERROR: Could not find resource Cube/Day/DaySpecularHDR.dds
+[2026-06-11 11_05_13_175][0] ERROR: Could not open file C:/Program Files/TapTap/UrhoXRuntime/User/user_info-e.master.sce.xd.com.json
+DPI monitor 0
+[2026-06-11 11_05_13_120][0] INFO: Initialized input
+[2026-06-11 11_05_13_120][0] INFO: Initialized user interface
+[2026-06-11 11_05_13_126][0] INFO: Initialized renderer
+[2026-06-11 11_05_13_175][0] INFO: Set audio mode 44100 Hz stereo interpolated
+[2026-06-11 11_05_13_175][0] INFO: Initialized graphics & audio output.
+[2026-06-11 11_05_13_175][0] INFO: Initialized engine
+[2026-06-11 11_05_13_176][0] INFO: LogUploader disabled (no SLS URL)
+[2026-06-11 11_05_13_176][0] INFO: HttpManager initialized (Native with libhv HttpClient)
+[2026-06-11 11_05_13_178][0] INFO: Device Max Storage Block Binding Range: 16
+[2026-06-11 11_05_14_898][0] INFO: Added resource path C:/Users/202102-91/Desktop/项目/横板平台跳跃/UrhoX2/
+[2026-06-11 11_05_14_898][0] INFO: Now resource dir: 
+[2026-06-11 11_05_14_898][0] INFO: 0 - C:/Users/202102-91/Desktop/项目/横板平台跳跃/UrhoX2/
+[2026-06-11 11_05_14_898][0] INFO: 1 - C:/Program Files/TapTap/UrhoXRuntime/ResCache/
+[2026-06-11 11_05_14_898][0] INFO: 2 - C:/Program Files/TapTap/UrhoXRuntime/Res/
+[2026-06-11 11_05_14_898][0] INFO: 3 - C:/Program Files/TapTap/UrhoXRuntime/Data/
+[2026-06-11 11_05_14_898][0] INFO: 4 - C:/Program Files/TapTap/UrhoXRuntime/CoreData/
+[2026-06-11 11_05_14_898][0] INFO: 5 - C:/Program Files/TapTap/UrhoXRuntime/Data/LuaScripts/
+[2026-06-11 11_05_14_898][0] INFO: 查看启动参数
+[2026-06-11 11_05_14_898][0] INFO: argv ===> scripts/main_kingsbird.lua 
+[2026-06-11 11_05_14_898][0] INFO: argv ===> project_dir C:\Users\202102-91\Desktop\项目\横板平台跳跃\UrhoX2
+[2026-06-11 11_05_14_898][0] INFO: argv ===> debug_local true
+[2026-06-11 11_05_14_898][0] INFO: argv ===> use_local_res true
+[2026-06-11 11_05_14_898][0] INFO: argv ===> skip_login true
+[2026-06-11 11_05_14_898][0] INFO: argv ===> width 1280
+[2026-06-11 11_05_14_898][0] INFO: argv ===> height 720
+[2026-06-11 11_05_14_898][0] INFO: PackageFile::Open, C:/Program Files/TapTap/UrhoXRuntime/Res/shadercache_runtime/shadercache_dx11.pak, 0
+[2026-06-11 11_05_15_026][0] INFO: ULZM package opened: C:/Program Files/TapTap/UrhoXRuntime/Res/shadercache_runtime/shadercache_dx11.pak, decompressed 1003773 -> 117331003 bytes
+[2026-06-11 11_05_15_026][0] INFO: Added resource package shadercache_runtime
+[2026-06-11 11_05_15_036][0] INFO: Loaded shader cache package: C:/Program Files/TapTap/UrhoXRuntime/Res/shadercache_runtime/shadercache_dx11.pak
+[2026-06-11 11_05_15_036][0] INFO: Custom Lua require system installed (module cache active)
+[2026-06-11 11_05_15_040][0] INFO: Lua 5.4: Generational GC enabled.
+[2026-06-11 11_05_15_040][0] INFO: Lua official log file initialized: C:/Program Files/TapTap/UrhoXRuntime/logs/lua/lua-2026-06-11 11_05_15_040.log
+[2026-06-11 11_05_15_041][0] WARNING: Localization::ReadUserPrefLanguage: userPrefPath_ is empty
+[2026-06-11 11_05_15_041][0] INFO: Localization: auto-selected 'zh_CN' from [en, zh_CN]
+[2026-06-11 11_05_15_041][0] INFO: BootstrapManager: Localization initialized, language=zh_CN
+[2026-06-11 11_05_15_041][0] INFO: BootstrapManager: starting with gameUrl=
+[2026-06-11 11_05_15_042][0] INFO: LoadingUI::Show()
+[2026-06-11 11_05_15_043][0] INFO: Font Fonts/Anonymous Pro.ttf has NO color glyphs, face_flags=0xa39
+[2026-06-11 11_05_15_043][0] INFO: Font Fonts/Anonymous Pro.ttf has NO color glyphs, face_flags=0xa39
+[2026-06-11 11_05_15_043][0] INFO: BootstrapPipeline: starting with 1 steps, total weight 0.05
+[2026-06-11 11_05_15_043][0] INFO: BootstrapPipeline: executing step [1/1] 'Ready'
+[2026-06-11 11_05_15_043][0] INFO: [Bootstrap/Ready] Starting...
+[2026-06-11 11_05_15_044][0] INFO: [Bootstrap/Ready] settings.json not found, single player mode assumed
+[2026-06-11 11_05_15_045][1] INFO: Shader::BeginLoad: Shaders/BLGL/UI.glsl
+[2026-06-11 11_05_15_046][1] INFO: Shader::EndLoad
+[2026-06-11 11_05_15_046][1] INFO: Loaded cached vertex shader UI(DIFFMAP GAMMA_IN_SHADERING MIXCOLOR VERTEXCOLOR)
+[2026-06-11 11_05_15_046][1] INFO: Loaded cached pixel shader UI(DIFFMAP GAMMA_IN_SHADERING MIXCOLOR OPACITY VERTEXCOLOR)
+[2026-06-11 11_05_15_046][1] INFO: Loaded cached vertex shader UI(DIFFMAP)
+[2026-06-11 11_05_15_046][1] INFO: Loaded cached pixel shader UI(DIFFMAP OPACITY)
+[2026-06-11 11_05_15_046][1] INFO: BXLOG:C:\UrhoX\engine\Source\ThirdParty\bgfx-all\bgfx\src\dxgi.cpp (428): Display Width: 1280, Height: 720, RefreshRate: 60/1
+
+[2026-06-11 11_05_16_061][68] INFO: [Bootstrap/Ready] Completed successfully
+[2026-06-11 11_05_16_061][68] INFO: BootstrapPipeline: step 'Ready' completed successfully
+[2026-06-11 11_05_16_061][68] INFO: BootstrapPipeline: completed successfully
+[2026-06-11 11_05_16_061][68] INFO: LoadingUI::Hide()
+[2026-06-11 11_05_16_061][68] INFO: BootstrapManager: pipeline completed successfully
+[2026-06-11 11_05_16_061][68] INFO: BootstrapManager: using provided scriptFileName: scripts/main_kingsbird.lua
+[2026-06-11 11_05_16_061][68] WARNING: RuntimeRetargeterCache: Cannot load mapping table: uuid://F4ItQUiV0gmvAelLXpk5yrTs
+[2026-06-11 11_05_16_062][68] INFO: Loaded Lua script LuaScripts/Utilities/EnginePreview.lua
+[2026-06-11 11_05_16_062][68][Script] IsNetworkMode:    false
+[2026-06-11 11_05_16_063][68] INFO: Loaded Lua script urhox-libs/Engine/init.lua
+[2026-06-11 11_05_16_063][68] INFO: Loaded Lua script urhox-libs/Engine/InputExtensions.lua
+[2026-06-11 11_05_16_064][68] INFO: Lua module loaded successfully: 'InputExtensions' -> 'urhox-libs/Engine/InputExtensions.lua' (cached as 'urhox-libs/Engine/InputExtensions')
+[2026-06-11 11_05_16_064][68] INFO: Loaded Lua script urhox-libs/Engine/ResourceCacheExtensions.lua
+[2026-06-11 11_05_16_064][68] INFO: Lua module loaded successfully: 'ResourceCacheExtensions' -> 'urhox-libs/Engine/ResourceCacheExtensions.lua' (cached as 'urhox-libs/Engine/ResourceCacheExtensions')
+[2026-06-11 11_05_16_065][68] INFO: Loaded Lua script urhox-libs/Engine/i18n.lua
+[2026-06-11 11_05_16_065][68] WARNING: [i18n] GetLanguage: no language resolved
+[2026-06-11 11_05_16_066][68] INFO: [i18n] loadConfig: i18n.json not found, i18n disabled
+[2026-06-11 11_05_16_066][68] WARNING: [i18n] init: no config found, hooks NOT installed
+[2026-06-11 11_05_16_066][68] INFO: Lua module loaded successfully: 'i18n' -> 'urhox-libs/Engine/i18n.lua' (cached as 'urhox-libs/Engine/i18n')
+[2026-06-11 11_05_16_066][68] INFO: Lua module loaded successfully: 'urhox-libs/Engine' -> 'urhox-libs/Engine/init.lua' (cached as 'urhox-libs/Engine')
+[2026-06-11 11_05_16_067][68] INFO: Loaded Lua script LuaScripts/Utilities/Previews/InputAdaptor.lua
+[2026-06-11 11_05_16_067][68][Script] [InputAdaptor] Loading input event adaptor...
+[2026-06-11 11_05_16_067][68][Script] [InputAdaptor] Hooked SubscribeToEvent for event mapping.
+[2026-06-11 11_05_16_067][68][Script] [InputAdaptor] Platform: Windows, isTouchPlatform: false
+[2026-06-11 11_05_16_067][68][Script] [InputAdaptor] Hooked Input methods for touch emulation fallback.
+[2026-06-11 11_05_16_067][68] INFO: Lua module loaded successfully: 'LuaScripts/Utilities/Previews/InputAdaptor' -> 'LuaScripts/Utilities/Previews/InputAdaptor.lua' (cached as 'LuaScripts/Utilities/Previews/InputAdaptor')
+[2026-06-11 11_05_16_068][68] INFO: Loaded Lua script LuaScripts/Utilities/Previews/Scene.lua
+[2026-06-11 11_05_16_068][68] INFO: Lua module loaded successfully: 'LuaScripts/Utilities/Previews/Scene' -> 'LuaScripts/Utilities/Previews/Scene.lua' (cached as 'LuaScripts/Utilities/Previews/Scene')
+[2026-06-11 11_05_16_069][68] INFO: Loaded Lua script LuaScripts/Utilities/Previews/SceneGuard.lua
+[2026-06-11 11_05_16_069][68] INFO: Lua module loaded successfully: 'LuaScripts/Utilities/Previews/SceneGuard' -> 'LuaScripts/Utilities/Previews/SceneGuard.lua' (cached as 'LuaScripts/Utilities/Previews/SceneGuard')
+[2026-06-11 11_05_16_070][68] INFO: Loaded Lua script LuaScripts/Utilities/Previews/UIGuard.lua
+[2026-06-11 11_05_16_070][68] INFO: Lua module loaded successfully: 'LuaScripts/Utilities/Previews/UIGuard' -> 'LuaScripts/Utilities/Previews/UIGuard.lua' (cached as 'LuaScripts/Utilities/Previews/UIGuard')
+[2026-06-11 11_05_16_071][68] INFO: Loaded Lua script LuaScripts/Utilities/Previews/UserInfo.lua
+[2026-06-11 11_05_16_071][68] INFO: Lua module loaded su[2026-06-11 11_05_16_085][68] ERROR: Could not open file C:/Program Files/TapTap/UrhoXRuntime/logs/lua/lua-2026-06-11 11_05_15_040.log
